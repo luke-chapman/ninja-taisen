@@ -13,12 +13,7 @@ class Team(IntEnum):
     WOLF = 1
 
     def other(self) -> "Team":
-        if self == Team.MONKEY:
-            return Team.WOLF
-        if self == Team.WOLF:
-            return Team.MONKEY
-        else:
-            raise Exception("Bad team value " + str(self))
+        return 1 - self
 
     def __str__(self) -> str:
         if self == Team.MONKEY:

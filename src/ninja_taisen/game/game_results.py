@@ -10,16 +10,9 @@ from ninja_taisen.objects.card import Team
 logger = getLogger(__name__)
 
 
-class GameResult:
-    def __init__(self, winning_team: Team | None, turn_count: int, time_taken_s: float) -> None:
-        self.winning_team = winning_team
-        self.turn_count = turn_count
-        self.time_taken_s = time_taken_s
-
-
 class GameResults:
     def __init__(self, results_file: Path) -> None:
-        assert results_file.parent.is_dir()
+        results_file.parent.mkdir(parents=True, exist_ok=True)
         self.results_file = results_file
         self.results: list[GameResult] = []
 

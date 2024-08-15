@@ -12,7 +12,7 @@ def run() -> None:
         for wolf_strategy in StrategyNames.ALL:
             command_line = [
                 "--games",
-                "1",
+                "1000",
                 "--monkey-strategy",
                 monkey_strategy,
                 "--wolf-strategy",
