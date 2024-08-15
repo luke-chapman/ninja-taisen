@@ -1,0 +1,79 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ninja-taisen"
+dynamic = ["version"]
+description = 'ninja-taisen board game - simulation and strategies'
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+  { name = "Luke Chapman", email = "lrrchapman@gmail.com" },
+]
+dependencies = [
+  "pydantic>=2.8",
+]
+
+[project.urls]
+Documentation = "https://github.com/luke-chapman/ninja-taisen#readme"
+Issues = "https://github.com/luke-chapman/ninja-taisen/issues"
+Source = "https://github.com/luke-chapman/ninja-taisen"
+
+[project.scripts]
+ninja-taisen = "ninja_taisen.__main__:main"
+
+[tool.hatch.version]
+path = "src/ninja_taisen/__about__.py"
+
+[tool.hatch.envs.default.scripts]
+lint = [
+  "ruff check",
+  "mypy --install-types --non-interactive ."
+]
+format = [
+  "black **/*.py",
+  "ruff check --fix --unsafe-fixes"
+]
+test = "pytest {args: tests}"
+yeehaw = [
+  "hatch run format",
+  "hatch run lint",
+  "hatch run test",
+  "git add .",
+  "git commit -m {args}",
+  "git push -u",
+]
+
+[tool.hatch.envs.default]
+dependencies = [
+  "black>=24.8.0",
+  "mypy>=1.0.0",
+  "pytest>=8.3.2",
+  "ruff>=0.5.6",
+]
+
+[tool.ruff]
+lint.select = [
+  # pycodestyle
+  "E",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
+]
+line-length = 120
+target-version = "py312"
+
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+
+[tool.mypy]
+python_version = "3.12"
