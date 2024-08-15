@@ -45,23 +45,20 @@ def main(override_args: list[str] | None = None) -> int:
     parser.add_argument("--wolf-strategy", type=str, default="random", choices=StrategyNames.ALL)
     parser.add_argument("--verbosity", action="count", default=0, help="Verbosity level for logging")
     parser.add_argument("--profile", action="store_true", help="Profile the code")
-    parser.add_argument(
-        "--results-dir", default=Path.cwd() / ".ninja-taisen", help="Directory in which to store results"
-    )
-    options = parser.parse_args(override_args or sys.argv[1:])
+    parser.add_argument("--results-dir", type=Path, help="Directory in which to store results")
+    args = parser.parse_args(override_args or sys.argv[1:])
 
-    basicConfig(level=options.verbosity)
+    basicConfig(level=args.verbosity)
+    results_dir = args.results_dir or Path.cwd() / ".ninja-taisen"
+    monkey_strategy = lookup_strategy(args.monkey_strategy)
+    wolf_strategy = lookup_strategy(args.wolf_strategy)
 
-    options.results_dir.mkdir(parents=True, exist_ok=True)
-    monkey_strategy = lookup_strategy(options.monkey_strategy)
-    wolf_strategy = lookup_strategy(options.wolf_strategy)
-
-    if options.profile:
+    if args.profile:
         with Profile() as profile:
-            run(options.games, monkey_strategy, wolf_strategy, options.results_dir)
+            run(args.games, monkey_strategy, wolf_strategy, results_dir)
         profile.print_stats(SortKey.TIME)
     else:
-        run(options.games, monkey_strategy, wolf_strategy, options.results_dir)
+        run(args.games, monkey_strategy, wolf_strategy, results_dir)
 
     return 0
 
