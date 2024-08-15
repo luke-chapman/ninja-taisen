@@ -14,7 +14,7 @@ def lookup_strategy(strategy: str) -> IStrategy:
         return MetricStrategy(PositionMetric())
     if strategy == StrategyNames.metric_position_strength:
         return MetricStrategy(PositionStrengthMetric())
-    if strategy == StrategyNames.metric_count:
+    if strategy == StrategyNames.metric_strength:
         return MetricStrategy(StrengthMetric())
     else:
         raise ValueError(f"Unexpected strategy '{strategy}'")
