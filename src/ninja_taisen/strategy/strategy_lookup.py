@@ -17,7 +17,7 @@ def lookup_strategy(strategy: str) -> IStrategy:
     if strategy == "random_spot_win":
         return RandomSpotWinStrategy()
     if strategy.startswith("metric_"):
-        _, metric = strategy.split("_")
+        _, metric = strategy.split("_", maxsplit=1)
         metrics: dict[str, IMetric] = {
             "count": CountMetric(),
             "position": PositionMetric(),

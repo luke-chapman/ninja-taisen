@@ -22,6 +22,7 @@ Source = "https://github.com/luke-chapman/ninja-taisen"
 
 [project.scripts]
 ninja-taisen = "ninja_taisen.__main__:main"
+nt = "ninja_taisen.__main__:main"
 
 [tool.hatch.version]
 path = "src/ninja_taisen/__about__.py"
