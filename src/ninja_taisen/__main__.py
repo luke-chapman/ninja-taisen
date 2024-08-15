@@ -16,8 +16,8 @@ from ninja_taisen.strategy.strategy_names import StrategyNames
 log = getLogger(__name__)
 
 
-def run(games: int, monkey_strategy: IStrategy, wolf_strategy: IStrategy, results_dir: Path) -> None:
-    all_results = GameResults(results_dir)
+def run(games: int, monkey_strategy: IStrategy, wolf_strategy: IStrategy, results_dir: Path, prefix: str) -> None:
+    all_results = GameResults(results_dir, prefix)
     starting_team = Team.MONKEY
 
     for i in range(games):
@@ -46,6 +46,7 @@ def main(override_args: list[str] | None = None) -> int:
     parser.add_argument("--verbosity", action="count", default=0, help="Verbosity level for logging")
     parser.add_argument("--profile", action="store_true", help="Profile the code")
     parser.add_argument("--results-dir", type=Path, help="Directory in which to store results")
+    parser.add_argument("--results-prefix", help="Prefix to prepend to results files")
     args = parser.parse_args(override_args or sys.argv[1:])
 
     basicConfig(level=args.verbosity)
@@ -56,10 +57,10 @@ def main(override_args: list[str] | None = None) -> int:
 
     if args.profile:
         with Profile() as profile:
-            run(args.games, monkey_strategy, wolf_strategy, results_dir)
+            run(args.games, monkey_strategy, wolf_strategy, results_dir, args.results_prefix or "")
         profile.print_stats(SortKey.TIME)
     else:
-        run(args.games, monkey_strategy, wolf_strategy, results_dir)
+        run(args.games, monkey_strategy, wolf_strategy, results_dir, args.results_prefix or "")
 
     return 0
 

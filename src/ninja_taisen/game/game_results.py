@@ -19,9 +19,10 @@ class GameResult:
 
 
 class GameResults:
-    def __init__(self, results_dir: Path) -> None:
+    def __init__(self, results_dir: Path, prefix) -> None:
         assert results_dir.is_dir()
         self.results_dir = results_dir
+        self.prefix = prefix
         self.results: list[GameResult] = []
 
     def register_result(self, game_result: GameResult) -> None:
@@ -41,4 +42,4 @@ class GameResults:
 
         df = pl.DataFrame(frame_dict)
         timestamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
-        df.write_csv(self.results_dir / f"results_{timestamp}.csv")
+        df.write_csv(self.results_dir / f"{self.prefix}results_{timestamp}.csv")
