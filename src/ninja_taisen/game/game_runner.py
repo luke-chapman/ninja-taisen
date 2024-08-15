@@ -31,9 +31,9 @@ class GameRunner:
             team = team.other()
             turn_count += 1
 
-        time_taken = perf_counter() - start_time
-        log.info(f"Winner={victorious_team}, turn_count={turn_count}, time_taken={time_taken}s")
-        return GameResult(victorious_team, turn_count, time_taken)
+        time_taken_s = perf_counter() - start_time
+        log.info(f"Winner={victorious_team}, turn_count={turn_count}, time_taken={time_taken_s}s")
+        return GameResult(victorious_team, turn_count, time_taken_s)
 
     def _execute_turn(self, team: Team) -> None:
 
