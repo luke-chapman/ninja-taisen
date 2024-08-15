@@ -1,5 +1,4 @@
 from logging import getLogger
-from typing import Dict, List, Optional
 
 from ninja_taisen.objects.card import Team
 
@@ -7,7 +6,7 @@ logger = getLogger(__name__)
 
 
 class GameResult:
-    def __init__(self, winning_team: Optional[Team], turn_count: int, time_taken: float) -> None:
+    def __init__(self, winning_team: Team | None, turn_count: int, time_taken: float) -> None:
         self.winning_team = winning_team
         self.turn_count = turn_count
         self.time_taken = time_taken
@@ -15,7 +14,7 @@ class GameResult:
 
 class GameResults:
     def __init__(self) -> None:
-        self.results: Dict[Optional[Team], List[GameResult]] = {Team.MONKEY: [], Team.WOLF: [], None: []}
+        self.results: dict[Team | None, list[GameResult]] = {Team.MONKEY: [], Team.WOLF: [], None: []}
 
     def register_result(self, game_result: GameResult) -> None:
         self.results[game_result.winning_team].append(game_result)

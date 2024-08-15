@@ -1,10 +1,8 @@
-from typing import List, Optional, Tuple
-
 from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
 
 
-def victorious_team(board: Board) -> Optional[Team]:
+def victorious_team(board: Board) -> Team | None:
     if board.monkey_cards[-1]:
         return Team.MONKEY
     if board.wolf_cards[0]:
@@ -12,7 +10,7 @@ def victorious_team(board: Board) -> Optional[Team]:
     return None
 
 
-def find_winning_board(boards: List[Board], team: Team) -> Optional[Board]:
+def find_winning_board(boards: list[Board], team: Team) -> Board | None:
     for board in boards:
         if victorious_team(board) == team:
             return board
@@ -21,8 +19,8 @@ def find_winning_board(boards: List[Board], team: Team) -> Optional[Board]:
 
 
 def movable_card_locations(
-    cards: List[List[Card]], combat_category: CombatCategory, used_joker: bool
-) -> List[Tuple[int, int]]:
+    cards: list[list[Card]], combat_category: CombatCategory, used_joker: bool
+) -> list[tuple[int, int]]:
     locations = []
     for pile_index, pile_cards in enumerate(cards):
         height_of_pile = len(pile_cards)

@@ -1,10 +1,11 @@
-from typing import List
+from abc import ABC, abstractmethod
 
 from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import Card, Team
 
 
-class IMetric:
+class IMetric(ABC):
+    @abstractmethod
     def calculate(self, board: Board, team: Team) -> float:
         pass
 
@@ -16,7 +17,7 @@ class CountMetric(IMetric):
         return team_metric - other_team_metric
 
     @staticmethod
-    def _calculate_team_metric(cards: List[List[Card]]) -> float:
+    def _calculate_team_metric(cards: list[list[Card]]) -> float:
         metric = 0.0
         for pile in cards:
             metric += len(pile)
@@ -36,9 +37,9 @@ class PositionMetric(IMetric):
         return team_metric - other_team_metric
 
     @staticmethod
-    def _calculate_team_metric(piles: List[List[Card]], pile_weights: List[float]) -> float:
+    def _calculate_team_metric(piles: list[list[Card]], pile_weights: list[float]) -> float:
         metric = 0.0
-        for pile, pile_weight in zip(piles, pile_weights):
+        for pile, pile_weight in zip(piles, pile_weights, strict=False):
             metric += len(pile) * pile_weight
         return metric
 
@@ -55,7 +56,7 @@ class StrengthMetric(IMetric):
         return team_metric - other_team_metric
 
     @staticmethod
-    def _calculate_team_metric(piles: List[List[Card]]) -> float:
+    def _calculate_team_metric(piles: list[list[Card]]) -> float:
         metric = 0.0
         for pile in piles:
             for card in pile:
@@ -70,9 +71,9 @@ class PositionStrengthMetric(IMetric):
         return team_metric - other_team_metric
 
     @staticmethod
-    def _calculate_team_metric(piles: List[List[Card]], pile_weights: List[float]) -> float:
+    def _calculate_team_metric(piles: list[list[Card]], pile_weights: list[float]) -> float:
         metric = 0.0
-        for pile, pile_weight in zip(piles, pile_weights):
+        for pile, pile_weight in zip(piles, pile_weights, strict=False):
             for card in pile:
                 metric += (
                     STRENGTHS_TO_WEIGHTS[card.strength] / STRENGTH_WEIGHTING_NORMALIZER

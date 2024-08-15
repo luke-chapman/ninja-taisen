@@ -1,8 +1,6 @@
 from itertools import chain
-from typing import List
 
 from more_itertools import unique_everseen
-
 from ninja_taisen.algos.board_builder import make_board
 from ninja_taisen.objects.board import BOARD_LENGTH, Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
@@ -39,7 +37,7 @@ def test_make_board_shuffled() -> None:
 
 def make_non_shuffled_board() -> Board:
 
-    monkey_cards: List[List[Card]] = [
+    monkey_cards: list[list[Card]] = [
         [
             Card(Team.MONKEY, CombatCategory.JOKER, 4),
             Card(Team.MONKEY, CombatCategory.ROCK, 1),
@@ -67,7 +65,7 @@ def make_non_shuffled_board() -> Board:
         [],
     ]
 
-    wolf_cards: List[List[Card]] = [
+    wolf_cards: list[list[Card]] = [
         [],
         [],
         [],
@@ -98,7 +96,7 @@ def make_non_shuffled_board() -> Board:
     return Board(monkey_cards, wolf_cards)
 
 
-def make_ordered_cards(team: Team) -> List[Card]:
+def make_ordered_cards(team: Team) -> list[Card]:
     return [
         Card(team, CombatCategory.ROCK, 1),
         Card(team, CombatCategory.ROCK, 2),
