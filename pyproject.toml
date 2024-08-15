@@ -38,13 +38,13 @@ format = [
   "ruff check --fix --unsafe-fixes"
 ]
 test = "pytest {args: tests}"
-pre_release = [
+check = [
   "hatch run format",
   "hatch run lint",
   "hatch run test",
 ]
 yeehaw = [
-  "hatch run pre_release",
+  "hatch run check",
   "git add .",
   "git commit -m {args}",
   "git push -u",
