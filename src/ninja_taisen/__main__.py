@@ -1,14 +1,15 @@
 from argparse import ArgumentParser
 from cProfile import Profile
 from logging import basicConfig, getLogger
-from pstats import SortKey  # type: ignore
+from pstats import SortKey
 from random import seed
 
 from ninja_taisen.game.game_results import GameResults
 from ninja_taisen.game.game_runner import GameRunner
 from ninja_taisen.objects.card import Team
 from ninja_taisen.strategy.strategy import IStrategy
-from ninja_taisen.strategy.strategy_lookup import STRATEGIES, lookup_strategy
+from ninja_taisen.strategy.strategy_lookup import lookup_strategy
+from ninja_taisen.strategy.strategy_names import StrategyNames
 
 log = getLogger(__name__)
 
@@ -38,16 +39,16 @@ def main() -> None:
 
     parser = ArgumentParser()
     parser.add_argument("--games", type=int, default=1, help="Number of games to simulate")
-    parser.add_argument("--monkey-strategy", type=str, default="random", choices=STRATEGIES)
-    parser.add_argument("--wolf-strategy", type=str, default="random", choices=STRATEGIES)
+    parser.add_argument("--monkey-strategy", type=str, default="random", choices=StrategyNames.ALL)
+    parser.add_argument("--wolf-strategy", type=str, default="random", choices=StrategyNames.ALL)
     parser.add_argument("--verbosity", action="count", default=0, help="Verbosity level for logging")
     parser.add_argument("--profile", action="store_true", help="Profile the code")
     options = parser.parse_args()
 
+    basicConfig(level=options.verbosity)
+
     monkey_strategy = lookup_strategy(options.monkey_strategy)
     wolf_strategy = lookup_strategy(options.wolf_strategy)
-
-    basicConfig(level=options.verbosity)
 
     if not options.profile:
         run(options.games, monkey_strategy, wolf_strategy)
