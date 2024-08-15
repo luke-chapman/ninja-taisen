@@ -1,9 +1,7 @@
-from typing import Optional
-
 from ninja_taisen.objects.card import Card, CombatCategory
 
 
-def battle_winner(card_a: Card, card_b: Card) -> Optional[Card]:
+def battle_winner(card_a: Card, card_b: Card) -> Card | None:
 
     assert card_a.team != card_b.team, f"battle_cards {card_a},{card_b} have the same team"
 
@@ -23,7 +21,7 @@ def battle_winner(card_a: Card, card_b: Card) -> Optional[Card]:
     return _rock_paper_scissors_winner(card_a, card_b)
 
 
-def _joker_versus_joker(joker_a: Card, joker_b: Card) -> Optional[Card]:
+def _joker_versus_joker(joker_a: Card, joker_b: Card) -> Card | None:
     assert joker_a.combat_category == CombatCategory.JOKER, f"Expected {joker_a} to be a joker"
     assert joker_b.combat_category == CombatCategory.JOKER, f"Expected {joker_b} to be a joker"
 
@@ -37,7 +35,7 @@ def _joker_versus_joker(joker_a: Card, joker_b: Card) -> Optional[Card]:
     return result
 
 
-def _joker_versus_non_joker(joker: Card, non_joker: Card) -> Optional[Card]:
+def _joker_versus_non_joker(joker: Card, non_joker: Card) -> Card | None:
     assert joker.combat_category == CombatCategory.JOKER, f"Expected {joker} to be a joker"
 
     result = _strength_winner(joker, non_joker)
@@ -50,7 +48,7 @@ def _joker_versus_non_joker(joker: Card, non_joker: Card) -> Optional[Card]:
     return result
 
 
-def _strength_winner(card_a: Card, card_b: Card) -> Optional[Card]:
+def _strength_winner(card_a: Card, card_b: Card) -> Card | None:
     if card_a.strength > card_b.strength:
         return card_a
     if card_a.strength < card_b.strength:

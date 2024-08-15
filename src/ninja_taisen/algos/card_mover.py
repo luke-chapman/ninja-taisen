@@ -1,18 +1,16 @@
-from typing import List, Tuple
-
 from ninja_taisen.algos import card_battle
 from ninja_taisen.objects.board import BOARD_LENGTH, Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
 
 
-def move_card(board: Board, position: Tuple[int, int], dice_roll: int, team: Team) -> None:
+def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
 
     _move_card_recursive(board, position, dice_roll, team)
     _restore_jokers(board.monkey_cards)
     _restore_jokers(board.wolf_cards)
 
 
-def _move_card_recursive(board: Board, position: Tuple[int, int], dice_roll: int, team: Team) -> None:
+def _move_card_recursive(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
 
     team_cards = board.monkey_cards if team == Team.MONKEY else board.wolf_cards
     old_pile_index = position[0]
@@ -58,7 +56,7 @@ def _resolve_battles(board: Board, pile_index: int, team: Team) -> None:
                     move_card(board, (pile_index, len(monkey_pile) - 1), -1, Team.MONKEY)
 
 
-def _restore_jokers(cards: List[List[Card]]) -> None:
+def _restore_jokers(cards: list[list[Card]]) -> None:
     for position_cards in cards:
         for card in position_cards:
             if card.combat_category == CombatCategory.JOKER:

@@ -1,5 +1,3 @@
-from typing import Dict
-
 from ninja_taisen.strategy.metric import CountMetric, IMetric, PositionMetric, PositionStrengthMetric, StrengthMetric
 from ninja_taisen.strategy.strategy import IStrategy, MetricStrategy, RandomSpotWinStrategy, RandomStrategy
 
@@ -11,7 +9,7 @@ def lookup_strategy(strategy: str) -> IStrategy:
         return RandomSpotWinStrategy()
     if strategy.startswith("metric:"):
         _, metric = strategy.split(":")
-        metrics: Dict[str, IMetric] = {
+        metrics: dict[str, IMetric] = {
             "count": CountMetric(),
             "position": PositionMetric(),
             "position-strength": PositionStrengthMetric(),

@@ -1,7 +1,4 @@
-from typing import List
-
 from more_itertools import unique_everseen
-
 from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
 
@@ -56,7 +53,7 @@ def test_str() -> None:
 
 def mock_board() -> Board:
 
-    monkey_cards: List[List[Card]] = [
+    monkey_cards: list[list[Card]] = [
         [
             Card(Team.MONKEY, CombatCategory.JOKER, 4),
             Card(Team.MONKEY, CombatCategory.ROCK, 1),
@@ -84,7 +81,7 @@ def mock_board() -> Board:
         [],
     ]
 
-    wolf_cards: List[List[Card]] = [
+    wolf_cards: list[list[Card]] = [
         [],
         [],
         [],

@@ -1,5 +1,4 @@
 from random import shuffle
-from typing import Dict, List
 
 from ninja_taisen.objects.board import BOARD_LENGTH, Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
@@ -9,8 +8,8 @@ def make_board(shuffle_cards: bool = True) -> Board:
     return Board(_monkey_cards(shuffle_cards), _wolf_cards(shuffle_cards))
 
 
-def _monkey_cards(shuffle_cards: bool) -> List[List[Card]]:
-    cards: List[List[Card]] = [[] for _ in range(BOARD_LENGTH)]
+def _monkey_cards(shuffle_cards: bool) -> list[list[Card]]:
+    cards: list[list[Card]] = [[] for _ in range(BOARD_LENGTH)]
     cards[0].append(Card(Team.MONKEY, CombatCategory.JOKER, 4))
 
     remaining_cards = _non_jokers(Team.MONKEY, shuffle_cards)
@@ -19,8 +18,8 @@ def _monkey_cards(shuffle_cards: bool) -> List[List[Card]]:
     return cards
 
 
-def _wolf_cards(shuffle_cards: bool) -> List[List[Card]]:
-    cards: List[List[Card]] = [[] for _ in range(BOARD_LENGTH)]
+def _wolf_cards(shuffle_cards: bool) -> list[list[Card]]:
+    cards: list[list[Card]] = [[] for _ in range(BOARD_LENGTH)]
     cards[-1].append(Card(Team.WOLF, CombatCategory.JOKER, 4))
 
     remaining_cards = _non_jokers(Team.WOLF, shuffle_cards)
@@ -29,7 +28,7 @@ def _wolf_cards(shuffle_cards: bool) -> List[List[Card]]:
     return cards
 
 
-def _non_jokers(team: Team, shuffle_cards: bool) -> List[Card]:
+def _non_jokers(team: Team, shuffle_cards: bool) -> list[Card]:
 
     non_jokers = [
         Card(team, CombatCategory.ROCK, 1),
@@ -50,9 +49,9 @@ def _non_jokers(team: Team, shuffle_cards: bool) -> List[Card]:
 
 
 def _add_remaining_cards(
-    cards: List[List[Card]],
-    shuffled_cards: List[Card],
-    initial_positions: Dict[int, int],
+    cards: list[list[Card]],
+    shuffled_cards: list[Card],
+    initial_positions: dict[int, int],
 ) -> None:
     index = 0
     for position_index, count in initial_positions.items():

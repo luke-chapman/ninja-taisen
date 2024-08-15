@@ -1,5 +1,4 @@
 from logging import getLogger
-from typing import List
 
 from ninja_taisen.algos import board_inspector, card_mover
 from ninja_taisen.objects import dice
@@ -10,7 +9,7 @@ from ninja_taisen.objects.card import CombatCategory, Team
 log = getLogger(__name__)
 
 
-def gather_complete_move_contexts(starting_board: Board, team: Team) -> List[BoardContext]:
+def gather_complete_move_contexts(starting_board: Board, team: Team) -> list[BoardContext]:
     board_contexts = []
     dice_rolls = [
         (CombatCategory.ROCK, dice.roll()),
@@ -42,11 +41,11 @@ def gather_complete_move_contexts(starting_board: Board, team: Team) -> List[Boa
 
 
 def gather_single_move_contexts(
-    starting_contexts: List[BoardContext],
+    starting_contexts: list[BoardContext],
     combat_category: CombatCategory,
     dice_roll: int,
     team: Team,
-) -> List[BoardContext]:
+) -> list[BoardContext]:
 
     final_contexts = []
 
@@ -65,7 +64,7 @@ def gather_single_move_contexts(
             try:
                 card_mover.move_card(cloned_context.board, movable_location, dice_roll, team)
             except Exception:
-                log.info(f"Error moving card!")
+                log.info("Error moving card!")
                 log.info(f"Starting board\n{starting_context.board}")
                 log.info(f"combat_category {combat_category}, dice_roll {dice_roll}, team {team}")
                 log.info(f"Movable location {movable_location}")

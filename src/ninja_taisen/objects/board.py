@@ -1,12 +1,10 @@
-from typing import List
-
 from ninja_taisen.objects.card import Card, Team
 
 BOARD_LENGTH = 11
 
 
 class Board:
-    def __init__(self, monkey_cards: List[List[Card]], wolf_cards: List[List[Card]]) -> None:
+    def __init__(self, monkey_cards: list[list[Card]], wolf_cards: list[list[Card]]) -> None:
         self.cards = {Team.MONKEY: monkey_cards, Team.WOLF: wolf_cards}
         self.__hash = 0
 
@@ -27,11 +25,11 @@ class Board:
         ), f"Some wolf cards were not wolves, {wolf_cards}"
 
     @property
-    def monkey_cards(self) -> List[List[Card]]:
+    def monkey_cards(self) -> list[list[Card]]:
         return self.cards[Team.MONKEY]
 
     @property
-    def wolf_cards(self) -> List[List[Card]]:
+    def wolf_cards(self) -> list[list[Card]]:
         return self.cards[Team.WOLF]
 
     def __eq__(self, other: object) -> bool:
@@ -44,7 +42,7 @@ class Board:
         self.__hash = hash(self._cards_str(self.monkey_cards) + self._cards_str(self.wolf_cards))
 
     @staticmethod
-    def _cards_str(cards: List[List[Card]]) -> str:
+    def _cards_str(cards: list[list[Card]]) -> str:
         str_cards = ""
         for pile in cards:
             str_cards += "["
@@ -63,7 +61,7 @@ class Board:
         return Board(cloned_monkey_cards, cloned_wolf_cards)
 
     @staticmethod
-    def _clone_cards(cards: List[List[Card]]) -> List[List[Card]]:
+    def _clone_cards(cards: list[list[Card]]) -> list[list[Card]]:
         cloned_cards = []
         for position_cards in cards:
             cloned_position_cards = []
@@ -90,7 +88,7 @@ class Board:
         return self_str
 
     @staticmethod
-    def _row_str(cards: List[List[Card]], row_index: int) -> str:
+    def _row_str(cards: list[list[Card]], row_index: int) -> str:
         row_str = ""
 
         for pile_index in range(BOARD_LENGTH):

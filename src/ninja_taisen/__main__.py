@@ -3,7 +3,6 @@ from cProfile import Profile
 from logging import basicConfig, getLogger
 from pstats import SortKey  # type: ignore
 from random import seed
-from time import perf_counter
 
 from ninja_taisen.game.game_results import GameResults
 from ninja_taisen.game.game_runner import GameRunner

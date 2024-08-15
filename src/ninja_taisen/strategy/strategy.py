@@ -1,7 +1,7 @@
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from logging import getLogger
 from random import choice
-from typing import Dict, List
 
 from ninja_taisen.algos.board_inspector import find_winning_board
 from ninja_taisen.objects.board import Board
@@ -11,18 +11,19 @@ from ninja_taisen.strategy.metric import IMetric
 log = getLogger(__name__)
 
 
-class IStrategy:
-    def choose_board(self, boards: List[Board], team: Team) -> Board:
+class IStrategy(ABC):
+    @abstractmethod
+    def choose_board(self, boards: list[Board], team: Team) -> Board:
         pass
 
 
 class RandomStrategy(IStrategy):
-    def choose_board(self, boards: List[Board], team: Team) -> Board:
+    def choose_board(self, boards: list[Board], team: Team) -> Board:
         return choice(boards)
 
 
 class RandomSpotWinStrategy(IStrategy):
-    def choose_board(self, boards: List[Board], team: Team) -> Board:
+    def choose_board(self, boards: list[Board], team: Team) -> Board:
         winning_board = find_winning_board(boards, team)
         if winning_board:
             return winning_board
@@ -34,12 +35,12 @@ class MetricStrategy(IStrategy):
     def __init__(self, metric: IMetric) -> None:
         self.metric = metric
 
-    def choose_board(self, boards: List[Board], team: Team) -> Board:
+    def choose_board(self, boards: list[Board], team: Team) -> Board:
         winning_board = find_winning_board(boards, team)
         if winning_board:
             return winning_board
 
-        metric_to_boards: Dict[float, List[Board]] = defaultdict(list)
+        metric_to_boards: dict[float, list[Board]] = defaultdict(list)
         for board in boards:
             metric = self.metric.calculate(board, team)
             metric_to_boards[metric].append(board)

@@ -1,5 +1,4 @@
 from copy import deepcopy
-from typing import List, Tuple
 
 from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import CombatCategory
@@ -10,7 +9,7 @@ class BoardContext:
         self,
         board: Board,
         used_joker: bool,
-        dice_used: List[Tuple[CombatCategory, int]],
+        dice_used: list[tuple[CombatCategory, int]],
     ) -> None:
         self.board = board
         self.used_joker = used_joker
