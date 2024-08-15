@@ -20,6 +20,7 @@ class GameResult:
 
 class GameResults:
     def __init__(self, results_dir: Path) -> None:
+        assert results_dir.is_dir()
         self.results_dir = results_dir
         self.results: list[GameResult] = []
 
@@ -34,7 +35,7 @@ class GameResults:
         frame_dict: dict[str, list[Any]] = defaultdict(list)
         for i, result in enumerate(self.results):
             frame_dict["game_index"].append(i)
-            frame_dict["winning_team"].append(str(result.winning_team) if result.winning_team else "NONE")
+            frame_dict["winning_team"].append(str(result.winning_team) or "NONE")
             frame_dict["turn_count"].append(result.turn_count)
             frame_dict["time_taken_s"].append(result.time_taken_s)
 

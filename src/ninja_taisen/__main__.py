@@ -50,6 +50,7 @@ def main(override_args: list[str] | None = None) -> int:
 
     basicConfig(level=args.verbosity)
     results_dir = args.results_dir or Path.cwd() / ".ninja-taisen"
+    results_dir.mkdir(parents=True, exist_ok=True)
     monkey_strategy = lookup_strategy(args.monkey_strategy)
     wolf_strategy = lookup_strategy(args.wolf_strategy)
 
