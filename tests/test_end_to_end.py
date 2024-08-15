@@ -16,7 +16,7 @@ def __all_strategy_pairs() -> list[tuple[str, str]]:
 
 @pytest.mark.parametrize("monkey_strategy, wolf_strategy", __all_strategy_pairs())
 def test_game_play(monkey_strategy: str, wolf_strategy: str, tmp_path: Path) -> None:
-    results_dir = tmp_path / ".ninja-taisen"
+    results_file = tmp_path / "results.csv"
     command_line = [
         "--games",
         "1",
@@ -24,16 +24,12 @@ def test_game_play(monkey_strategy: str, wolf_strategy: str, tmp_path: Path) -> 
         monkey_strategy,
         "--wolf-strategy",
         wolf_strategy,
-        "--results-dir",
-        str(results_dir),
+        "--results-file",
+        str(results_file),
     ]
     main(command_line)
 
-    pattern = "results_*.csv"
-    results = list(results_dir.glob(pattern))
-    assert len(results) == 1, f"Expected 1 file in {results_dir} matching pattern {pattern} but found {len(results)}"
-
-    frame = pl.read_csv(results[0])
+    frame = pl.read_csv(results_file)
     assert frame.columns == ["game_index", "winning_team", "turn_count", "time_taken_s"]
     assert frame["game_index"][0] == 0
     assert frame["winning_team"][0] in ("MONKEY", "WOLF", "NONE")
