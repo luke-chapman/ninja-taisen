@@ -29,7 +29,6 @@ def _wolf_cards(shuffle_cards: bool) -> list[list[Card]]:
 
 
 def _non_jokers(team: Team, shuffle_cards: bool) -> list[Card]:
-
     non_jokers = [
         Card(team, CombatCategory.ROCK, 1),
         Card(team, CombatCategory.ROCK, 2),
