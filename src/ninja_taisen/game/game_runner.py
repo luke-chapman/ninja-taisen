@@ -3,9 +3,9 @@ from logging import getLogger
 
 from more_itertools import unique_everseen
 
-from ninja_taisen import Instruction, Result
 from ninja_taisen.algos import board_builder, board_context_gatherer, board_inspector
 from ninja_taisen.objects.card import Team
+from ninja_taisen.public_types import Instruction, Result
 from ninja_taisen.strategy.strategy import IStrategy
 
 log = getLogger(__name__)

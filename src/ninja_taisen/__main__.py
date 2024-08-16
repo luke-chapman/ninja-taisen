@@ -4,7 +4,8 @@ from argparse import ArgumentParser
 from logging import basicConfig, getLogger
 from pathlib import Path
 
-from ninja_taisen import Instruction, Options, simulate
+from ninja_taisen.api import simulate
+from ninja_taisen.public_types import Instruction, Options
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 log = getLogger(__name__)

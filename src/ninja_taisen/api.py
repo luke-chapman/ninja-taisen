@@ -5,8 +5,8 @@ from pstats import SortKey
 
 import polars as pl
 
-from ninja_taisen import Instruction, Options, Result
 from ninja_taisen.game.game_runner import simulate_one
+from ninja_taisen.public_types import Instruction, Options, Result
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
 
