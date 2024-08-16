@@ -22,10 +22,11 @@ def simulate(instructions: list[Instruction], options: Options) -> list[Result]:
 
         if options.profile:
             with Profile() as profile:
-                simulate_one(monkey_strategy, wolf_strategy, instruction)
+                result = simulate_one(monkey_strategy, wolf_strategy, instruction)
             profile.print_stats(SortKey.TIME)
         else:
-            simulate_one(monkey_strategy, wolf_strategy, instruction)
+            result = simulate_one(monkey_strategy, wolf_strategy, instruction)
+        results.append(result)
 
     df = pl.DataFrame(data=results, schema=Result._fields, orient="row")
     df.write_csv(options.results_file)
