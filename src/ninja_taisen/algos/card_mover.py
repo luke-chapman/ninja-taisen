@@ -4,14 +4,12 @@ from ninja_taisen.objects.card import Card, CombatCategory, Team
 
 
 def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
-
     _move_card_recursive(board, position, dice_roll, team)
     _restore_jokers(board.monkey_cards)
     _restore_jokers(board.wolf_cards)
 
 
 def _move_card_recursive(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
-
     team_cards = board.monkey_cards if team == Team.MONKEY else board.wolf_cards
     old_pile_index = position[0]
     new_pile_index = old_pile_index + dice_roll if team == Team.MONKEY else old_pile_index - dice_roll
@@ -30,7 +28,6 @@ def _move_card_recursive(board: Board, position: tuple[int, int], dice_roll: int
 
 
 def _resolve_battles(board: Board, pile_index: int, team: Team) -> None:
-
     monkey_pile = board.monkey_cards[pile_index]
     wolf_pile = board.wolf_cards[pile_index]
 

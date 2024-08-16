@@ -44,7 +44,6 @@ class GameRunner:
         )
 
     def _execute_turn(self, team: Team) -> None:
-
         board_contexts = board_context_gatherer.gather_complete_move_contexts(self.board, team)
         unique_boards = list(unique_everseen(context.board for context in board_contexts))
         if unique_boards:

@@ -2,7 +2,6 @@ from ninja_taisen.objects.card import Card, CombatCategory
 
 
 def battle_winner(card_a: Card, card_b: Card) -> Card | None:
-
     assert card_a.team != card_b.team, f"battle_cards {card_a},{card_b} have the same team"
 
     # Case where both cards are jokers
