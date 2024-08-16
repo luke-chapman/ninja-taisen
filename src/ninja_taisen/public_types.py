@@ -10,9 +10,9 @@ class Instruction(NamedTuple):
 
 
 class Options(NamedTuple):
-    verbosity: int
-    profile: bool
     results_file: Path
+    verbosity: int = 0
+    profile: bool = False
 
 
 class Result(NamedTuple):
