@@ -1,26 +1,18 @@
 import datetime
+import itertools
 from pathlib import Path
 
-from ninja_taisen.__main__ import main
+from ninja_taisen import Instruction, Options, simulate
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 
 def run() -> None:
     timestamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
-
-    for monkey_strategy in StrategyNames.ALL:
-        for wolf_strategy in StrategyNames.ALL:
-            command_line = [
-                "--games",
-                "1000",
-                "--monkey-strategy",
-                monkey_strategy,
-                "--wolf-strategy",
-                wolf_strategy,
-                "--results-file",
-                str(Path.cwd() / ".ninja-taisen" / timestamp / f"{monkey_strategy}_vs_{wolf_strategy}.csv"),
-            ]
-            main(command_line)
+    results_file = Path(__file__).resolve().parent / f"play_all_strategies_{timestamp}.csv"
+    options = Options(results_file)
+    instructions = [Instruction(*t) for t in itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(5))]
+    print(f"Will simulate {len(instructions)} games")
+    simulate(instructions=instructions, options=options)
 
 
 if __name__ == "__main__":
