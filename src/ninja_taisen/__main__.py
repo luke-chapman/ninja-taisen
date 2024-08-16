@@ -1,18 +1,10 @@
 import datetime
 import sys
 from argparse import ArgumentParser
-from cProfile import Profile
 from logging import basicConfig, getLogger
 from pathlib import Path
-from pstats import SortKey
-from random import seed
 
-from ninja_taisen import GameInstruction, GameOptions, play
-from ninja_taisen.game.game_results import GameResults
-from ninja_taisen.game.game_runner import GameRunner
-from ninja_taisen.objects.card import Team
-from ninja_taisen.strategy.strategy import IStrategy
-from ninja_taisen.strategy.strategy_lookup import lookup_strategy
+from ninja_taisen import Instruction, Options, simulate
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 log = getLogger(__name__)
@@ -35,14 +27,17 @@ def main(override_args: list[str] | None = None) -> int:
         results_file = Path.cwd() / ".ninja-taisen" / f"results_{timestamp}.csv"
 
     instructions = [
-        GameInstruction(monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy, seed=seed) for seed in range(args.games)
+        Instruction(monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy, seed=seed)
+        for seed in range(args.games)
     ]
-    options = GameOptions(verbosity=args.verbosity, profile=args.profile, results_file=results_file)
+    options = Options(verbosity=args.verbosity, profile=args.profile, results_file=results_file)
 
     basicConfig(level=args.verbosity)
     log.info(options)
 
-    results = play(instructions, options)
+    results = simulate(instructions, options)
+    assert len(results) == len(instructions)
+    print(f"Successfully simulated {len(results)} games")
     return 0
 
 

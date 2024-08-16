@@ -3,19 +3,19 @@ from pathlib import Path
 from typing import NamedTuple
 
 
-class GameInstruction(NamedTuple):
+class Instruction(NamedTuple):
     monkey_strategy: str
     wolf_strategy: str
     seed: int
 
 
-class GameOptions(NamedTuple):
+class Options(NamedTuple):
     verbosity: int
     profile: bool
     results_file: Path
 
 
-class GameResult(NamedTuple):
+class Result(NamedTuple):
     monkey_strategy: str
     wolf_strategy: str
     seed: int

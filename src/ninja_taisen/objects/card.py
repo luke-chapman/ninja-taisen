@@ -13,14 +13,19 @@ class Team(IntEnum):
     WOLF = 1
 
     def other(self) -> "Team":
-        return 1 - self
+        if self == Team.MONKEY:
+            return Team.WOLF
+        if self == Team.WOLF:
+            return Team.MONKEY
+        else:
+            raise ValueError("Bad team value " + str(self))
 
     def __str__(self) -> str:
         if self == Team.MONKEY:
             return "MONKEY"
         if self == Team.WOLF:
             return "WOLF"
-        raise RuntimeError("Bad team value")
+        raise ValueError("Bad team value")
 
 
 TEAM_STRS = {Team.MONKEY: "M", Team.WOLF: "W"}

@@ -1,17 +1,20 @@
+import random
 from cProfile import Profile
 from logging import basicConfig
-import random
 from pstats import SortKey
 
-from ninja_taisen import GameInstruction, GameOptions, GameResult
+import polars as pl
+
+from ninja_taisen import Instruction, Options, Result
+from ninja_taisen.game.game_runner import simulate_one
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
 
-def simulate(instructions: list[GameInstruction], options: GameOptions) -> list[GameResult]:
+def simulate(instructions: list[Instruction], options: Options) -> list[Result]:
     basicConfig(level=options.verbosity)
     options.results_file.parent.mkdir(parents=True, exist_ok=True)
 
-    results: list[GameResult] = []
+    results: list[Result] = []
     for instruction in instructions:
         random.seed(instruction.seed)
         monkey_strategy = lookup_strategy(instruction.monkey_strategy)
@@ -19,9 +22,12 @@ def simulate(instructions: list[GameInstruction], options: GameOptions) -> list[
 
         if options.profile:
             with Profile() as profile:
-                simulate_one(monkey_strategy, wolf_strategy)
+                simulate_one(monkey_strategy, wolf_strategy, instruction)
             profile.print_stats(SortKey.TIME)
         else:
-            simulate_one(monkey_strategy, wolf_strategy)
+            simulate_one(monkey_strategy, wolf_strategy, instruction)
+
+    df = pl.DataFrame(data=results, schema=Result._fields, orient="row")
+    df.write_csv(options.results_file)
 
     return results
