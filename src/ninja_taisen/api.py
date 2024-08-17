@@ -12,16 +12,20 @@ log = getLogger(__name__)
 
 
 def simulate(
-    instructions: list[Instruction], results_file: Path | None = None, verbosity: int = 0, profile: bool = False
+    instructions: list[Instruction],
+    max_threads: int = 1,
+    results_file: Path | None = None,
+    verbosity: int = 0,
+    profile: bool = False,
 ) -> list[Result]:
     basicConfig(level=verbosity)
 
     if profile:
         with Profile() as profiler:
-            results = simulate_all(instructions)
+            results = simulate_all(instructions, max_threads)
         profiler.print_stats(SortKey.TIME)
     else:
-        results = simulate_all(instructions)
+        results = simulate_all(instructions, max_threads)
 
     if results_file:
         results_file.parent.mkdir(parents=True, exist_ok=True)

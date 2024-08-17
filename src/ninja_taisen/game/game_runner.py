@@ -1,5 +1,6 @@
 import datetime
 import random
+from concurrent.futures import ThreadPoolExecutor
 from logging import getLogger
 
 from more_itertools import unique_everseen
@@ -52,7 +53,12 @@ class GameRunner:
             self.board = self.strategies[team].choose_board(unique_boards, team)
 
 
-def simulate_one(monkey_strategy: IStrategy, wolf_strategy: IStrategy, instruction: Instruction) -> Result:
+def simulate_one(instruction: Instruction) -> Result:
+    random.seed(instruction.seed)
+
+    monkey_strategy = lookup_strategy(instruction.monkey_strategy)
+    wolf_strategy = lookup_strategy(instruction.wolf_strategy)
+
     game_runner = GameRunner(
         monkey_strategy=monkey_strategy,
         wolf_strategy=wolf_strategy,
@@ -61,14 +67,6 @@ def simulate_one(monkey_strategy: IStrategy, wolf_strategy: IStrategy, instructi
     return game_runner.simulate(instruction)
 
 
-def simulate_all(instructions: list[Instruction]) -> list[Result]:
-    results: list[Result] = []
-
-    for instruction in instructions:
-        random.seed(instruction.seed)
-        monkey_strategy = lookup_strategy(instruction.monkey_strategy)
-        wolf_strategy = lookup_strategy(instruction.wolf_strategy)
-        result = simulate_one(monkey_strategy, wolf_strategy, instruction)
-        results.append(result)
-
-    return results
+def simulate_all(instructions: list[Instruction], max_threads: int) -> list[Result]:
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+        return list(executor.map(simulate_one, instructions))
