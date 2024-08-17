@@ -10,7 +10,7 @@ class Instruction(NamedTuple):
 
 
 class Options(NamedTuple):
-    results_file: Path
+    results_file: Path | None = None
     verbosity: int = 0
     profile: bool = False
 

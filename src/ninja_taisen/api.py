@@ -1,6 +1,7 @@
 import random
 from cProfile import Profile
 from logging import basicConfig
+from pathlib import Path
 from pstats import SortKey
 
 import polars as pl
@@ -12,7 +13,8 @@ from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
 def simulate(instructions: list[Instruction], options: Options) -> list[Result]:
     basicConfig(level=options.verbosity)
-    options.results_file.parent.mkdir(parents=True, exist_ok=True)
+    if options.results_file:
+        options.results_file.parent.mkdir(parents=True, exist_ok=True)
 
     results: list[Result] = []
     for instruction in instructions:
@@ -28,7 +30,21 @@ def simulate(instructions: list[Instruction], options: Options) -> list[Result]:
             result = simulate_one(monkey_strategy, wolf_strategy, instruction)
         results.append(result)
 
-    df = pl.DataFrame(data=results, schema=Result._fields, orient="row")
-    df.write_csv(options.results_file)
+    if options.results_file:
+        write_results_csv(results, options.results_file)
+        print(f"Results written to {options.results_file}")
 
     return results
+
+
+def make_data_frame(results: list[Result]) -> pl.DataFrame:
+    return pl.DataFrame(data=results, schema=Result._fields, orient="row")
+
+
+def write_results_csv(results: list[Result], filename: Path) -> None:
+    df = make_data_frame(results)
+    df.write_csv(filename)
+
+
+def read_results_csv(filename: Path) -> pl.DataFrame:
+    return pl.read_csv(filename, schema_overrides={"start_time": pl.Datetime, "end_time": pl.Datetime})

@@ -1,9 +1,9 @@
 from pathlib import Path
 
-import polars as pl
 import pytest
 from ninja_taisen import Instruction, Options, simulate
 from ninja_taisen.__main__ import main
+from ninja_taisen.api import make_data_frame, read_results_csv
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 
@@ -24,12 +24,13 @@ def test_game_play(monkey_strategy: str, wolf_strategy: str, invocation: str, tm
             str(results_file),
         ]
         main(command_line)
+        frame = read_results_csv(results_file)
     elif invocation == "library_api":
-        simulate([Instruction(monkey_strategy, wolf_strategy, 0)], Options(results_file=results_file))
+        results = simulate([Instruction(monkey_strategy, wolf_strategy, 0)], Options(results_file=results_file))
+        frame = make_data_frame(results)
     else:
         raise ValueError(f"Unexpected invocation {invocation}")
 
-    frame = pl.read_csv(results_file, schema_overrides={"start_time": pl.Datetime, "end_time": pl.Datetime})
     assert frame.columns == [
         "monkey_strategy",
         "wolf_strategy",

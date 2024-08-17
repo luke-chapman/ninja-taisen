@@ -31,7 +31,7 @@ def main(override_args: list[str] | None = None) -> int:
         Instruction(monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy, seed=seed)
         for seed in range(args.games)
     ]
-    options = Options(verbosity=args.verbosity, profile=args.profile, results_file=results_file)
+    options = Options(results_file=results_file, verbosity=args.verbosity, profile=args.profile)
 
     basicConfig(level=args.verbosity)
     log.info(options)
@@ -39,6 +39,7 @@ def main(override_args: list[str] | None = None) -> int:
     results = simulate(instructions, options)
     assert len(results) == len(instructions)
     print(f"Successfully simulated {len(results)} games")
+
     return 0
 
 
