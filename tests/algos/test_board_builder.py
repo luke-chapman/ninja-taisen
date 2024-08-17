@@ -1,6 +1,7 @@
 from itertools import chain
 
 from more_itertools import unique_everseen
+
 from ninja_taisen.algos.board_builder import make_board
 from ninja_taisen.objects.board import BOARD_LENGTH, Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team

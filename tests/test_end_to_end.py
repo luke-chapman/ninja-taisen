@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+
 from ninja_taisen import Instruction, simulate
 from ninja_taisen.__main__ import main
 from ninja_taisen.api import make_data_frame, read_results_csv

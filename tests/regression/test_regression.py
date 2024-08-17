@@ -1,10 +1,11 @@
 from pathlib import Path
 
 import polars as pl
+from polars.testing import assert_frame_equal
+
 from ninja_taisen import Instruction, simulate
 from ninja_taisen.api import make_data_frame
 from ninja_taisen.strategy.strategy_names import StrategyNames
-from polars.testing import assert_frame_equal
 
 
 def test_regression(regen: bool) -> None:
