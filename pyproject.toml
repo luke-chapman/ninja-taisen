@@ -38,7 +38,7 @@ format = [
   "ruff check --fix --unsafe-fixes"
 ]
 test = "pytest {args: tests}"
-regen = "pytest tests/regression"
+regen = "pytest tests/regression --regen"
 check = [
   "hatch run format",
   "hatch run lint",
