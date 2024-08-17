@@ -50,11 +50,16 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
 @pytest.mark.parametrize("monkey_strategy", StrategyNames.ALL)
 @pytest.mark.parametrize("wolf_strategy", StrategyNames.ALL)
 def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path: Path) -> None:
-    __launch_and_assert_game(monkey_strategy, wolf_strategy, "library_api", tmp_path)
+    __launch_and_assert_game(
+        monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy, invocation="library_api", tmp_path=tmp_path
+    )
 
 
 # We only test one strategy-pair from the command line because launching the subprocess is slower
 def test_from_command_line(tmp_path: Path) -> None:
     __launch_and_assert_game(
-        StrategyNames.random_spot_win, StrategyNames.metric_position_strength, "command_line", tmp_path
+        monkey_strategy=StrategyNames.random_spot_win,
+        wolf_strategy=StrategyNames.metric_position_strength,
+        invocation="command_line",
+        tmp_path=tmp_path,
     )
