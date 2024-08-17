@@ -1,38 +1,32 @@
-import random
 from cProfile import Profile
-from logging import basicConfig
+from logging import basicConfig, getLogger
 from pathlib import Path
 from pstats import SortKey
 
 import polars as pl
 
-from ninja_taisen.game.game_runner import simulate_one
-from ninja_taisen.public_types import Instruction, Options, Result
-from ninja_taisen.strategy.strategy_lookup import lookup_strategy
+from ninja_taisen.game.game_runner import simulate_all
+from ninja_taisen.public_types import Instruction, Result
+
+log = getLogger(__name__)
 
 
-def simulate(instructions: list[Instruction], options: Options) -> list[Result]:
-    basicConfig(level=options.verbosity)
-    if options.results_file:
-        options.results_file.parent.mkdir(parents=True, exist_ok=True)
+def simulate(
+    instructions: list[Instruction], results_file: Path | None = None, verbosity: int = 0, profile: bool = False
+) -> list[Result]:
+    basicConfig(level=verbosity)
 
-    results: list[Result] = []
-    for instruction in instructions:
-        random.seed(instruction.seed)
-        monkey_strategy = lookup_strategy(instruction.monkey_strategy)
-        wolf_strategy = lookup_strategy(instruction.wolf_strategy)
+    if profile:
+        with Profile() as profiler:
+            results = simulate_all(instructions)
+        profiler.print_stats(SortKey.TIME)
+    else:
+        results = simulate_all(instructions)
 
-        if options.profile:
-            with Profile() as profile:
-                result = simulate_one(monkey_strategy, wolf_strategy, instruction)
-            profile.print_stats(SortKey.TIME)
-        else:
-            result = simulate_one(monkey_strategy, wolf_strategy, instruction)
-        results.append(result)
-
-    if options.results_file:
-        write_results_csv(results, options.results_file)
-        print(f"Results written to {options.results_file}")
+    if results_file:
+        results_file.parent.mkdir(parents=True, exist_ok=True)
+        write_results_csv(results, results_file)
+        log.info(f"Results written to {results_file}")
 
     return results
 

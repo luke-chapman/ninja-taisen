@@ -1,11 +1,11 @@
 import datetime
 import sys
 from argparse import ArgumentParser
-from logging import basicConfig, getLogger
+from logging import getLogger
 from pathlib import Path
 
 from ninja_taisen.api import simulate
-from ninja_taisen.public_types import Instruction, Options
+from ninja_taisen.public_types import Instruction
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 log = getLogger(__name__)
@@ -31,14 +31,12 @@ def main(override_args: list[str] | None = None) -> int:
         Instruction(monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy, seed=seed)
         for seed in range(args.games)
     ]
-    options = Options(results_file=results_file, verbosity=args.verbosity, profile=args.profile)
 
-    basicConfig(level=args.verbosity)
-    log.info(options)
-
-    results = simulate(instructions, options)
+    results = simulate(
+        instructions=instructions, results_file=results_file, verbosity=args.verbosity, profile=args.profile
+    )
     assert len(results) == len(instructions)
-    print(f"Successfully simulated {len(results)} games")
+    log.info(f"Successfully simulated {len(results)} games")
 
     return 0
 
