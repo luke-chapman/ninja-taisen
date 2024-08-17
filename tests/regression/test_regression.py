@@ -1,10 +1,11 @@
 from pathlib import Path
 
 import polars as pl
-from ninja_taisen import Instruction, Options, simulate
+from polars.testing import assert_frame_equal
+
+from ninja_taisen import Instruction, simulate
 from ninja_taisen.api import make_data_frame
 from ninja_taisen.strategy.strategy_names import StrategyNames
-from polars.testing import assert_frame_equal
 
 
 def test_regression(regen: bool) -> None:
@@ -17,7 +18,7 @@ def test_regression(regen: bool) -> None:
             instructions.append(Instruction(monkey_strategy, wolf_strategy, seed))
             seed += 1
 
-    results = simulate(instructions, Options())
+    results = simulate(instructions)
     assert len(results) == len(instructions)
 
     df_actual = make_data_frame(results).drop(["start_time", "end_time"])

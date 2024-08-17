@@ -1,4 +1,5 @@
 import datetime
+import random
 from logging import getLogger
 
 from more_itertools import unique_everseen
@@ -7,6 +8,7 @@ from ninja_taisen.algos import board_builder, board_context_gatherer, board_insp
 from ninja_taisen.objects.card import Team
 from ninja_taisen.public_types import Instruction, Result
 from ninja_taisen.strategy.strategy import IStrategy
+from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
 log = getLogger(__name__)
 
@@ -57,3 +59,16 @@ def simulate_one(monkey_strategy: IStrategy, wolf_strategy: IStrategy, instructi
         starting_team=Team.MONKEY,
     )
     return game_runner.simulate(instruction)
+
+
+def simulate_all(instructions: list[Instruction]) -> list[Result]:
+    results: list[Result] = []
+
+    for instruction in instructions:
+        random.seed(instruction.seed)
+        monkey_strategy = lookup_strategy(instruction.monkey_strategy)
+        wolf_strategy = lookup_strategy(instruction.wolf_strategy)
+        result = simulate_one(monkey_strategy, wolf_strategy, instruction)
+        results.append(result)
+
+    return results

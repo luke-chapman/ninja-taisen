@@ -1,4 +1,5 @@
 from more_itertools import unique_everseen
+
 from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
 

@@ -1,11 +1,12 @@
 import datetime
 from pathlib import Path
 
+from polars.testing import assert_frame_equal
+
 from ninja_taisen import Result
 from ninja_taisen.api import make_data_frame, read_results_csv, write_results_csv
 from ninja_taisen.objects.card import Team
 from ninja_taisen.strategy.strategy_names import StrategyNames
-from polars.testing import assert_frame_equal
 
 
 def test_csv_round_trip(tmp_path: Path) -> None:
