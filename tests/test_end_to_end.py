@@ -7,10 +7,7 @@ from ninja_taisen.api import make_data_frame, read_results_csv
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 
-@pytest.mark.parametrize("monkey_strategy", StrategyNames.ALL)
-@pytest.mark.parametrize("wolf_strategy", StrategyNames.ALL)
-@pytest.mark.parametrize("invocation", ["command_line", "library_api"])
-def test_game_play(monkey_strategy: str, wolf_strategy: str, invocation: str, tmp_path: Path) -> None:
+def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocation: str, tmp_path: Path) -> None:
     results_file = tmp_path / "results.csv"
     if invocation == "command_line":
         command_line = [
@@ -48,3 +45,16 @@ def test_game_play(monkey_strategy: str, wolf_strategy: str, invocation: str, tm
 
     time_taken_s = (frame["end_time"][0] - frame["start_time"][0]).total_seconds()
     assert 0.0 < time_taken_s < 10.0
+
+
+@pytest.mark.parametrize("monkey_strategy", StrategyNames.ALL)
+@pytest.mark.parametrize("wolf_strategy", StrategyNames.ALL)
+def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path: Path) -> None:
+    __launch_and_assert_game(monkey_strategy, wolf_strategy, "library_api", tmp_path)
+
+
+# We only test one strategy-pair from the command line because launching the subprocess is slower
+def test_from_command_line(tmp_path: Path) -> None:
+    __launch_and_assert_game(
+        StrategyNames.random_spot_win, StrategyNames.metric_position_strength, "command_line", tmp_path
+    )
