@@ -5,6 +5,7 @@ import math
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from logging import getLogger
+from time import perf_counter
 
 from more_itertools import unique_everseen
 
@@ -86,8 +87,10 @@ def simulate_one(instruction: Instruction) -> Result:
 def simulate_many_single_thread(instructions: list[Instruction]) -> list[Result]:
     suffix = f"block with ids {instructions[0].id}-{instructions[-1].id} on thread {threading.current_thread().name}"
     log.info(f"Starting {suffix}")
+    start = perf_counter()
     results = [simulate_one(i) for i in instructions]
-    log.info(f"Completed {suffix}")
+    stop = perf_counter()
+    log.info(f"Completed {suffix} in {stop - start:0.1f} seconds")
     return results
 
 
