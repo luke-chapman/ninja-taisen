@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from logging import getLogger
-from random import choice
 
 from ninja_taisen.algos.board_inspector import find_winning_board
 from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import Team
+from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.strategy.metric import IMetric
 
 log = getLogger(__name__)
@@ -18,22 +18,29 @@ class IStrategy(ABC):
 
 
 class RandomStrategy(IStrategy):
+    def __init__(self, random: SafeRandom) -> None:
+        self.random = random
+
     def choose_board(self, boards: list[Board], team: Team) -> Board:
-        return choice(boards)
+        return self.random.choice(boards)
 
 
 class RandomSpotWinStrategy(IStrategy):
+    def __init__(self, random: SafeRandom) -> None:
+        self.random = random
+
     def choose_board(self, boards: list[Board], team: Team) -> Board:
         winning_board = find_winning_board(boards, team)
         if winning_board:
             return winning_board
 
-        return choice(boards)
+        return self.random.choice(boards)
 
 
 class MetricStrategy(IStrategy):
-    def __init__(self, metric: IMetric) -> None:
+    def __init__(self, metric: IMetric, random: SafeRandom) -> None:
         self.metric = metric
+        self.random = random
 
     def choose_board(self, boards: list[Board], team: Team) -> Board:
         winning_board = find_winning_board(boards, team)
@@ -47,4 +54,4 @@ class MetricStrategy(IStrategy):
 
         max_metric = max(metric_to_boards.keys())
         max_metrics_boards = metric_to_boards[max_metric]
-        return choice(max_metrics_boards)
+        return self.random.choice(max_metrics_boards)

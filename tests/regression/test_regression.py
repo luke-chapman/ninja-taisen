@@ -22,6 +22,8 @@ def __run_regression_test(regen: bool, max_threads: int) -> None:
 
     results = simulate(instructions, max_threads=max_threads)
     assert len(results) == len(instructions)
+    recovered_instructions = [Instruction(r.monkey_strategy, r.wolf_strategy, r.seed) for r in results]
+    assert instructions == recovered_instructions
 
     df_actual = make_data_frame(results).drop(["start_time", "end_time"])
     if regen:

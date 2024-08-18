@@ -5,17 +5,18 @@ from more_itertools import unique_everseen
 from ninja_taisen.algos.board_builder import make_board
 from ninja_taisen.objects.board import BOARD_LENGTH, Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
+from ninja_taisen.objects.safe_random import SafeRandom
 
 
 def test_make_board_not_shuffled() -> None:
-    actual_board = make_board(shuffle_cards=False)
+    actual_board = make_board(shuffle_cards=False, random=SafeRandom(0))
     expected_board = make_non_shuffled_board()
 
     assert expected_board == actual_board
 
 
 def test_make_board_shuffled() -> None:
-    shuffled_board = make_board(shuffle_cards=True)
+    shuffled_board = make_board(shuffle_cards=True, random=SafeRandom(0))
 
     non_shuffled_board = make_non_shuffled_board()
     assert non_shuffled_board != shuffled_board
@@ -37,7 +38,6 @@ def test_make_board_shuffled() -> None:
 
 
 def make_non_shuffled_board() -> Board:
-
     monkey_cards: list[list[Card]] = [
         [
             Card(Team.MONKEY, CombatCategory.JOKER, 4),

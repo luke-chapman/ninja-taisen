@@ -1,20 +1,20 @@
 from logging import getLogger
 
 from ninja_taisen.algos import board_inspector, card_mover
-from ninja_taisen.objects import dice
 from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.board_context import BoardContext
 from ninja_taisen.objects.card import CombatCategory, Team
+from ninja_taisen.objects.safe_random import SafeRandom
 
 log = getLogger(__name__)
 
 
-def gather_complete_move_contexts(starting_board: Board, team: Team) -> list[BoardContext]:
+def gather_complete_move_contexts(starting_board: Board, team: Team, random: SafeRandom) -> list[BoardContext]:
     board_contexts = []
     dice_rolls = [
-        (CombatCategory.ROCK, dice.roll()),
-        (CombatCategory.PAPER, dice.roll()),
-        (CombatCategory.SCISSORS, dice.roll()),
+        (CombatCategory.ROCK, random.roll_dice()),
+        (CombatCategory.PAPER, random.roll_dice()),
+        (CombatCategory.SCISSORS, random.roll_dice()),
     ]
     starting_context = BoardContext(board=starting_board, used_joker=False, dice_used=[])
 
