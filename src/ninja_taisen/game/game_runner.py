@@ -84,8 +84,10 @@ def simulate_one(instruction: Instruction) -> Result:
 
 
 def simulate_many_single_thread(instructions: list[Instruction]) -> list[Result]:
+    suffix = f"block with ids {instructions[0].id}-{instructions[-1].id} on thread {threading.current_thread().name}"
+    log.info(f"Starting {suffix}")
     results = [simulate_one(i) for i in instructions]
-    log.info(f"Completed block with ids {instructions[0].id}-{instructions[-1].id}")
+    log.info(f"Completed {suffix}")
     return results
 
 

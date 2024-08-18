@@ -28,7 +28,7 @@ def simulate(
             raise OSError("Unable to deduce CPU count from os.cpu_count(). Please manually specify max_threads >= 1")
         log.info(f"User provided max_threads={max_threads}; os.cpu_count()={cpu_count}")
         max_threads = max(cpu_count + max_threads, 1)
-        log.info(f"Set max_threads=max(cpu_count + max_threads), 1)={max_threads}")
+        log.info(f"Will use max_threads={max_threads}")
 
     if profile:
         with Profile() as profiler:
