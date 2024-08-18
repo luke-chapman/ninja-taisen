@@ -1,5 +1,6 @@
 import datetime
 import itertools
+import logging
 import math
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -40,9 +41,7 @@ class GameRunner:
             turn_count += 1
 
         end_time = datetime.datetime.now(datetime.UTC)
-        time_taken_s = end_time - start_time
-        log.info(f"Winner={victorious_team}, turn_count={turn_count}, time_taken={time_taken_s}s")
-        return Result(
+        result = Result(
             monkey_strategy=instruction.monkey_strategy,
             wolf_strategy=instruction.wolf_strategy,
             seed=instruction.seed,
@@ -52,6 +51,14 @@ class GameRunner:
             end_time=end_time,
             thread_name=threading.current_thread().name,
         )
+
+        if log.level <= logging.INFO:
+            to_log = result._asdict()
+            to_log.pop("start_time")
+            to_log.pop("end_time")
+            log.info(to_log)
+
+        return result
 
     def _execute_turn(self, team: Team) -> None:
         board_contexts = board_context_gatherer.gather_complete_move_contexts(self.board, team, random=SafeRandom(0))

@@ -16,7 +16,7 @@ def run() -> None:
 
     timestamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
     results_file = Path(__file__).resolve().parent / f"play_all_strategies_{timestamp}.csv"
-    instructions = [Instruction(*t) for t in itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(10))]
+    instructions = [Instruction(*t) for t in itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(1))]
     log.info(f"Will simulate {len(instructions)} games")
     simulate(instructions=instructions, max_threads=-1, results_file=results_file, verbosity=logging.INFO)
 
