@@ -80,9 +80,10 @@ def simulate_all_single_thread(instructions: list[Instruction]) -> list[Result]:
 def simulate_many_multi_threads(instructions: list[Instruction], max_threads: int) -> list[Result]:
     assert max_threads > 0
     per_thread = int(math.ceil(len(instructions) / max_threads))
+    log.info(f"Will assign {len(instructions)} instructions in blocks of {per_thread} between {max_threads} threads")
 
     i_blocks = [instructions[i * per_thread : (i + 1) * per_thread] for i in range(max_threads)]
-    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+    with ThreadPoolExecutor(max_workers=max_threads, thread_name_prefix="ninja_taisen") as executor:
         r_blocks = list(executor.map(simulate_all_single_thread, i_blocks))
 
     return list(itertools.chain(*r_blocks))
