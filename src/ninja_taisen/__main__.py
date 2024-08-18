@@ -29,8 +29,8 @@ def main(override_args: list[str] | None = None) -> int:
         results_file = Path.cwd() / ".ninja-taisen" / f"results_{timestamp}.csv"
 
     instructions = [
-        Instruction(monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy, seed=seed)
-        for seed in range(args.games)
+        Instruction(id=index, seed=index, monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy)
+        for index in range(args.games)
     ]
 
     results = simulate(

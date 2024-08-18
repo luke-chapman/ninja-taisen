@@ -14,9 +14,10 @@ def test_csv_round_trip(tmp_path: Path) -> None:
 
     results = [
         Result(
+            id=0,
+            seed=5,
             monkey_strategy=StrategyNames.random,
             wolf_strategy=StrategyNames.metric_count,
-            seed=5,
             winner=str(Team.MONKEY),
             turn_count=18,
             start_time=now,
@@ -24,9 +25,10 @@ def test_csv_round_trip(tmp_path: Path) -> None:
             thread_name="thread-1",
         ),
         Result(
+            id=1,
+            seed=55,
             monkey_strategy=StrategyNames.random_spot_win,
             wolf_strategy=StrategyNames.metric_position,
-            seed=55,
             winner=str(Team.WOLF),
             turn_count=22,
             start_time=datetime.datetime.now(datetime.UTC) + datetime.timedelta(milliseconds=110),

@@ -42,9 +42,10 @@ class GameRunner:
 
         end_time = datetime.datetime.now(datetime.UTC)
         result = Result(
+            id=instruction.id,
+            seed=instruction.seed,
             monkey_strategy=instruction.monkey_strategy,
             wolf_strategy=instruction.wolf_strategy,
-            seed=instruction.seed,
             winner=str(victorious_team),
             turn_count=turn_count,
             start_time=start_time,

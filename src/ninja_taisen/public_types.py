@@ -3,15 +3,17 @@ from typing import NamedTuple
 
 
 class Instruction(NamedTuple):
+    id: int
+    seed: int
     monkey_strategy: str
     wolf_strategy: str
-    seed: int
 
 
 class Result(NamedTuple):
+    id: int
+    seed: int
     monkey_strategy: str
     wolf_strategy: str
-    seed: int
     winner: str
     turn_count: int
     start_time: datetime
