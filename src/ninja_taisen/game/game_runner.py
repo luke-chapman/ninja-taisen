@@ -53,11 +53,11 @@ class GameRunner:
             thread_name=threading.current_thread().name,
         )
 
-        if log.level <= logging.INFO:
+        if log.level <= logging.DEBUG:
             to_log = result._asdict()
             to_log.pop("start_time")
             to_log.pop("end_time")
-            log.info(to_log)
+            log.debug(to_log)
 
         return result
 
@@ -83,16 +83,19 @@ def simulate_one(instruction: Instruction) -> Result:
     return game_runner.simulate(instruction)
 
 
-def simulate_all_single_thread(instructions: list[Instruction]) -> list[Result]:
-    return [simulate_one(i) for i in instructions]
+def simulate_many_single_thread(instructions: list[Instruction]) -> list[Result]:
+    results = [simulate_one(i) for i in instructions]
+    log.info(f"Completed block with ids {instructions[0].id}-{instructions[-1].id}")
+    return results
 
 
-def simulate_many_multi_threads(instructions: list[Instruction], max_threads: int) -> list[Result]:
+def simulate_many_multi_threads(instructions: list[Instruction], max_threads: int, per_thread: int) -> list[Result]:
     assert max_threads > 0
-    per_thread = int(math.ceil(len(instructions) / max_threads))
+    assert per_thread > 0
     log.info(f"Will assign {len(instructions)} instructions in blocks of {per_thread} between {max_threads} threads")
 
-    i_blocks = [instructions[i * per_thread : (i + 1) * per_thread] for i in range(max_threads)]
+    blocks_count = int(math.ceil(len(instructions) / per_thread))
+    i_blocks = [instructions[i * per_thread : (i + 1) * per_thread] for i in range(blocks_count)]
     with ThreadPoolExecutor(max_workers=max_threads, thread_name_prefix="ninja_taisen") as executor:
-        r_blocks = executor.map(simulate_all_single_thread, i_blocks)
+        r_blocks = executor.map(simulate_many_single_thread, i_blocks)
         return list(itertools.chain(*r_blocks))

@@ -18,7 +18,7 @@ def run() -> None:
     results_file = Path(__file__).resolve().parent / f"play_all_strategies_{timestamp}.csv"
 
     instructions: list[Instruction] = []
-    enumeration = enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(1000)))
+    enumeration = enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(10)))
     for index, (monkey_strategy, wolf_strategy, seed) in enumeration:
         instruction = Instruction(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         instructions.append(instruction)

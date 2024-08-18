@@ -16,6 +16,7 @@ log = getLogger(__name__)
 def simulate(
     instructions: list[Instruction],
     max_threads: int = 1,
+    per_thread: int = 100,
     results_file: Path | None = None,
     verbosity: int = logging.INFO,
     profile: bool = False,
@@ -31,10 +32,12 @@ def simulate(
 
     if profile:
         with Profile() as profiler:
-            results = simulate_many_multi_threads(instructions, max_threads)
+            results = simulate_many_multi_threads(
+                instructions=instructions, max_threads=max_threads, per_thread=per_thread
+            )
         profiler.print_stats(SortKey.TIME)
     else:
-        results = simulate_many_multi_threads(instructions, max_threads)
+        results = simulate_many_multi_threads(instructions=instructions, max_threads=max_threads, per_thread=per_thread)
 
     if results_file:
         results_file.parent.mkdir(parents=True, exist_ok=True)

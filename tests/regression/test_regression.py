@@ -18,7 +18,7 @@ def __run_regression_test(regen: bool, max_threads: int) -> None:
     for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL)):
         instructions.append(Instruction(index, index, monkey_strategy, wolf_strategy))
 
-    results = simulate(instructions, max_threads=max_threads)
+    results = simulate(instructions=instructions, max_threads=max_threads, per_thread=5)
     assert len(results) == len(instructions)
     recovered_instructions = [Instruction(r.id, r.seed, r.monkey_strategy, r.wolf_strategy) for r in results]
     assert instructions == recovered_instructions
