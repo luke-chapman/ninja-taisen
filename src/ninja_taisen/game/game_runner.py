@@ -2,14 +2,16 @@ import datetime
 import itertools
 import logging
 import math
-import threading
-from concurrent.futures import ThreadPoolExecutor
+import multiprocessing
 from logging import getLogger
+from pathlib import Path
 from time import perf_counter
+from typing import NamedTuple
 
 from more_itertools import unique_everseen
 
 from ninja_taisen.algos import board_builder, board_context_gatherer, board_inspector
+from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.card import Team
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.public_types import Instruction, Result
@@ -28,14 +30,14 @@ class GameRunner:
         self.starting_team = starting_team
         self.random = random
 
-    def simulate(self, instruction: Instruction) -> Result:
+    def execute(self, instruction: Instruction) -> Result:
         start_time = datetime.datetime.now(datetime.UTC)
 
         team = self.starting_team
         victorious_team: Team | None = None
         turn_count = 0
         while victorious_team is None and turn_count < 100:
-            self._execute_turn(team)
+            self.__execute_turn(team)
 
             victorious_team = board_inspector.victorious_team(self.board)
             team = team.other()
@@ -51,7 +53,7 @@ class GameRunner:
             turn_count=turn_count,
             start_time=start_time,
             end_time=end_time,
-            thread_name=threading.current_thread().name,
+            process_name=multiprocessing.current_process().name,
         )
 
         if log.level <= logging.DEBUG:
@@ -62,7 +64,7 @@ class GameRunner:
 
         return result
 
-    def _execute_turn(self, team: Team) -> None:
+    def __execute_turn(self, team: Team) -> None:
         board_contexts = board_context_gatherer.gather_complete_move_contexts(self.board, team, random=SafeRandom(0))
         unique_boards = list(unique_everseen(context.board for context in board_contexts))
         if unique_boards:
@@ -81,26 +83,43 @@ def simulate_one(instruction: Instruction) -> Result:
         starting_team=Team.MONKEY,
         random=random,
     )
-    return game_runner.simulate(instruction)
+    return game_runner.execute(instruction)
 
 
-def simulate_many_single_thread(instructions: list[Instruction]) -> list[Result]:
-    suffix = f"block with ids {instructions[0].id}-{instructions[-1].id} on thread {threading.current_thread().name}"
+# We have to put all arguments for the multiprocessing subprocess into a class which can be pickled
+class SubprocessArgs(NamedTuple):
+    instructions: list[Instruction]
+    log_file: Path | None
+
+
+def simulate_many_single_thread(args: SubprocessArgs) -> list[Result]:
+    setup_logging(verbosity=logging.INFO, log_file=args.log_file)
+
+    suffix = (
+        f"block with ids {args.instructions[0].id}-{args.instructions[-1].id} "
+        f"in process {multiprocessing.current_process().name}"
+    )
     log.info(f"Starting {suffix}")
     start = perf_counter()
-    results = [simulate_one(i) for i in instructions]
+    results = [simulate_one(i) for i in args.instructions]
     stop = perf_counter()
     log.info(f"Completed {suffix} in {stop - start:0.1f} seconds")
     return results
 
 
-def simulate_many_multi_threads(instructions: list[Instruction], max_threads: int, per_thread: int) -> list[Result]:
-    assert max_threads > 0
-    assert per_thread > 0
-    log.info(f"Will assign {len(instructions)} instructions in blocks of {per_thread} between {max_threads} threads")
+def simulate_many_multi_process(
+    instructions: list[Instruction], max_processes: int, per_process: int, log_file: Path | None
+) -> list[Result]:
+    assert max_processes > 0
+    assert per_process > 0
+    log.info(
+        f"Will assign {len(instructions)} instructions in blocks of {per_process} between {max_processes} processes"
+    )
 
-    blocks_count = int(math.ceil(len(instructions) / per_thread))
-    i_blocks = [instructions[i * per_thread : (i + 1) * per_thread] for i in range(blocks_count)]
-    with ThreadPoolExecutor(max_workers=max_threads, thread_name_prefix="ninja_taisen") as executor:
-        r_blocks = executor.map(simulate_many_single_thread, i_blocks)
+    blocks_count = int(math.ceil(len(instructions) / per_process))
+    i_blocks = [instructions[i * per_process : (i + 1) * per_process] for i in range(blocks_count)]
+    subprocess_args = [SubprocessArgs(i_block, log_file) for i_block in i_blocks]
+
+    with multiprocessing.Pool(processes=max_processes) as pool:
+        r_blocks = pool.map(simulate_many_single_thread, subprocess_args)
         return list(itertools.chain(*r_blocks))

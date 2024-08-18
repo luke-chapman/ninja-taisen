@@ -38,7 +38,7 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
         "turn_count",
         "start_time",
         "end_time",
-        "thread_name",
+        "process_name",
     ]
     assert frame["monkey_strategy"][0] == monkey_strategy
     assert frame["wolf_strategy"][0] == wolf_strategy
@@ -48,7 +48,7 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
 
     time_taken_s = (frame["end_time"][0] - frame["start_time"][0]).total_seconds()
     assert 0.0 < time_taken_s < 10.0
-    assert frame["thread_name"][0].startswith("ninja_taisen_")
+    assert frame["process_name"][0]
 
 
 @pytest.mark.parametrize("monkey_strategy", StrategyNames.ALL)

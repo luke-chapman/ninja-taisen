@@ -18,13 +18,19 @@ def run() -> None:
     results_file = Path(__file__).resolve().parent / f"play_all_strategies_{timestamp}.csv"
 
     instructions: list[Instruction] = []
-    enumeration = enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(10)))
+    enumeration = enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(100)))
     for index, (monkey_strategy, wolf_strategy, seed) in enumeration:
         instruction = Instruction(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         instructions.append(instruction)
 
     log.info(f"Will simulate {len(instructions)} games")
-    simulate(instructions=instructions, max_threads=-2, results_file=results_file, verbosity=logging.INFO)
+    simulate(
+        instructions=instructions,
+        max_processes=-1,
+        results_file=results_file,
+        verbosity=logging.INFO,
+        log_file=Path(__file__).resolve().parent / f"log_{timestamp}.txt",
+    )
 
     stop = perf_counter()
     log.info(f"Took {stop - start:.2f} seconds")
