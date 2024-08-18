@@ -1,13 +1,14 @@
 import logging
 import os
 from cProfile import Profile
-from logging import basicConfig, getLogger
+from logging import getLogger
 from pathlib import Path
 from pstats import SortKey
 
 import polars as pl
 
 from ninja_taisen.game.game_runner import simulate_many_multi_threads
+from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.public_types import Instruction, Result
 
 log = getLogger(__name__)
@@ -21,7 +22,8 @@ def simulate(
     verbosity: int = logging.INFO,
     profile: bool = False,
 ) -> list[Result]:
-    basicConfig(level=verbosity)
+    setup_logging(verbosity)
+
     if max_threads <= 0:
         cpu_count = os.cpu_count()
         if cpu_count is None:
