@@ -1,6 +1,7 @@
 import datetime
 import itertools
 import math
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from logging import getLogger
 
@@ -49,6 +50,7 @@ class GameRunner:
             turn_count=turn_count,
             start_time=start_time,
             end_time=end_time,
+            thread_name=threading.current_thread().name,
         )
 
     def _execute_turn(self, team: Team) -> None:
@@ -84,6 +86,5 @@ def simulate_many_multi_threads(instructions: list[Instruction], max_threads: in
 
     i_blocks = [instructions[i * per_thread : (i + 1) * per_thread] for i in range(max_threads)]
     with ThreadPoolExecutor(max_workers=max_threads, thread_name_prefix="ninja_taisen") as executor:
-        r_blocks = list(executor.map(simulate_all_single_thread, i_blocks))
-
-    return list(itertools.chain(*r_blocks))
+        r_blocks = executor.map(simulate_all_single_thread, i_blocks)
+        return list(itertools.chain(*r_blocks))

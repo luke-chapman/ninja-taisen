@@ -21,6 +21,7 @@ def test_csv_round_trip(tmp_path: Path) -> None:
             turn_count=18,
             start_time=now,
             end_time=now + datetime.timedelta(milliseconds=100),
+            thread_name="thread-1",
         ),
         Result(
             monkey_strategy=StrategyNames.random_spot_win,
@@ -30,6 +31,7 @@ def test_csv_round_trip(tmp_path: Path) -> None:
             turn_count=22,
             start_time=datetime.datetime.now(datetime.UTC) + datetime.timedelta(milliseconds=110),
             end_time=datetime.datetime.now(datetime.UTC) + datetime.timedelta(milliseconds=211),
+            thread_name="thread-2",
         ),
     ]
 

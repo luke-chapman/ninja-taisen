@@ -24,10 +24,10 @@ def simulate(
     if max_threads <= 0:
         cpu_count = os.cpu_count()
         if cpu_count is None:
-            raise OSError("Unable to deduce CPU count from os.cpu_count(). Please manually specify number of threads")
-        log.info(f"User provided max_threads={max_threads}; we found cpu_count={cpu_count}")
-        log.info(f"Setting max_threads={cpu_count}-{-max_threads}={cpu_count+max_threads}")
-        max_threads = cpu_count + max_threads
+            raise OSError("Unable to deduce CPU count from os.cpu_count(). Please manually specify max_threads >= 1")
+        log.info(f"User provided max_threads={max_threads}; os.cpu_count()={cpu_count}")
+        max_threads = max(cpu_count + max_threads, 1)
+        log.info(f"Set max_threads=max(cpu_count + max_threads), 1)={max_threads}")
 
     if profile:
         with Profile() as profiler:
