@@ -1,4 +1,6 @@
 import datetime
+import itertools
+import math
 from concurrent.futures import ThreadPoolExecutor
 from logging import getLogger
 
@@ -71,6 +73,16 @@ def simulate_one(instruction: Instruction) -> Result:
     return game_runner.simulate(instruction)
 
 
-def simulate_all(instructions: list[Instruction], max_threads: int) -> list[Result]:
+def simulate_all_single_thread(instructions: list[Instruction]) -> list[Result]:
+    return [simulate_one(i) for i in instructions]
+
+
+def simulate_many_multi_threads(instructions: list[Instruction], max_threads: int) -> list[Result]:
+    assert max_threads > 0
+    per_thread = int(math.ceil(len(instructions) / max_threads))
+
+    i_blocks = [instructions[i * per_thread : (i + 1) * per_thread] for i in range(max_threads)]
     with ThreadPoolExecutor(max_workers=max_threads) as executor:
-        return list(executor.map(simulate_one, instructions))
+        r_blocks = list(executor.map(simulate_all_single_thread, i_blocks))
+
+    return list(itertools.chain(*r_blocks))

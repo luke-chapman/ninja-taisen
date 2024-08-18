@@ -1,3 +1,4 @@
+import os
 from cProfile import Profile
 from logging import basicConfig, getLogger
 from pathlib import Path
@@ -5,7 +6,7 @@ from pstats import SortKey
 
 import polars as pl
 
-from ninja_taisen.game.game_runner import simulate_all
+from ninja_taisen.game.game_runner import simulate_many_multi_threads
 from ninja_taisen.public_types import Instruction, Result
 
 log = getLogger(__name__)
@@ -19,13 +20,20 @@ def simulate(
     profile: bool = False,
 ) -> list[Result]:
     basicConfig(level=verbosity)
+    if max_threads <= 0:
+        cpu_count = os.cpu_count()
+        if cpu_count is None:
+            raise OSError("Unable to deduce CPU count from os.cpu_count(). Please manually specify number of threads")
+        log.info(f"User provided max_threads={max_threads}; we found cpu_count={cpu_count}")
+        log.info(f"Setting max_threads={cpu_count}-{-max_threads}={cpu_count+max_threads}")
+        max_threads = cpu_count + max_threads
 
     if profile:
         with Profile() as profiler:
-            results = simulate_all(instructions, max_threads)
+            results = simulate_many_multi_threads(instructions, max_threads)
         profiler.print_stats(SortKey.TIME)
     else:
-        results = simulate_all(instructions, max_threads)
+        results = simulate_many_multi_threads(instructions, max_threads)
 
     if results_file:
         results_file.parent.mkdir(parents=True, exist_ok=True)
