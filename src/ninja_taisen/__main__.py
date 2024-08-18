@@ -1,4 +1,5 @@
 import datetime
+import logging
 import sys
 from argparse import ArgumentParser
 from logging import getLogger
@@ -17,7 +18,7 @@ def main(override_args: list[str] | None = None) -> int:
     parser.add_argument("--games", type=int, default=1, help="Number of games to simulate")
     parser.add_argument("--monkey-strategy", type=str, default="random", choices=StrategyNames.ALL)
     parser.add_argument("--wolf-strategy", type=str, default="random", choices=StrategyNames.ALL)
-    parser.add_argument("--verbosity", action="count", default=0, help="Verbosity level for logging")
+    parser.add_argument("--verbosity", action="count", default=logging.INFO, help="Verbosity level for logging")
     parser.add_argument("--profile", action="store_true", help="Profile the code")
     parser.add_argument("--results-file", type=Path, help="Filename to store results in csv format")
     args = parser.parse_args(override_args or sys.argv[1:])

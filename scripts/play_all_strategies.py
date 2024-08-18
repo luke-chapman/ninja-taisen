@@ -1,5 +1,6 @@
 import datetime
 import itertools
+import logging
 from logging import getLogger
 from pathlib import Path
 from time import perf_counter
@@ -17,7 +18,7 @@ def run() -> None:
     results_file = Path(__file__).resolve().parent / f"play_all_strategies_{timestamp}.csv"
     instructions = [Instruction(*t) for t in itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(5))]
     log.info(f"Will simulate {len(instructions)} games")
-    simulate(instructions=instructions, max_threads=2, results_file=results_file)
+    simulate(instructions=instructions, max_threads=2, results_file=results_file, verbosity=logging.WARNING)
 
     stop = perf_counter()
     log.info(f"Took {stop - start:.2f} seconds")

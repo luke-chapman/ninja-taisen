@@ -1,3 +1,4 @@
+import logging
 import os
 from cProfile import Profile
 from logging import basicConfig, getLogger
@@ -16,7 +17,7 @@ def simulate(
     instructions: list[Instruction],
     max_threads: int = 1,
     results_file: Path | None = None,
-    verbosity: int = 0,
+    verbosity: int = logging.INFO,
     profile: bool = False,
 ) -> list[Result]:
     basicConfig(level=verbosity)
