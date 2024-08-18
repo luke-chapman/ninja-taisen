@@ -1,3 +1,4 @@
+import itertools
 import os
 from pathlib import Path
 
@@ -14,18 +15,15 @@ def __run_regression_test(regen: bool, max_threads: int) -> None:
     expected = Path(__file__).resolve().parent / "expected_results.csv"
 
     instructions: list[Instruction] = []
-    seed = 0
-    for monkey_strategy in StrategyNames.ALL:
-        for wolf_strategy in StrategyNames.ALL:
-            instructions.append(Instruction(monkey_strategy, wolf_strategy, seed))
-            seed += 1
+    for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL)):
+        instructions.append(Instruction(index, index, monkey_strategy, wolf_strategy))
 
-    results = simulate(instructions, max_threads=max_threads)
+    results = simulate(instructions=instructions, max_threads=max_threads, per_thread=5)
     assert len(results) == len(instructions)
-    recovered_instructions = [Instruction(r.monkey_strategy, r.wolf_strategy, r.seed) for r in results]
+    recovered_instructions = [Instruction(r.id, r.seed, r.monkey_strategy, r.wolf_strategy) for r in results]
     assert instructions == recovered_instructions
 
-    df_actual = make_data_frame(results).drop(["start_time", "end_time"])
+    df_actual = make_data_frame(results).drop(["start_time", "end_time", "thread_name"])
     if regen:
         df_actual.write_csv(expected)
     else:

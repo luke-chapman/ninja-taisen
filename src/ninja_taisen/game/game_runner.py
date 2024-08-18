@@ -1,4 +1,8 @@
 import datetime
+import itertools
+import logging
+import math
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from logging import getLogger
 
@@ -37,17 +41,25 @@ class GameRunner:
             turn_count += 1
 
         end_time = datetime.datetime.now(datetime.UTC)
-        time_taken_s = end_time - start_time
-        log.info(f"Winner={victorious_team}, turn_count={turn_count}, time_taken={time_taken_s}s")
-        return Result(
+        result = Result(
+            id=instruction.id,
+            seed=instruction.seed,
             monkey_strategy=instruction.monkey_strategy,
             wolf_strategy=instruction.wolf_strategy,
-            seed=instruction.seed,
             winner=str(victorious_team),
             turn_count=turn_count,
             start_time=start_time,
             end_time=end_time,
+            thread_name=threading.current_thread().name,
         )
+
+        if log.level <= logging.DEBUG:
+            to_log = result._asdict()
+            to_log.pop("start_time")
+            to_log.pop("end_time")
+            log.debug(to_log)
+
+        return result
 
     def _execute_turn(self, team: Team) -> None:
         board_contexts = board_context_gatherer.gather_complete_move_contexts(self.board, team, random=SafeRandom(0))
@@ -71,6 +83,21 @@ def simulate_one(instruction: Instruction) -> Result:
     return game_runner.simulate(instruction)
 
 
-def simulate_all(instructions: list[Instruction], max_threads: int) -> list[Result]:
-    with ThreadPoolExecutor(max_workers=max_threads) as executor:
-        return list(executor.map(simulate_one, instructions))
+def simulate_many_single_thread(instructions: list[Instruction]) -> list[Result]:
+    suffix = f"block with ids {instructions[0].id}-{instructions[-1].id} on thread {threading.current_thread().name}"
+    log.info(f"Starting {suffix}")
+    results = [simulate_one(i) for i in instructions]
+    log.info(f"Completed {suffix}")
+    return results
+
+
+def simulate_many_multi_threads(instructions: list[Instruction], max_threads: int, per_thread: int) -> list[Result]:
+    assert max_threads > 0
+    assert per_thread > 0
+    log.info(f"Will assign {len(instructions)} instructions in blocks of {per_thread} between {max_threads} threads")
+
+    blocks_count = int(math.ceil(len(instructions) / per_thread))
+    i_blocks = [instructions[i * per_thread : (i + 1) * per_thread] for i in range(blocks_count)]
+    with ThreadPoolExecutor(max_workers=max_threads, thread_name_prefix="ninja_taisen") as executor:
+        r_blocks = executor.map(simulate_many_single_thread, i_blocks)
+        return list(itertools.chain(*r_blocks))
