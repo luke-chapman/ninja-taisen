@@ -18,4 +18,4 @@ class Result(NamedTuple):
     turn_count: int
     start_time: datetime
     end_time: datetime
-    thread_name: str
+    process_name: str

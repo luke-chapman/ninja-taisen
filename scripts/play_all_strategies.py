@@ -24,7 +24,13 @@ def run() -> None:
         instructions.append(instruction)
 
     log.info(f"Will simulate {len(instructions)} games")
-    simulate(instructions=instructions, max_threads=-2, results_file=results_file, verbosity=logging.INFO)
+    simulate(
+        instructions=instructions,
+        max_processes=-1,
+        results_file=results_file,
+        verbosity=logging.INFO,
+        log_file=Path(__file__).resolve().parent / f"log_{timestamp}.txt",
+    )
 
     stop = perf_counter()
     log.info(f"Took {stop - start:.2f} seconds")
