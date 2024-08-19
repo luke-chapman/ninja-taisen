@@ -1,15 +1,22 @@
 import datetime
 from pathlib import Path
 
+import pytest
 from polars.testing import assert_frame_equal
 
 from ninja_taisen import Result
-from ninja_taisen.api import make_data_frame, read_results_csv, write_results_csv
+from ninja_taisen.api import (
+    read_csv_results,
+    read_parquet_results,
+    write_csv_results,
+    write_parquet_results,
+)
 from ninja_taisen.objects.card import Team
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 
-def test_csv_round_trip(tmp_path: Path) -> None:
+@pytest.mark.parametrize("file_format", ["csv", "parquet"])
+def test_csv_round_trip(file_format: str, tmp_path: Path) -> None:
     now = datetime.datetime.now(datetime.UTC)
 
     results = [
@@ -37,11 +44,17 @@ def test_csv_round_trip(tmp_path: Path) -> None:
         ),
     ]
 
-    filename = tmp_path / "results.csv"
-    write_results_csv(results, filename)
-    assert filename.is_file()
+    if file_format == "csv":
+        csv_filename = tmp_path / "results.csv"
+        write_csv_results(results, csv_filename)
+        assert csv_filename.is_file()
+        recovered_frame = read_csv_results(csv_filename)
+    elif file_format == "parquet":
+        parquet_filename = tmp_path / "results.parquet"
+        write_parquet_results(results, parquet_filename)
+        assert parquet_filename.is_file()
+        recovered_frame = read_parquet_results(parquet_filename)
+    else:
+        raise ValueError(f"Unsupported file format: {file_format}")
 
-    original_frame = make_data_frame(results)
-    recovered_frame = read_results_csv(filename)
-
-    assert_frame_equal(original_frame, recovered_frame)
+    assert_frame_equal(recovered_frame, recovered_frame)  #

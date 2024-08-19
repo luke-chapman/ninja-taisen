@@ -34,7 +34,7 @@ def main(override_args: list[str] | None = None) -> int:
     ]
 
     results = simulate(
-        instructions=instructions, results_file=results_file, verbosity=args.verbosity, profile=args.profile
+        instructions=instructions, csv_results=results_file, verbosity=args.verbosity, profile=args.profile
     )
     assert len(results) == len(instructions)
     log.info(f"Successfully simulated {len(results)} games")

@@ -20,7 +20,7 @@ def setup_logging(verbosity: int, log_file: Path | None = None) -> None:
         )
         logger.addHandler(console_handler)
 
-    if log_file is not None:
+    if log_file is not None and not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
         # Create a file handler with the specified format
         file_handler = logging.FileHandler(log_file)
         file_handler.setFormatter(
