@@ -24,7 +24,10 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
         main(command_line)
         frame = read_csv_results(results_file)
     elif invocation == "library_api":
-        results = simulate([Instruction(0, 0, monkey_strategy, wolf_strategy)], csv_results=results_file)
+        results = simulate(
+            [Instruction(id=0, seed=0, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)],
+            csv_results=results_file,
+        )
         frame = make_data_frame(results)
     else:
         raise ValueError(f"Unexpected invocation {invocation}")
