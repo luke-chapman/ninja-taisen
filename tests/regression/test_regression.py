@@ -16,11 +16,16 @@ def __run_regression_test(regen: bool, max_processes: int) -> None:
 
     instructions: list[Instruction] = []
     for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL)):
-        instructions.append(Instruction(index, index, monkey_strategy, wolf_strategy))
+        instructions.append(
+            Instruction(id=index, seed=index, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
+        )
 
     results = simulate(instructions=instructions, max_processes=max_processes, per_process=5)
     assert len(results) == len(instructions)
-    recovered_instructions = [Instruction(r.id, r.seed, r.monkey_strategy, r.wolf_strategy) for r in results]
+    recovered_instructions = [
+        Instruction(id=r.id, seed=r.seed, monkey_strategy=r.monkey_strategy, wolf_strategy=r.wolf_strategy)
+        for r in results
+    ]
     assert instructions == recovered_instructions
 
     df_actual = make_data_frame(results).drop(["start_time", "end_time", "process_name"])

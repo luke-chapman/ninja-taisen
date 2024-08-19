@@ -6,9 +6,9 @@ import multiprocessing
 from logging import getLogger
 from pathlib import Path
 from time import perf_counter
-from typing import NamedTuple
 
 from more_itertools import unique_everseen
+from pydantic import BaseModel
 
 from ninja_taisen.algos import board_builder, board_context_gatherer, board_inspector
 from ninja_taisen.logging_setup import setup_logging
@@ -57,9 +57,7 @@ class GameRunner:
         )
 
         if log.level <= logging.DEBUG:
-            to_log = result._asdict()
-            to_log.pop("start_time")
-            to_log.pop("end_time")
+            to_log = result.model_dump(exclude={"start_time", "end_time"})
             log.debug(to_log)
 
         return result
@@ -87,7 +85,7 @@ def simulate_one(instruction: Instruction) -> Result:
 
 
 # We have to put all arguments for the multiprocessing subprocess into a class which can be pickled
-class SubprocessArgs(NamedTuple):
+class SubprocessArgs(BaseModel):
     instructions: list[Instruction]
     log_file: Path | None
 
@@ -118,7 +116,7 @@ def simulate_many_multi_process(
 
     blocks_count = int(math.ceil(len(instructions) / per_process))
     i_blocks = [instructions[i * per_process : (i + 1) * per_process] for i in range(blocks_count)]
-    subprocess_args = [SubprocessArgs(i_block, log_file) for i_block in i_blocks]
+    subprocess_args = [SubprocessArgs(instructions=i_block, log_file=log_file) for i_block in i_blocks]
 
     with multiprocessing.Pool(processes=max_processes) as pool:
         r_blocks = pool.map(simulate_many_single_thread, subprocess_args)

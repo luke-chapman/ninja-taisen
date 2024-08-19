@@ -65,7 +65,7 @@ def simulate(
 
 
 def make_data_frame(results: list[Result]) -> pl.DataFrame:
-    return pl.DataFrame(data=results, schema=Result._fields, orient="row")
+    return pl.DataFrame(data=results, orient="row")
 
 
 def write_csv_results(results: list[Result], filename: Path) -> None:

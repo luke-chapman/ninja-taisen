@@ -1,15 +1,16 @@
 from datetime import datetime
-from typing import NamedTuple
+
+from pydantic import BaseModel
 
 
-class Instruction(NamedTuple):
+class Instruction(BaseModel):
     id: int
     seed: int
     monkey_strategy: str
     wolf_strategy: str
 
 
-class Result(NamedTuple):
+class Result(BaseModel):
     id: int
     seed: int
     monkey_strategy: str
