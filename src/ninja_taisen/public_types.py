@@ -34,6 +34,13 @@ class Team(StrEnum):
     monkey = "monkey"
     wolf = "wolf"
 
+    def other(self) -> "Team":
+        if self == Team.monkey:
+            return Team.wolf
+        if self == Team.wolf:
+            return Team.monkey
+        raise ValueError(f"Unknown team {self.value}")
+
 
 class Card(BaseModel):
     team: Team
@@ -41,7 +48,12 @@ class Card(BaseModel):
     strength: int
 
     def __str__(self) -> str:
-        return f"{self.team[0]}{self.combat_category[0]}{self.strength}".upper()
+        return f"{self.team[0]}{self.category[0]}{self.strength}".upper()
+
+    def __lt__(self, other):
+        if not isinstance(other, Card):
+            return NotImplemented
+        return (self.team, self.category, self.strength) < (other.team, other.category, other.strength)
 
 
 CardPiles = tuple[
@@ -57,7 +69,7 @@ CardPiles = tuple[
     list[Card],
     list[Card],
 ]
-BOARD_LENGTH = len(CardPiles.__args__)
+BOARD_LENGTH = 11
 
 
 class DiceRoll(BaseModel):
@@ -69,6 +81,13 @@ class DiceRoll(BaseModel):
 class Board(BaseModel):
     monkey_cards: CardPiles
     wolf_cards: CardPiles
+
+    def cards(self, team: Team) -> CardPiles:
+        if team == Team.monkey:
+            return self.monkey_cards
+        if team == Team.wolf:
+            return self.wolf_cards
+        raise ValueError(f"Unsupported team {team}")
 
     def __str__(self) -> str:
         self_str = ""
@@ -86,7 +105,7 @@ class Board(BaseModel):
         return self_str
 
     @staticmethod
-    def __row_str(cards: list[list[Card]], row_index: int) -> str:
+    def __row_str(cards: CardPiles, row_index: int) -> str:
         row_str = ""
 
         for pile_index in range(11):

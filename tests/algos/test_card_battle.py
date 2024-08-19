@@ -11,21 +11,21 @@ def test_battle_draws() -> None:
 
 def test_rock_paper_scissors_wins() -> None:
     monkey_rocks = [
-        Card(Team.monkey, Category.rock, 1),
-        Card(Team.monkey, Category.rock, 2),
-        Card(Team.monkey, Category.rock, 3),
+        Card(team=Team.monkey, category=Category.rock, strength=1),
+        Card(team=Team.monkey, category=Category.rock, strength=2),
+        Card(team=Team.monkey, category=Category.rock, strength=3),
     ]
 
     wolf_papers = [
-        Card(Team.wolf, Category.paper, 1),
-        Card(Team.wolf, Category.paper, 2),
-        Card(Team.wolf, Category.paper, 3),
+        Card(team=Team.wolf, category=Category.paper, strength=1),
+        Card(team=Team.wolf, category=Category.paper, strength=2),
+        Card(team=Team.wolf, category=Category.paper, strength=3),
     ]
 
     wolf_scissorss = [
-        Card(Team.wolf, Category.scissors, 1),
-        Card(Team.wolf, Category.scissors, 2),
-        Card(Team.wolf, Category.scissors, 3),
+        Card(team=Team.wolf, category=Category.scissors, strength=1),
+        Card(team=Team.wolf, category=Category.scissors, strength=2),
+        Card(team=Team.wolf, category=Category.scissors, strength=3),
     ]
 
     for monkey_rock in monkey_rocks:
@@ -37,18 +37,18 @@ def test_rock_paper_scissors_wins() -> None:
 
 
 def test_strength_wins() -> None:
-    for combat_category in [
+    for category in [
         Category.rock,
         Category.paper,
         Category.scissors,
     ]:
-        M1 = Card(Team.monkey, combat_category, 1)
-        M2 = Card(Team.monkey, combat_category, 2)
-        M3 = Card(Team.monkey, combat_category, 3)
+        M1 = Card(team=Team.monkey, category=category, strength=1)
+        M2 = Card(team=Team.monkey, category=category, strength=2)
+        M3 = Card(team=Team.monkey, category=category, strength=3)
 
-        W1 = Card(Team.wolf, combat_category, 1)
-        W2 = Card(Team.wolf, combat_category, 2)
-        W3 = Card(Team.wolf, combat_category, 3)
+        W1 = Card(team=Team.wolf, category=category, strength=1)
+        W2 = Card(team=Team.wolf, category=category, strength=2)
+        W3 = Card(team=Team.wolf, category=category, strength=3)
 
         assert_battle_winner(M2, W1)
         assert_battle_winner(M3, W1)
@@ -60,46 +60,46 @@ def test_strength_wins() -> None:
 
 
 def test_joker_nonjoker_battles() -> None:
-    MJ4 = Card(Team.monkey, Category.joker, 4)
-    WP3 = Card(Team.wolf, Category.paper, 3)
+    MJ4 = Card(team=Team.monkey, category=Category.joker, strength=4)
+    WP3 = Card(team=Team.wolf, category=Category.paper, strength=3)
     assert_battle_winner(MJ4, WP3)
     assert MJ4.strength == 1
 
-    WS1 = Card(Team.wolf, Category.scissors, 1)
+    WS1 = Card(team=Team.wolf, category=Category.scissors, strength=1)
     assert not card_battle.battle_winner(MJ4, WS1)
     assert MJ4.strength == 0
 
-    WR2 = Card(Team.wolf, Category.rock, 2)
+    WR2 = Card(team=Team.wolf, category=Category.rock, strength=2)
     assert_battle_winner(WR2, MJ4)
 
 
 def test_joker_joker_draws() -> None:
     for joker_strength in range(0, 4):
-        MJ = Card(Team.monkey, Category.joker, joker_strength)
-        WJ = Card(Team.wolf, Category.joker, joker_strength)
+        MJ = Card(team=Team.monkey, category=Category.joker, strength=joker_strength)
+        WJ = Card(team=Team.wolf, category=Category.joker, strength=joker_strength)
         assert not card_battle.battle_winner(MJ, WJ)
         assert MJ.strength == 0
         assert WJ.strength == 0
 
 
 def test_joker_joker_wins() -> None:
-    MJ = Card(Team.monkey, Category.joker, 4)
-    WJ2 = Card(Team.wolf, Category.joker, 1)
+    MJ = Card(team=Team.monkey, category=Category.joker, strength=4)
+    WJ2 = Card(team=Team.wolf, category=Category.joker, strength=1)
     winner_a = card_battle.battle_winner(MJ, WJ2)
     assert winner_a is not None
     assert winner_a.team == Team.monkey
     assert MJ.strength == 3
 
-    WJ1 = Card(Team.wolf, Category.joker, 2)
+    WJ1 = Card(team=Team.wolf, category=Category.joker, strength=2)
     winner_b = card_battle.battle_winner(MJ, WJ1)
     assert winner_b is not None
     assert winner_b.team == Team.monkey
     assert MJ.strength == 1
 
 
-def assert_battle_draw(combat_category: Category, strength: int) -> None:
-    monkey = Card(Team.monkey, combat_category, strength)
-    wolf = Card(Team.wolf, combat_category, strength)
+def assert_battle_draw(category: Category, strength: int) -> None:
+    monkey = Card(team=Team.monkey, category=category, strength=strength)
+    wolf = Card(team=Team.wolf, category=category, strength=strength)
     assert not card_battle.battle_winner(monkey, wolf)
 
 

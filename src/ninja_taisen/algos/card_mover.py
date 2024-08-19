@@ -1,5 +1,5 @@
 from ninja_taisen.algos import card_battle
-from ninja_taisen.public_types import BOARD_LENGTH, Board, Card, Category, Team
+from ninja_taisen.public_types import BOARD_LENGTH, Board, CardPiles, Category, Team
 
 
 def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
@@ -52,8 +52,8 @@ def _resolve_battles(board: Board, pile_index: int, team: Team) -> None:
                     move_card(board, (pile_index, len(monkey_pile) - 1), -1, Team.monkey)
 
 
-def _restore_jokers(cards: list[list[Card]]) -> None:
+def _restore_jokers(cards: CardPiles) -> None:
     for position_cards in cards:
         for card in position_cards:
-            if card.combat_category == Category.joker:
+            if card.category == Category.joker:
                 card.strength = 4

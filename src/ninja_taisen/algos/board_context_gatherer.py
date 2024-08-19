@@ -41,11 +41,10 @@ def gather_complete_move_contexts(starting_board: Board, team: Team, random: Saf
 
 def gather_single_move_contexts(
     starting_contexts: list[BoardContext],
-    combat_category: Category,
+    category: Category,
     dice_roll: int,
     team: Team,
 ) -> list[BoardContext]:
-
     final_contexts = []
 
     for starting_context in starting_contexts:
@@ -53,25 +52,24 @@ def gather_single_move_contexts(
         if board_inspector.victorious_team(board) is not None:
             continue
 
-        cards = board.monkey_cards if team == Team.monkey else board.wolf_cards
-        movable_locations = board_inspector.movable_card_locations(cards, combat_category, starting_context.used_joker)
+        cards = board.cards(team)
+        movable_locations = board_inspector.movable_card_locations(cards, category, starting_context.used_joker)
 
         for movable_location in movable_locations:
             cloned_context = starting_context.clone()
-            using_joker = cards[movable_location[0]][movable_location[1]].combat_category == Category.joker
+            using_joker = cards[movable_location[0]][movable_location[1]].category == Category.joker
 
             try:
                 card_mover.move_card(cloned_context.board, movable_location, dice_roll, team)
             except Exception:
                 log.info("Error moving card!")
                 log.info(f"Starting board\n{starting_context.board}")
-                log.info(f"combat_category {combat_category}, dice_roll {dice_roll}, team {team}")
+                log.info(f"category {category}, dice_roll {dice_roll}, team {team}")
                 log.info(f"Movable location {movable_location}")
                 raise
 
             cloned_context.used_joker |= using_joker
-            cloned_context.dice_used.append((combat_category, dice_roll))
-            cloned_context.board.compute_hash()
+            cloned_context.dice_used.append((category, dice_roll))
 
             final_contexts.append(cloned_context)
 
