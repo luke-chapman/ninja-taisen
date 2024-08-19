@@ -57,4 +57,4 @@ def test_csv_round_trip(file_format: str, tmp_path: Path) -> None:
     else:
         raise ValueError(f"Unsupported file format: {file_format}")
 
-    assert_frame_equal(recovered_frame, recovered_frame)  #
+    assert_frame_equal(recovered_frame, recovered_frame)
