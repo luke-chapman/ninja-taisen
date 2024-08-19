@@ -4,6 +4,7 @@ from ninja_taisen.objects.card import Card, CombatCategory, Team
 
 def victorious_team(board: Board) -> Team | None:
     if board.monkey_cards[-1]:
+        assert not board.wolf_cards[0]
         return Team.MONKEY
     if board.wolf_cards[0]:
         return Team.WOLF
