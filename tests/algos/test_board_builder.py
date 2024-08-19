@@ -98,14 +98,14 @@ def make_non_shuffled_board() -> Board:
 
 def make_ordered_cards(team: Team) -> list[Card]:
     return [
-        Card(team=team, category=Category.rock, strength=1),
-        Card(team=team, category=Category.rock, strength=2),
-        Card(team=team, category=Category.rock, strength=3),
+        Card(team=team, category=Category.joker, strength=4),
         Card(team=team, category=Category.paper, strength=1),
         Card(team=team, category=Category.paper, strength=2),
         Card(team=team, category=Category.paper, strength=3),
+        Card(team=team, category=Category.rock, strength=1),
+        Card(team=team, category=Category.rock, strength=2),
+        Card(team=team, category=Category.rock, strength=3),
         Card(team=team, category=Category.scissors, strength=1),
         Card(team=team, category=Category.scissors, strength=2),
         Card(team=team, category=Category.scissors, strength=3),
-        Card(team=team, category=Category.joker, strength=4),
     ]
