@@ -25,7 +25,7 @@ class GameRunner:
     def __init__(
         self, monkey_strategy: IStrategy, wolf_strategy: IStrategy, starting_team: Team, random: SafeRandom
     ) -> None:
-        self.board = board_builder.make_board(random=SafeRandom(0))
+        self.board = board_builder.make_board(random=random)
         self.strategies = {Team.MONKEY: monkey_strategy, Team.WOLF: wolf_strategy}
         self.starting_team = starting_team
         self.random = random
@@ -65,7 +65,7 @@ class GameRunner:
         return result
 
     def __execute_turn(self, team: Team) -> None:
-        board_contexts = board_context_gatherer.gather_complete_move_contexts(self.board, team, random=SafeRandom(0))
+        board_contexts = board_context_gatherer.gather_complete_move_contexts(self.board, team, random=self.random)
         unique_boards = list(unique_everseen(context.board for context in board_contexts))
         if unique_boards:
             self.board = self.strategies[team].choose_board(unique_boards, team)
