@@ -66,7 +66,7 @@ def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path
 def test_from_command_line(tmp_path: Path) -> None:
     __launch_and_assert_game(
         monkey_strategy=StrategyNames.random_spot_win,
-        wolf_strategy=StrategyNames.metric_position_strength,
+        wolf_strategy=StrategyNames.metric_strength,
         invocation="command_line",
         tmp_path=tmp_path,
     )
