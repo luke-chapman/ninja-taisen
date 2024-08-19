@@ -3,7 +3,7 @@ from pathlib import Path
 from ninja_taisen.public_types import Board, Card, Category, Team
 
 
-def test_board(regen: bool) -> None:
+def test_for_board_json_changes(regen: bool) -> None:
     board = Board(
         monkey_cards=(
             [
@@ -61,7 +61,7 @@ def test_board(regen: bool) -> None:
         ),
     )
 
-    board_json = Path(__file__).resolve().parent / "board.json"
+    board_json = Path(__file__).resolve().parent / "expected_board.json"
     if regen:
         content = board.model_dump_json(indent=2, round_trip=True)
         board_json.write_text(content)
