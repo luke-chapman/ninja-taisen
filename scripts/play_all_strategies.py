@@ -20,7 +20,7 @@ def run() -> None:
     results_file = results_dir / "results.parquet"
 
     instructions: list[Instruction] = []
-    enumeration = enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(100)))
+    enumeration = enumerate(itertools.product([StrategyNames.metric_count], [StrategyNames.random_spot_win], range(1)))
     for index, (monkey_strategy, wolf_strategy, seed) in enumeration:
         instruction = Instruction(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         instructions.append(instruction)
@@ -28,10 +28,11 @@ def run() -> None:
     log.info(f"Will simulate {len(instructions)} games")
     simulate(
         instructions=instructions,
-        max_processes=-1,
+        max_processes=1,
         parquet_results=results_file,
         verbosity=logging.INFO,
         log_file=results_dir / "log.txt",
+        profile=True,
     )
 
     stop = perf_counter()

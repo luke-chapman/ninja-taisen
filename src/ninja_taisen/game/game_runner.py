@@ -107,6 +107,10 @@ def simulate_many_single_thread(args: SubprocessArgs) -> list[Result]:
 def simulate_many_multi_process(
     instructions: list[Instruction], max_processes: int, per_process: int, log_file: Path | None
 ) -> list[Result]:
+    if max_processes == 1:
+        log.info(f"Bypassing multiprocessing.Pool because max_processes=1 specified")
+        return simulate_many_single_thread(SubprocessArgs(instructions=instructions, log_file=log_file))
+
     assert max_processes > 0
     assert per_process > 0
     log.info(

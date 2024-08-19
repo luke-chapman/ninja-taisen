@@ -46,7 +46,7 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
     assert frame["monkey_strategy"][0] == monkey_strategy
     assert frame["wolf_strategy"][0] == wolf_strategy
     assert frame["seed"][0] == 0
-    assert frame["winner"][0] in ("MONKEY", "WOLF", "NONE")
+    assert frame["winner"][0] in ("monkey", "wolf", "none")
     assert 0 < frame["turn_count"][0] < 100
 
     time_taken_s = (frame["end_time"][0] - frame["start_time"][0]).total_seconds()
