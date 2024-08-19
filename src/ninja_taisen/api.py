@@ -18,7 +18,8 @@ def simulate(
     instructions: list[Instruction],
     max_processes: int = 1,
     per_process: int = 100,
-    results_file: Path | None = None,
+    csv_results: Path | None = None,
+    parquet_results: Path | None = None,
     verbosity: int = logging.INFO,
     log_file: Path | None = None,
     profile: bool = False,
@@ -50,10 +51,15 @@ def simulate(
             log_file=log_file,
         )
 
-    if results_file:
-        results_file.parent.mkdir(parents=True, exist_ok=True)
-        write_results_csv(results, results_file)
-        log.info(f"Results written to {results_file}")
+    if csv_results:
+        csv_results.parent.mkdir(parents=True, exist_ok=True)
+        write_csv_results(results, csv_results)
+        log.info(f"csv results written to {csv_results}")
+
+    if parquet_results:
+        parquet_results.parent.mkdir(parents=True, exist_ok=True)
+        write_parquet_results(results, parquet_results)
+        log.info(f"parquet results written to {parquet_results}")
 
     return results
 
@@ -62,10 +68,19 @@ def make_data_frame(results: list[Result]) -> pl.DataFrame:
     return pl.DataFrame(data=results, schema=Result._fields, orient="row")
 
 
-def write_results_csv(results: list[Result], filename: Path) -> None:
+def write_csv_results(results: list[Result], filename: Path) -> None:
     df = make_data_frame(results)
     df.write_csv(filename)
 
 
-def read_results_csv(filename: Path) -> pl.DataFrame:
+def write_parquet_results(results: list[Result], filename: Path) -> None:
+    df = make_data_frame(results)
+    df.write_parquet(filename)
+
+
+def read_csv_results(filename: Path) -> pl.DataFrame:
     return pl.read_csv(filename, schema_overrides={"start_time": pl.Datetime, "end_time": pl.Datetime})
+
+
+def read_parquet_results(filename: Path) -> pl.DataFrame:
+    return pl.read_parquet(filename)

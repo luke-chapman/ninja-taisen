@@ -15,10 +15,12 @@ def run() -> None:
     start = perf_counter()
 
     timestamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
-    results_file = Path(__file__).resolve().parent / f"play_all_strategies_{timestamp}.csv"
+    results_dir = Path(__file__).resolve().parent / f".ninja-taisen-{timestamp}"
+    results_dir.mkdir()
+    results_file = results_dir / "results.parquet"
 
     instructions: list[Instruction] = []
-    enumeration = enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(100)))
+    enumeration = enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL, range(10)))
     for index, (monkey_strategy, wolf_strategy, seed) in enumeration:
         instruction = Instruction(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         instructions.append(instruction)
@@ -27,9 +29,9 @@ def run() -> None:
     simulate(
         instructions=instructions,
         max_processes=-1,
-        results_file=results_file,
+        parquet_results=results_file,
         verbosity=logging.INFO,
-        log_file=Path(__file__).resolve().parent / f"log_{timestamp}.txt",
+        log_file=results_dir / "log.txt",
     )
 
     stop = perf_counter()
