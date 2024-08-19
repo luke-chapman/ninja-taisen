@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Literal
+from enum import StrEnum
 
 from pydantic import BaseModel
 
@@ -23,7 +23,7 @@ class Result(BaseModel):
     process_name: str
 
 
-class CardCategory(StrEnum):
+class Category(StrEnum):
     rock = "rock"
     paper = "paper"
     scissors = "scissors"
@@ -37,7 +37,7 @@ class Team(StrEnum):
 
 class Card(BaseModel):
     team: Team
-    category: CardCategory
+    category: Category
     strength: int
 
     def __str__(self) -> str:
@@ -68,7 +68,7 @@ class DiceRoll(BaseModel):
 
 class Board(BaseModel):
     monkey_cards: CardPiles
-    wolf_card: CardPiles
+    wolf_cards: CardPiles
 
     def __str__(self) -> str:
         self_str = ""

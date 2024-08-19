@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from ninja_taisen.objects.board import Board
-from ninja_taisen.objects.card import Card, Team
+from ninja_taisen.public_types import Board, Card, Team
 
 
 class IMetric(ABC):
@@ -23,7 +22,7 @@ class CountMetric(IMetric):
 
 MONKEY_PILE_WEIGHTS = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]
 WOLF_PILE_WEIGHTS = [5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5]
-PILE_WEIGHTS = {Team.MONKEY: MONKEY_PILE_WEIGHTS, Team.WOLF: WOLF_PILE_WEIGHTS}
+PILE_WEIGHTS = {Team.monkey: MONKEY_PILE_WEIGHTS, Team.wolf: WOLF_PILE_WEIGHTS}
 
 
 class PositionMetric(IMetric):

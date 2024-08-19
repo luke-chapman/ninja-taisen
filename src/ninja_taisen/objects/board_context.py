@@ -1,7 +1,6 @@
 from copy import deepcopy
 
-from ninja_taisen.objects.board import Board
-from ninja_taisen.objects.card import CombatCategory
+from ninja_taisen.public_types import Board, Category
 
 
 class BoardContext:
@@ -9,7 +8,7 @@ class BoardContext:
         self,
         board: Board,
         used_joker: bool,
-        dice_used: list[tuple[CombatCategory, int]],
+        dice_used: list[tuple[Category, int]],
     ) -> None:
         self.board = board
         self.used_joker = used_joker

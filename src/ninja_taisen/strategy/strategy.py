@@ -3,9 +3,8 @@ from collections import defaultdict
 from logging import getLogger
 
 from ninja_taisen.algos.board_inspector import find_winning_board
-from ninja_taisen.objects.board import Board
-from ninja_taisen.objects.card import Team
 from ninja_taisen.objects.safe_random import SafeRandom
+from ninja_taisen.public_types import Board, Team
 from ninja_taisen.strategy.metric import IMetric
 
 log = getLogger(__name__)

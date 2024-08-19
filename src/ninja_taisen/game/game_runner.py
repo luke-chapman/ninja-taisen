@@ -12,9 +12,8 @@ from pydantic import BaseModel
 
 from ninja_taisen.algos import board_builder, board_context_gatherer, board_inspector
 from ninja_taisen.logging_setup import setup_logging
-from ninja_taisen.objects.card import Team
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.public_types import Instruction, Result
+from ninja_taisen.public_types import Instruction, Result, Team
 from ninja_taisen.strategy.strategy import IStrategy
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
@@ -26,7 +25,7 @@ class GameRunner:
         self, monkey_strategy: IStrategy, wolf_strategy: IStrategy, starting_team: Team, random: SafeRandom
     ) -> None:
         self.board = board_builder.make_board(random=random)
-        self.strategies = {Team.MONKEY: monkey_strategy, Team.WOLF: wolf_strategy}
+        self.strategies = {Team.monkey: monkey_strategy, Team.wolf: wolf_strategy}
         self.starting_team = starting_team
         self.random = random
 
@@ -78,7 +77,7 @@ def simulate_one(instruction: Instruction) -> Result:
     game_runner = GameRunner(
         monkey_strategy=monkey_strategy,
         wolf_strategy=wolf_strategy,
-        starting_team=Team.MONKEY,
+        starting_team=Team.monkey,
         random=random,
     )
     return game_runner.execute(instruction)

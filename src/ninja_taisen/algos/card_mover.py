@@ -1,6 +1,5 @@
 from ninja_taisen.algos import card_battle
-from ninja_taisen.objects.board import Board
-from ninja_taisen.objects.card import Card, CombatCategory, Team
+from ninja_taisen.public_types import BOARD_LENGTH, Board, Card, Category, Team
 
 
 def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
@@ -10,9 +9,9 @@ def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Tea
 
 
 def _move_card_recursive(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
-    team_cards = board.monkey_cards if team == Team.MONKEY else board.wolf_cards
+    team_cards = board.monkey_cards if team == Team.monkey else board.wolf_cards
     old_pile_index = position[0]
-    new_pile_index = old_pile_index + dice_roll if team == Team.MONKEY else old_pile_index - dice_roll
+    new_pile_index = old_pile_index + dice_roll if team == Team.monkey else old_pile_index - dice_roll
     new_pile_index = max(0, min(new_pile_index, BOARD_LENGTH - 1))
 
     cards_moved = 0
@@ -34,27 +33,27 @@ def _resolve_battles(board: Board, pile_index: int, team: Team) -> None:
     while monkey_pile and wolf_pile:
         winning_card = card_battle.battle_winner(monkey_pile[-1], wolf_pile[-1])
         if winning_card:
-            if winning_card.team == Team.MONKEY:
+            if winning_card.team == Team.monkey:
                 wolf_pile.pop()
             else:
                 monkey_pile.pop()
         else:
-            if team == Team.MONKEY:
+            if team == Team.monkey:
                 if pile_index == BOARD_LENGTH - 1:
                     wolf_pile.pop()
                 else:
-                    move_card(board, (pile_index, len(monkey_pile) - 1), -1, Team.MONKEY)
-                    move_card(board, (pile_index, len(wolf_pile) - 1), -1, Team.WOLF)
+                    move_card(board, (pile_index, len(monkey_pile) - 1), -1, Team.monkey)
+                    move_card(board, (pile_index, len(wolf_pile) - 1), -1, Team.wolf)
             else:
                 if pile_index == 0:
                     monkey_pile.pop()
                 else:
-                    move_card(board, (pile_index, len(wolf_pile) - 1), -1, Team.WOLF)
-                    move_card(board, (pile_index, len(monkey_pile) - 1), -1, Team.MONKEY)
+                    move_card(board, (pile_index, len(wolf_pile) - 1), -1, Team.wolf)
+                    move_card(board, (pile_index, len(monkey_pile) - 1), -1, Team.monkey)
 
 
 def _restore_jokers(cards: list[list[Card]]) -> None:
     for position_cards in cards:
         for card in position_cards:
-            if card.combat_category == CombatCategory.JOKER:
+            if card.combat_category == Category.joker:
                 card.strength = 4

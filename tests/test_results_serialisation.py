@@ -11,7 +11,7 @@ from ninja_taisen.api import (
     write_csv_results,
     write_parquet_results,
 )
-from ninja_taisen.objects.card import Team
+from ninja_taisen.public_types import Team
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 
@@ -25,7 +25,7 @@ def test_csv_round_trip(file_format: str, tmp_path: Path) -> None:
             seed=5,
             monkey_strategy=StrategyNames.random,
             wolf_strategy=StrategyNames.metric_count,
-            winner=str(Team.MONKEY),
+            winner=str(Team.monkey),
             turn_count=18,
             start_time=now,
             end_time=now + datetime.timedelta(milliseconds=100),
@@ -36,7 +36,7 @@ def test_csv_round_trip(file_format: str, tmp_path: Path) -> None:
             seed=55,
             monkey_strategy=StrategyNames.random_spot_win,
             wolf_strategy=StrategyNames.metric_position,
-            winner=str(Team.WOLF),
+            winner=str(Team.wolf),
             turn_count=22,
             start_time=datetime.datetime.now(datetime.UTC) + datetime.timedelta(milliseconds=110),
             end_time=datetime.datetime.now(datetime.UTC) + datetime.timedelta(milliseconds=211),

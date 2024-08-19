@@ -1,0 +1,136 @@
+{
+  "monkey_cards": [
+    [
+      {
+        "team": "monkey",
+        "category": "joker",
+        "strength": 4
+      },
+      {
+        "team": "monkey",
+        "category": "rock",
+        "strength": 3
+      },
+      {
+        "team": "monkey",
+        "category": "paper",
+        "strength": 2
+      },
+      {
+        "team": "monkey",
+        "category": "scissors",
+        "strength": 1
+      }
+    ],
+    [
+      {
+        "team": "monkey",
+        "category": "paper",
+        "strength": 3
+      },
+      {
+        "team": "monkey",
+        "category": "scissors",
+        "strength": 2
+      },
+      {
+        "team": "monkey",
+        "category": "rock",
+        "strength": 1
+      }
+    ],
+    [
+      {
+        "team": "monkey",
+        "category": "scissors",
+        "strength": 3
+      },
+      {
+        "team": "monkey",
+        "category": "rock",
+        "strength": 2
+      }
+    ],
+    [
+      {
+        "team": "monkey",
+        "category": "paper",
+        "strength": 1
+      }
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "wolf_cards": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      {
+        "team": "wolf",
+        "category": "paper",
+        "strength": 1
+      }
+    ],
+    [
+      {
+        "team": "wolf",
+        "category": "scissors",
+        "strength": 3
+      },
+      {
+        "team": "wolf",
+        "category": "rock",
+        "strength": 2
+      }
+    ],
+    [
+      {
+        "team": "wolf",
+        "category": "paper",
+        "strength": 1
+      },
+      {
+        "team": "wolf",
+        "category": "scissors",
+        "strength": 2
+      },
+      {
+        "team": "wolf",
+        "category": "rock",
+        "strength": 3
+      }
+    ],
+    [
+      {
+        "team": "wolf",
+        "category": "joker",
+        "strength": 4
+      },
+      {
+        "team": "wolf",
+        "category": "rock",
+        "strength": 1
+      },
+      {
+        "team": "wolf",
+        "category": "paper",
+        "strength": 2
+      },
+      {
+        "team": "wolf",
+        "category": "scissors",
+        "strength": 3
+      }
+    ]
+  ]
+}
