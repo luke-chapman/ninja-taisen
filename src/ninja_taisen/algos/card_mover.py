@@ -1,5 +1,5 @@
 from ninja_taisen.algos import card_battle
-from ninja_taisen.objects.board import BOARD_LENGTH, Board
+from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
 
 

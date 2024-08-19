@@ -3,9 +3,10 @@ from itertools import chain
 from more_itertools import unique_everseen
 
 from ninja_taisen.algos.board_builder import make_board
-from ninja_taisen.objects.board import BOARD_LENGTH, Board
+from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
 from ninja_taisen.objects.safe_random import SafeRandom
+from ninja_taisen.public_types import BOARD_LENGTH
 
 
 def test_make_board_not_shuffled() -> None:

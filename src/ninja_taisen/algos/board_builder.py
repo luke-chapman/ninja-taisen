@@ -1,6 +1,7 @@
-from ninja_taisen.objects.board import BOARD_LENGTH, Board
+from ninja_taisen.objects.board import Board
 from ninja_taisen.objects.card import Card, CombatCategory, Team
 from ninja_taisen.objects.safe_random import SafeRandom
+from ninja_taisen.public_types import BOARD_LENGTH
 
 
 def make_board(random: SafeRandom, shuffle_cards: bool = True) -> Board:
