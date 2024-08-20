@@ -6,7 +6,7 @@ import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
-from ninja_taisen import Instruction, simulate
+from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.api import make_data_frame
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
@@ -14,16 +14,16 @@ from ninja_taisen.strategy.strategy_names import StrategyNames
 def __run_simulation_regression_test(regen: bool, max_processes: int) -> None:
     expected = Path(__file__).resolve().parent / "expected_results.csv"
 
-    instructions: list[Instruction] = []
+    instructions: list[InstructionDto] = []
     for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL)):
         instructions.append(
-            Instruction(id=index, seed=index, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
+            InstructionDto(id=index, seed=index, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         )
 
     results = simulate(instructions=instructions, max_processes=max_processes, per_process=5)
     assert len(results) == len(instructions)
     recovered_instructions = [
-        Instruction(id=r.id, seed=r.seed, monkey_strategy=r.monkey_strategy, wolf_strategy=r.wolf_strategy)
+        InstructionDto(id=r.id, seed=r.seed, monkey_strategy=r.monkey_strategy, wolf_strategy=r.wolf_strategy)
         for r in results
     ]
     assert instructions == recovered_instructions

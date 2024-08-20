@@ -1,19 +1,19 @@
 from logging import getLogger
 
 from ninja_taisen.algos import board_inspector, card_mover
+from ninja_taisen.dtos import BoardDto, CategoryDto, TeamDto
 from ninja_taisen.objects.board_context import BoardContext
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.public_types import Board, Category, Team
 
 log = getLogger(__name__)
 
 
-def gather_complete_move_contexts(starting_board: Board, team: Team, random: SafeRandom) -> list[BoardContext]:
+def gather_complete_move_contexts(starting_board: BoardDto, team: TeamDto, random: SafeRandom) -> list[BoardContext]:
     board_contexts = []
     dice_rolls = [
-        (Category.rock, random.roll_dice()),
-        (Category.paper, random.roll_dice()),
-        (Category.scissors, random.roll_dice()),
+        (CategoryDto.rock, random.roll_dice()),
+        (CategoryDto.paper, random.roll_dice()),
+        (CategoryDto.scissors, random.roll_dice()),
     ]
     starting_context = BoardContext(board=starting_board, used_joker=False, dice_used=[])
 
@@ -41,9 +41,9 @@ def gather_complete_move_contexts(starting_board: Board, team: Team, random: Saf
 
 def gather_single_move_contexts(
     starting_contexts: list[BoardContext],
-    category: Category,
+    category: CategoryDto,
     dice_roll: int,
-    team: Team,
+    team: TeamDto,
 ) -> list[BoardContext]:
     final_contexts = []
 
@@ -57,7 +57,7 @@ def gather_single_move_contexts(
 
         for movable_location in movable_locations:
             cloned_context = starting_context.clone()
-            using_joker = cards[movable_location[0]][movable_location[1]].category == Category.joker
+            using_joker = cards[movable_location[0]][movable_location[1]].category == CategoryDto.joker
 
             try:
                 card_mover.move_card(cloned_context.board, movable_location, dice_roll, team)

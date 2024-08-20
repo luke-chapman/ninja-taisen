@@ -6,7 +6,7 @@ from logging import getLogger
 from pathlib import Path
 
 from ninja_taisen.api import simulate
-from ninja_taisen.public_types import Instruction
+from ninja_taisen.dtos import InstructionDto
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 log = getLogger(__name__)
@@ -29,7 +29,7 @@ def main(override_args: list[str] | None = None) -> int:
         results_file = Path.cwd() / ".ninja-taisen" / f"results_{timestamp}.csv"
 
     instructions = [
-        Instruction(id=index, seed=index, monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy)
+        InstructionDto(id=index, seed=index, monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy)
         for index in range(args.games)
     ]
 

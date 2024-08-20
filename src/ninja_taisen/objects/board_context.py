@@ -1,14 +1,14 @@
 from copy import deepcopy
 
-from ninja_taisen.public_types import Board, Category
+from ninja_taisen.dtos import BoardDto, CategoryDto
 
 
 class BoardContext:
     def __init__(
         self,
-        board: Board,
+        board: BoardDto,
         used_joker: bool,
-        dice_used: list[tuple[Category, int]],
+        dice_used: list[tuple[CategoryDto, int]],
     ) -> None:
         self.board = board
         self.used_joker = used_joker

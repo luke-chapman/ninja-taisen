@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from ninja_taisen import Instruction, simulate
+from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.__main__ import main
 from ninja_taisen.api import make_data_frame, read_csv_results
 from ninja_taisen.strategy.strategy_names import StrategyNames
@@ -25,7 +25,7 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
         frame = read_csv_results(results_file)
     elif invocation == "library_api":
         results = simulate(
-            [Instruction(id=0, seed=0, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)],
+            [InstructionDto(id=0, seed=0, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)],
             csv_results=results_file,
         )
         frame = make_data_frame(results)

@@ -1,28 +1,28 @@
 from pathlib import Path
 
-from ninja_taisen.public_types import Board, Card, Category, Team
+from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, TeamDto
 
 
 def test_for_board_json_changes(regen: bool) -> None:
-    board = Board(
+    board = BoardDto(
         monkey_cards=(
             [
-                Card(team=Team.monkey, category=Category.joker, strength=4),
-                Card(team=Team.monkey, category=Category.rock, strength=3),
-                Card(team=Team.monkey, category=Category.paper, strength=2),
-                Card(team=Team.monkey, category=Category.scissors, strength=1),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.joker, strength=4),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=3),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=2),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=1),
             ],
             [
-                Card(team=Team.monkey, category=Category.paper, strength=3),
-                Card(team=Team.monkey, category=Category.scissors, strength=2),
-                Card(team=Team.monkey, category=Category.rock, strength=1),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=3),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=2),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=1),
             ],
             [
-                Card(team=Team.monkey, category=Category.scissors, strength=3),
-                Card(team=Team.monkey, category=Category.rock, strength=2),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=3),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=2),
             ],
             [
-                Card(team=Team.monkey, category=Category.paper, strength=1),
+                CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=1),
             ],
             [],
             [],
@@ -41,22 +41,22 @@ def test_for_board_json_changes(regen: bool) -> None:
             [],
             [],
             [
-                Card(team=Team.wolf, category=Category.paper, strength=1),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=1),
             ],
             [
-                Card(team=Team.wolf, category=Category.scissors, strength=3),
-                Card(team=Team.wolf, category=Category.rock, strength=2),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=3),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=2),
             ],
             [
-                Card(team=Team.wolf, category=Category.paper, strength=1),
-                Card(team=Team.wolf, category=Category.scissors, strength=2),
-                Card(team=Team.wolf, category=Category.rock, strength=3),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=1),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=2),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=3),
             ],
             [
-                Card(team=Team.wolf, category=Category.joker, strength=4),
-                Card(team=Team.wolf, category=Category.rock, strength=1),
-                Card(team=Team.wolf, category=Category.paper, strength=2),
-                Card(team=Team.wolf, category=Category.scissors, strength=3),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.joker, strength=4),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=1),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=2),
+                CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=3),
             ],
         ),
     )
@@ -67,5 +67,5 @@ def test_for_board_json_changes(regen: bool) -> None:
         board_json.write_text(content)
     else:
         content = board_json.read_text()
-        recovered_board = Board.model_validate_json(content)
+        recovered_board = BoardDto.model_validate_json(content)
         assert board == recovered_board

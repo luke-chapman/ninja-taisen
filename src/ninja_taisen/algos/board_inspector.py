@@ -1,16 +1,16 @@
-from ninja_taisen.public_types import Board, CardPiles, Category, Team
+from ninja_taisen.dtos import BoardDto, CardPilesDto, CategoryDto, TeamDto
 
 
-def victorious_team(board: Board) -> Team | None:
+def victorious_team(board: BoardDto) -> TeamDto | None:
     if board.monkey_cards[-1]:
         assert not board.wolf_cards[0]
-        return Team.monkey
+        return TeamDto.monkey
     if board.wolf_cards[0]:
-        return Team.wolf
+        return TeamDto.wolf
     return None
 
 
-def find_winning_board(boards: list[Board], team: Team) -> Board | None:
+def find_winning_board(boards: list[BoardDto], team: TeamDto) -> BoardDto | None:
     for board in boards:
         if victorious_team(board) == team:
             return board
@@ -18,7 +18,7 @@ def find_winning_board(boards: list[Board], team: Team) -> Board | None:
     return None
 
 
-def movable_card_locations(cards: CardPiles, category: Category, used_joker: bool) -> list[tuple[int, int]]:
+def movable_card_locations(cards: CardPilesDto, category: CategoryDto, used_joker: bool) -> list[tuple[int, int]]:
     locations = []
     for pile_index, pile_cards in enumerate(cards):
         height_of_pile = len(pile_cards)
@@ -26,7 +26,7 @@ def movable_card_locations(cards: CardPiles, category: Category, used_joker: boo
 
         for card_index in range(accessible_start, height_of_pile):
             card_category = pile_cards[card_index].category
-            if card_category == category or (not used_joker and card_category == Category.joker):
+            if card_category == category or (not used_joker and card_category == CategoryDto.joker):
                 locations.append((pile_index, card_index))
 
     return locations

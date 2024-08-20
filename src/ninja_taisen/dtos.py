@@ -4,14 +4,14 @@ from enum import StrEnum
 from pydantic import BaseModel
 
 
-class Instruction(BaseModel):
+class InstructionDto(BaseModel):
     id: int
     seed: int
     monkey_strategy: str
     wolf_strategy: str
 
 
-class Result(BaseModel):
+class ResultDto(BaseModel):
     id: int
     seed: int
     monkey_strategy: str
@@ -23,69 +23,69 @@ class Result(BaseModel):
     process_name: str
 
 
-class Category(StrEnum):
+class CategoryDto(StrEnum):
     rock = "rock"
     paper = "paper"
     scissors = "scissors"
     joker = "joker"
 
 
-class Team(StrEnum):
+class TeamDto(StrEnum):
     monkey = "monkey"
     wolf = "wolf"
 
-    def other(self) -> "Team":
-        if self == Team.monkey:
-            return Team.wolf
-        if self == Team.wolf:
-            return Team.monkey
+    def other(self) -> "TeamDto":
+        if self == TeamDto.monkey:
+            return TeamDto.wolf
+        if self == TeamDto.wolf:
+            return TeamDto.monkey
         raise ValueError(f"Unknown team {self.value}")
 
 
-class Card(BaseModel):
-    team: Team
-    category: Category
+class CardDto(BaseModel):
+    team: TeamDto
+    category: CategoryDto
     strength: int
 
     def __str__(self) -> str:
         return f"{self.team[0]}{self.category[0]}{self.strength}".upper()
 
     def __lt__(self, other):
-        if not isinstance(other, Card):
+        if not isinstance(other, CardDto):
             return NotImplemented
         return (self.team, self.category, self.strength) < (other.team, other.category, other.strength)
 
 
-CardPiles = tuple[
-    list[Card],
-    list[Card],
-    list[Card],
-    list[Card],
-    list[Card],
-    list[Card],
-    list[Card],
-    list[Card],
-    list[Card],
-    list[Card],
-    list[Card],
+CardPilesDto = tuple[
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
+    list[CardDto],
 ]
 BOARD_LENGTH = 11
 
 
-class DiceRoll(BaseModel):
+class DiceRollDto(BaseModel):
     rock: int
     paper: int
     scissors: int
 
 
-class Board(BaseModel):
-    monkey_cards: CardPiles
-    wolf_cards: CardPiles
+class BoardDto(BaseModel):
+    monkey_cards: CardPilesDto
+    wolf_cards: CardPilesDto
 
-    def cards(self, team: Team) -> CardPiles:
-        if team == Team.monkey:
+    def cards(self, team: TeamDto) -> CardPilesDto:
+        if team == TeamDto.monkey:
             return self.monkey_cards
-        if team == Team.wolf:
+        if team == TeamDto.wolf:
             return self.wolf_cards
         raise ValueError(f"Unsupported team {team}")
 
@@ -105,7 +105,7 @@ class Board(BaseModel):
         return self_str
 
     @staticmethod
-    def __row_str(cards: CardPiles, row_index: int) -> str:
+    def __row_str(cards: CardPilesDto, row_index: int) -> str:
         row_str = ""
 
         for pile_index in range(11):

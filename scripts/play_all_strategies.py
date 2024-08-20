@@ -5,7 +5,7 @@ from logging import getLogger
 from pathlib import Path
 from time import perf_counter
 
-from ninja_taisen import Instruction, simulate
+from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.strategy.strategy_names import StrategyNames
 
 log = getLogger(__name__)
@@ -19,10 +19,10 @@ def run() -> None:
     results_dir.mkdir()
     results_file = results_dir / "results.parquet"
 
-    instructions: list[Instruction] = []
+    instructions: list[InstructionDto] = []
     enumeration = enumerate(itertools.product([StrategyNames.metric_count], [StrategyNames.random_spot_win], range(1)))
     for index, (monkey_strategy, wolf_strategy, seed) in enumeration:
-        instruction = Instruction(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
+        instruction = InstructionDto(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         instructions.append(instruction)
 
     log.info(f"Will simulate {len(instructions)} games")
