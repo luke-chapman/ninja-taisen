@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from copy import deepcopy
 from enum import IntEnum
 from typing import NamedTuple
 
@@ -84,6 +84,36 @@ class DiceRoll(NamedTuple):
 class Board(NamedTuple):
     monkey_cards: CardPiles
     wolf_cards: CardPiles
+
+    def clone(self) -> "Board":
+        return Board(
+            monkey_cards=(
+                deepcopy(self.monkey_cards[0]),
+                deepcopy(self.monkey_cards[1]),
+                deepcopy(self.monkey_cards[2]),
+                deepcopy(self.monkey_cards[3]),
+                deepcopy(self.monkey_cards[4]),
+                deepcopy(self.monkey_cards[5]),
+                deepcopy(self.monkey_cards[6]),
+                deepcopy(self.monkey_cards[7]),
+                deepcopy(self.monkey_cards[8]),
+                deepcopy(self.monkey_cards[9]),
+                deepcopy(self.monkey_cards[10]),
+            ),
+            wolf_cards=(
+                deepcopy(self.wolf_cards[0]),
+                deepcopy(self.wolf_cards[1]),
+                deepcopy(self.wolf_cards[2]),
+                deepcopy(self.wolf_cards[3]),
+                deepcopy(self.wolf_cards[4]),
+                deepcopy(self.wolf_cards[5]),
+                deepcopy(self.wolf_cards[6]),
+                deepcopy(self.wolf_cards[7]),
+                deepcopy(self.wolf_cards[8]),
+                deepcopy(self.wolf_cards[9]),
+                deepcopy(self.wolf_cards[10]),
+            ),
+        )
 
     @classmethod
     def from_dto(cls, dto: BoardDto) -> "Board":
@@ -181,8 +211,7 @@ class Board(NamedTuple):
         return row_str
 
 
-@dataclass
-class BoardContext:  # Not a tuple - we need this one to be mutable
+class BoardContext(NamedTuple):
     board: Board
     used_joker: bool
     dice_used: list[tuple[Category, int]]

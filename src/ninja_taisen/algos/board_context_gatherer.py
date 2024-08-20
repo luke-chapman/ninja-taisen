@@ -56,11 +56,13 @@ def gather_single_move_contexts(
         movable_locations = board_inspector.movable_card_locations(cards, category, starting_context.used_joker)
 
         for movable_location in movable_locations:
-            cloned_context = deepcopy(starting_context)
+            cloned_board = board.clone()
+            dice_used = deepcopy(starting_context.dice_used)
+            used_joker = starting_context.used_joker
             using_joker = cards[movable_location[0]][movable_location[1]].category == Category.joker
 
             try:
-                card_mover.move_card(cloned_context.board, movable_location, dice_roll, team)
+                card_mover.move_card(cloned_board, movable_location, dice_roll, team)
             except Exception:
                 log.info("Error moving card!")
                 log.info(f"Starting board\n{starting_context.board}")
@@ -68,9 +70,9 @@ def gather_single_move_contexts(
                 log.info(f"Movable location {movable_location}")
                 raise
 
-            cloned_context.used_joker |= using_joker
-            cloned_context.dice_used.append((category, dice_roll))
+            used_joker |= using_joker
+            dice_used.append((category, dice_roll))
 
-            final_contexts.append(cloned_context)
+            final_contexts.append(BoardContext(board=cloned_board, used_joker=used_joker, dice_used=dice_used))
 
     return final_contexts
