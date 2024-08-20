@@ -7,10 +7,9 @@ from logging import getLogger
 from pathlib import Path
 from time import perf_counter
 
-from more_itertools import unique_everseen
 from pydantic import BaseModel
 
-from ninja_taisen.algos import board_builder, board_context_gatherer, board_inspector
+from ninja_taisen.algos import board_builder, board_inspector, board_state_gatherer
 from ninja_taisen.dtos import InstructionDto, ResultDto
 from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.safe_random import SafeRandom
@@ -63,10 +62,9 @@ class GameRunner:
         return result
 
     def __execute_turn(self, team: Team) -> None:
-        board_contexts = board_context_gatherer.gather_complete_move_contexts(self.board, team, random=self.random)
-        unique_boards = list(unique_everseen(context.board for context in board_contexts))
-        if unique_boards:
-            self.board = self.strategies[team].choose_board(unique_boards, team)
+        board_states = board_state_gatherer.gather_all_board_states_post_move(self.board, team, random=self.random)
+        if board_states:
+            self.board = self.strategies[team].choose_board([s.board for s in board_states], team)
 
 
 def simulate_one(instruction: InstructionDto) -> ResultDto:

@@ -1,10 +1,13 @@
 from copy import deepcopy
+from dataclasses import dataclass
 from enum import IntEnum
 from typing import NamedTuple
 
-from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, DiceRollDto, StrategyName, TeamDto
+from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, StrategyName, TeamDto
 
 
+# We represent Category as an IntEnum internally for speed
+# We check for rock/paper/scissors winners using arithemtic modulo 3
 class Category(IntEnum):
     rock = 0
     paper = 1
@@ -37,9 +40,10 @@ TEAM_DTO_TO_TYPE = {TeamDto.monkey: Team.monkey, TeamDto.wolf: Team.wolf}
 TEAM_TYPE_TO_DTO = {v: k for k, v in TEAM_DTO_TO_TYPE.items()}
 
 
-class Card(NamedTuple):
+@dataclass(order=True)
+class Card:
     category: Category
-    strength: int
+    strength: int  # mutable - the strength of a joker decreases after each fight, but resets after a move is complete
 
     def __str__(self) -> str:
         return f"{CATEGORY_TYPE_TO_DTO[self.category].value[0]}{self.strength}".upper()
@@ -68,23 +72,12 @@ CardPiles = tuple[
 ]
 
 
-class DiceRoll(NamedTuple):
-    rock: int
-    paper: int
-    scissors: int
-
-    @classmethod
-    def from_dto(cls, dto: DiceRollDto) -> "DiceRoll":
-        return DiceRoll(rock=dto.rock, paper=dto.paper, scissors=dto.scissors)
-
-    def to_dto(self) -> DiceRollDto:
-        return DiceRollDto(rock=self.rock, paper=self.paper, scissors=self.scissors)
-
-
 class Board(NamedTuple):
     monkey_cards: CardPiles
     wolf_cards: CardPiles
 
+    #  Because CardPiles is a tuple of lists, a deepcopy would normally stop at the immutable tuple
+    #  Therefore we implement our own .clone() operation which invokes the deepcopy inside the tuples
     def clone(self) -> "Board":
         return Board(
             monkey_cards=(
@@ -211,7 +204,7 @@ class Board(NamedTuple):
         return row_str
 
 
-class BoardContext(NamedTuple):
+class BoardStateMidTurn(NamedTuple):
     board: Board
     used_joker: bool
     dice_used: list[tuple[Category, int]]
