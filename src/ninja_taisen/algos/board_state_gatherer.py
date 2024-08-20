@@ -61,15 +61,16 @@ def gather_board_state_post_move(
 
             try:
                 card_mover.move_card(cloned_board, (pile_index, card_index), dice_roll, team)
-            except Exception:
-                log.info("Error moving card!")
-                log.info(f"Starting board\n{initial_state.board}")
-                log.info(
+            except Exception as e:
+                log.error(e)
+                log.error("Error moving card!")
+                log.error(f"Starting board\n\n{initial_state.board}")
+                log.error(
                     f"team={TEAM_TYPE_TO_DTO[team].value}, "
                     f"category={CATEGORY_TYPE_TO_DTO[category].value}, "
                     f"dice_roll={dice_roll}, "
                 )
-                log.info(f"pile_index={pile_index}, card_index={card_index}")
+                log.error(f"pile_index={pile_index}, card_index={card_index}")
                 raise
 
             used_joker |= using_joker
