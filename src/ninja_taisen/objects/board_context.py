@@ -15,4 +15,4 @@ class BoardContext:
         self.dice_used = dice_used
 
     def clone(self) -> "BoardContext":
-        return BoardContext(self.board.model_copy(deep=True), self.used_joker, deepcopy(self.dice_used))
+        return BoardContext(deepcopy(self.board), self.used_joker, deepcopy(self.dice_used))

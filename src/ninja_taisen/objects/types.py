@@ -1,0 +1,179 @@
+from enum import IntEnum
+from typing import NamedTuple
+
+from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, DiceRollDto, TeamDto
+
+
+class Category(IntEnum):
+    rock = 0
+    paper = 1
+    scissors = 2
+    joker = 3
+
+
+CATEGORY_DTO_TO_TYPE = {
+    CategoryDto.rock: Category.rock,
+    CategoryDto.paper: Category.paper,
+    CategoryDto.scissors: Category.scissors,
+    CategoryDto.joker: Category.joker,
+}
+CATEGORY_TYPE_TO_DTO = {v: k for k, v in CATEGORY_DTO_TO_TYPE.items()}
+
+
+class Team(IntEnum):
+    monkey = 0
+    wolf = 1
+
+    def other(self) -> "Team":
+        if self == Team.monkey:
+            return Team.wolf
+        if self == Team.wolf:
+            return Team.monkey
+        raise ValueError(f"Unknown team {self.value}")
+
+
+TEAM_DTO_TO_TYPE = {TeamDto.monkey: Team.monkey, TeamDto.wolf: Team.wolf}
+TEAM_TYPE_TO_DTO = {v: k for k, v in TEAM_DTO_TO_TYPE.items()}
+
+
+class Card(NamedTuple):
+    category: Category
+    strength: int
+
+    def __str__(self) -> str:
+        return f"{self.category[0]}{self.strength}".upper()
+
+    @classmethod
+    def from_dto(cls, dto: CardDto) -> "Card":
+        return Card(category=dto.category, strength=dto.strength)
+
+    def to_dto(self) -> CardDto:
+        return CardDto(category=self.category, strength=self.strength)
+
+
+CardPiles = tuple[
+    list[Card],
+    list[Card],
+    list[Card],
+    list[Card],
+    list[Card],
+    list[Card],
+    list[Card],
+    list[Card],
+    list[Card],
+    list[Card],
+    list[Card],
+]
+
+
+class DiceRoll(NamedTuple):
+    rock: int
+    paper: int
+    scissors: int
+
+    @classmethod
+    def from_dto(cls, dto: DiceRollDto) -> "DiceRoll":
+        return DiceRoll(rock=dto.rock, paper=dto.paper, scissors=dto.scissors)
+
+    def to_dto(self) -> DiceRollDto:
+        return DiceRollDto(rock=self.rock, paper=self.paper, scissors=self.scissors)
+
+
+class Board(NamedTuple):
+    monkey_cards: CardPiles
+    wolf_cards: CardPiles
+
+    @classmethod
+    def from_dto(cls, dto: BoardDto) -> "Board":
+        return Board(
+            monkey_cards=(
+                [Card.from_dto(d) for d in dto.monkey_cards[0]],
+                [Card.from_dto(d) for d in dto.monkey_cards[1]],
+                [Card.from_dto(d) for d in dto.monkey_cards[2]],
+                [Card.from_dto(d) for d in dto.monkey_cards[3]],
+                [Card.from_dto(d) for d in dto.monkey_cards[4]],
+                [Card.from_dto(d) for d in dto.monkey_cards[5]],
+                [Card.from_dto(d) for d in dto.monkey_cards[6]],
+                [Card.from_dto(d) for d in dto.monkey_cards[7]],
+                [Card.from_dto(d) for d in dto.monkey_cards[8]],
+                [Card.from_dto(d) for d in dto.monkey_cards[9]],
+                [Card.from_dto(d) for d in dto.monkey_cards[10]],
+            ),
+            wolf_cards=(
+                [Card.from_dto(d) for d in dto.wolf_cards[0]],
+                [Card.from_dto(d) for d in dto.wolf_cards[1]],
+                [Card.from_dto(d) for d in dto.wolf_cards[2]],
+                [Card.from_dto(d) for d in dto.wolf_cards[3]],
+                [Card.from_dto(d) for d in dto.wolf_cards[4]],
+                [Card.from_dto(d) for d in dto.wolf_cards[5]],
+                [Card.from_dto(d) for d in dto.wolf_cards[6]],
+                [Card.from_dto(d) for d in dto.wolf_cards[7]],
+                [Card.from_dto(d) for d in dto.wolf_cards[8]],
+                [Card.from_dto(d) for d in dto.wolf_cards[9]],
+                [Card.from_dto(d) for d in dto.wolf_cards[10]],
+            ),
+        )
+
+    def to_dto(self) -> BoardDto:
+        return BoardDto(
+            monkey_cards=(
+                [c.to_dto() for c in self.monkey_cards[0]],
+                [c.to_dto() for c in self.monkey_cards[1]],
+                [c.to_dto() for c in self.monkey_cards[2]],
+                [c.to_dto() for c in self.monkey_cards[3]],
+                [c.to_dto() for c in self.monkey_cards[4]],
+                [c.to_dto() for c in self.monkey_cards[5]],
+                [c.to_dto() for c in self.monkey_cards[6]],
+                [c.to_dto() for c in self.monkey_cards[7]],
+                [c.to_dto() for c in self.monkey_cards[8]],
+                [c.to_dto() for c in self.monkey_cards[9]],
+                [c.to_dto() for c in self.monkey_cards[10]],
+            ),
+            wolf_cards=(
+                [c.to_dto() for c in self.wolf_cards[0]],
+                [c.to_dto() for c in self.wolf_cards[1]],
+                [c.to_dto() for c in self.wolf_cards[2]],
+                [c.to_dto() for c in self.wolf_cards[3]],
+                [c.to_dto() for c in self.wolf_cards[4]],
+                [c.to_dto() for c in self.wolf_cards[5]],
+                [c.to_dto() for c in self.wolf_cards[6]],
+                [c.to_dto() for c in self.wolf_cards[7]],
+                [c.to_dto() for c in self.wolf_cards[8]],
+                [c.to_dto() for c in self.wolf_cards[9]],
+                [c.to_dto() for c in self.wolf_cards[10]],
+            ),
+        )
+
+    def cards(self, team: Team) -> CardPiles:
+        if team == Team.monkey:
+            return self.monkey_cards
+        if team == Team.wolf:
+            return self.wolf_cards
+        raise ValueError(f"Unsupported team {team}")
+
+    def __str__(self) -> str:
+        self_str = ""
+
+        max_monkey_height = max([len(pile_cards) for pile_cards in self.monkey_cards])
+        for row_index in range(max_monkey_height - 1, -1, -1):
+            self_str += self.__row_str(self.monkey_cards, row_index) + "\n"
+
+        self_str += "--- " * 11 + "\n"
+
+        max_wolf_height = max([len(pile_cards) for pile_cards in self.wolf_cards])
+        for row_index in range(max_wolf_height):
+            self_str += self.__row_str(self.wolf_cards, row_index) + "\n"
+
+        return self_str
+
+    @staticmethod
+    def __row_str(cards: CardPiles, row_index: int) -> str:
+        row_str = ""
+
+        for pile_index in range(11):
+            if len(cards[pile_index]) <= row_index:
+                row_str += "    "
+            else:
+                row_str += cards[pile_index][row_index].__str__() + " "
+
+        return row_str
