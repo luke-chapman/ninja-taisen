@@ -1,19 +1,19 @@
+from copy import deepcopy
 from logging import getLogger
 
 from ninja_taisen.algos import board_inspector, card_mover
-from ninja_taisen.dtos import BoardDto, CategoryDto, TeamDto
-from ninja_taisen.objects.board_context import BoardContext
 from ninja_taisen.objects.safe_random import SafeRandom
+from ninja_taisen.objects.types import Board, BoardContext, Category, Team
 
 log = getLogger(__name__)
 
 
-def gather_complete_move_contexts(starting_board: BoardDto, team: TeamDto, random: SafeRandom) -> list[BoardContext]:
+def gather_complete_move_contexts(starting_board: Board, team: Team, random: SafeRandom) -> list[BoardContext]:
     board_contexts = []
     dice_rolls = [
-        (CategoryDto.rock, random.roll_dice()),
-        (CategoryDto.paper, random.roll_dice()),
-        (CategoryDto.scissors, random.roll_dice()),
+        (Category.rock, random.roll_dice()),
+        (Category.paper, random.roll_dice()),
+        (Category.scissors, random.roll_dice()),
     ]
     starting_context = BoardContext(board=starting_board, used_joker=False, dice_used=[])
 
@@ -41,9 +41,9 @@ def gather_complete_move_contexts(starting_board: BoardDto, team: TeamDto, rando
 
 def gather_single_move_contexts(
     starting_contexts: list[BoardContext],
-    category: CategoryDto,
+    category: Category,
     dice_roll: int,
-    team: TeamDto,
+    team: Team,
 ) -> list[BoardContext]:
     final_contexts = []
 
@@ -56,8 +56,8 @@ def gather_single_move_contexts(
         movable_locations = board_inspector.movable_card_locations(cards, category, starting_context.used_joker)
 
         for movable_location in movable_locations:
-            cloned_context = starting_context.clone()
-            using_joker = cards[movable_location[0]][movable_location[1]].category == CategoryDto.joker
+            cloned_context = deepcopy(starting_context)
+            using_joker = cards[movable_location[0]][movable_location[1]].category == Category.joker
 
             try:
                 card_mover.move_card(cloned_context.board, movable_location, dice_roll, team)

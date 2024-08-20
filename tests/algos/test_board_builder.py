@@ -3,8 +3,8 @@ from itertools import chain
 from more_itertools import unique_everseen
 
 from ninja_taisen.algos.board_builder import make_board
-from ninja_taisen.dtos import BOARD_LENGTH, BoardDto, CardDto, CardPilesDto, CategoryDto, TeamDto
 from ninja_taisen.objects.safe_random import SafeRandom
+from ninja_taisen.objects.types import BOARD_LENGTH, Board, Card, CardPiles, Category
 
 
 def test_make_board_not_shuffled() -> None:
@@ -31,30 +31,31 @@ def test_make_board_shuffled() -> None:
 
     unique_monkey_cards = sorted(unique_everseen(chain.from_iterable(shuffled_board.monkey_cards)))
     unique_wolf_cards = sorted(unique_everseen(chain.from_iterable(shuffled_board.wolf_cards)))
+    unique_ordered_cards = make_ordered_cards()
 
-    assert unique_monkey_cards == make_ordered_cards(TeamDto.monkey)
-    assert unique_wolf_cards == make_ordered_cards(TeamDto.wolf)
+    assert unique_monkey_cards == unique_ordered_cards
+    assert unique_wolf_cards == unique_ordered_cards
 
 
-def make_non_shuffled_board() -> BoardDto:
-    monkey_cards: CardPilesDto = (
+def make_non_shuffled_board() -> Board:
+    monkey_cards: CardPiles = (
         [
-            CardDto(team=TeamDto.monkey, category=CategoryDto.joker, strength=4),
-            CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=1),
-            CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=2),
-            CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=3),
+            Card(category=Category.joker, strength=4),
+            Card(category=Category.rock, strength=1),
+            Card(category=Category.rock, strength=2),
+            Card(category=Category.rock, strength=3),
         ],
         [
-            CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=1),
-            CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=2),
-            CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=3),
+            Card(category=Category.paper, strength=1),
+            Card(category=Category.paper, strength=2),
+            Card(category=Category.paper, strength=3),
         ],
         [
-            CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=1),
-            CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=2),
+            Card(category=Category.scissors, strength=1),
+            Card(category=Category.scissors, strength=2),
         ],
         [
-            CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=3),
+            Card(category=Category.scissors, strength=3),
         ],
         [],
         [],
@@ -65,7 +66,7 @@ def make_non_shuffled_board() -> BoardDto:
         [],
     )
 
-    wolf_cards: CardPilesDto = (
+    wolf_cards: CardPiles = (
         [],
         [],
         [],
@@ -74,38 +75,38 @@ def make_non_shuffled_board() -> BoardDto:
         [],
         [],
         [
-            CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=3),
+            Card(category=Category.scissors, strength=3),
         ],
         [
-            CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=1),
-            CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=2),
+            Card(category=Category.scissors, strength=1),
+            Card(category=Category.scissors, strength=2),
         ],
         [
-            CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=1),
-            CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=2),
-            CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=3),
+            Card(category=Category.paper, strength=1),
+            Card(category=Category.paper, strength=2),
+            Card(category=Category.paper, strength=3),
         ],
         [
-            CardDto(team=TeamDto.wolf, category=CategoryDto.joker, strength=4),
-            CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=1),
-            CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=2),
-            CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=3),
+            Card(category=Category.joker, strength=4),
+            Card(category=Category.rock, strength=1),
+            Card(category=Category.rock, strength=2),
+            Card(category=Category.rock, strength=3),
         ],
     )
 
-    return BoardDto(monkey_cards=monkey_cards, wolf_cards=wolf_cards)
+    return Board(monkey_cards=monkey_cards, wolf_cards=wolf_cards)
 
 
-def make_ordered_cards(team: TeamDto) -> list[CardDto]:
+def make_ordered_cards() -> list[Card]:
     return [
-        CardDto(team=team, category=CategoryDto.joker, strength=4),
-        CardDto(team=team, category=CategoryDto.paper, strength=1),
-        CardDto(team=team, category=CategoryDto.paper, strength=2),
-        CardDto(team=team, category=CategoryDto.paper, strength=3),
-        CardDto(team=team, category=CategoryDto.rock, strength=1),
-        CardDto(team=team, category=CategoryDto.rock, strength=2),
-        CardDto(team=team, category=CategoryDto.rock, strength=3),
-        CardDto(team=team, category=CategoryDto.scissors, strength=1),
-        CardDto(team=team, category=CategoryDto.scissors, strength=2),
-        CardDto(team=team, category=CategoryDto.scissors, strength=3),
+        Card(category=Category.joker, strength=4),
+        Card(category=Category.paper, strength=1),
+        Card(category=Category.paper, strength=2),
+        Card(category=Category.paper, strength=3),
+        Card(category=Category.rock, strength=1),
+        Card(category=Category.rock, strength=2),
+        Card(category=Category.rock, strength=3),
+        Card(category=Category.scissors, strength=1),
+        Card(category=Category.scissors, strength=2),
+        Card(category=Category.scissors, strength=3),
     ]

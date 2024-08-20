@@ -8,14 +8,14 @@ from polars.testing import assert_frame_equal
 
 from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.api import make_data_frame
-from ninja_taisen.strategy.strategy_names import StrategyNames
+from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
 def __run_simulation_regression_test(regen: bool, max_processes: int) -> None:
     expected = Path(__file__).resolve().parent / "expected_results.csv"
 
     instructions: list[InstructionDto] = []
-    for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(StrategyNames.ALL, StrategyNames.ALL)):
+    for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(ALL_STRATEGY_NAMES, ALL_STRATEGY_NAMES)):
         instructions.append(
             InstructionDto(id=index, seed=index, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         )

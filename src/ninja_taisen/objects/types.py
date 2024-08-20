@@ -1,7 +1,8 @@
+from dataclasses import dataclass
 from enum import IntEnum
 from typing import NamedTuple
 
-from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, DiceRollDto, TeamDto
+from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, DiceRollDto, StrategyName, TeamDto
 
 
 class Category(IntEnum):
@@ -41,16 +42,17 @@ class Card(NamedTuple):
     strength: int
 
     def __str__(self) -> str:
-        return f"{self.category[0]}{self.strength}".upper()
+        return f"{CATEGORY_TYPE_TO_DTO[self.category].value[0]}{self.strength}".upper()
 
     @classmethod
     def from_dto(cls, dto: CardDto) -> "Card":
-        return Card(category=dto.category, strength=dto.strength)
+        return Card(category=CATEGORY_DTO_TO_TYPE[dto.category], strength=dto.strength)
 
-    def to_dto(self) -> CardDto:
-        return CardDto(category=self.category, strength=self.strength)
+    def to_dto(self, team: TeamDto) -> CardDto:
+        return CardDto(team=team, category=CATEGORY_TYPE_TO_DTO[self.category], strength=self.strength)
 
 
+BOARD_LENGTH = 11
 CardPiles = tuple[
     list[Card],
     list[Card],
@@ -117,30 +119,30 @@ class Board(NamedTuple):
     def to_dto(self) -> BoardDto:
         return BoardDto(
             monkey_cards=(
-                [c.to_dto() for c in self.monkey_cards[0]],
-                [c.to_dto() for c in self.monkey_cards[1]],
-                [c.to_dto() for c in self.monkey_cards[2]],
-                [c.to_dto() for c in self.monkey_cards[3]],
-                [c.to_dto() for c in self.monkey_cards[4]],
-                [c.to_dto() for c in self.monkey_cards[5]],
-                [c.to_dto() for c in self.monkey_cards[6]],
-                [c.to_dto() for c in self.monkey_cards[7]],
-                [c.to_dto() for c in self.monkey_cards[8]],
-                [c.to_dto() for c in self.monkey_cards[9]],
-                [c.to_dto() for c in self.monkey_cards[10]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[0]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[1]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[2]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[3]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[4]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[5]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[6]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[7]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[8]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[9]],
+                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[10]],
             ),
             wolf_cards=(
-                [c.to_dto() for c in self.wolf_cards[0]],
-                [c.to_dto() for c in self.wolf_cards[1]],
-                [c.to_dto() for c in self.wolf_cards[2]],
-                [c.to_dto() for c in self.wolf_cards[3]],
-                [c.to_dto() for c in self.wolf_cards[4]],
-                [c.to_dto() for c in self.wolf_cards[5]],
-                [c.to_dto() for c in self.wolf_cards[6]],
-                [c.to_dto() for c in self.wolf_cards[7]],
-                [c.to_dto() for c in self.wolf_cards[8]],
-                [c.to_dto() for c in self.wolf_cards[9]],
-                [c.to_dto() for c in self.wolf_cards[10]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[0]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[1]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[2]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[3]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[4]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[5]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[6]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[7]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[8]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[9]],
+                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[10]],
             ),
         )
 
@@ -177,3 +179,13 @@ class Board(NamedTuple):
                 row_str += cards[pile_index][row_index].__str__() + " "
 
         return row_str
+
+
+@dataclass
+class BoardContext:  # Not a tuple - we need this one to be mutable
+    board: Board
+    used_joker: bool
+    dice_used: list[tuple[Category, int]]
+
+
+ALL_STRATEGY_NAMES = list(s.value for s in StrategyName)
