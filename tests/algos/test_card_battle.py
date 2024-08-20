@@ -1,5 +1,5 @@
 from ninja_taisen.algos import card_battle
-from ninja_taisen.objects.types import Card, Category
+from ninja_taisen.objects.types import BattleStatus, Card, Category
 
 
 def test_battle_draws() -> None:
@@ -66,7 +66,7 @@ def test_joker_non_joker_battles() -> None:
     assert MJ4.strength == 1
 
     WS1 = Card(category=Category.scissors, strength=1)
-    assert not card_battle.battle_winner(MJ4, WS1)
+    assert card_battle.battle_winner(MJ4, WS1).status == BattleStatus.draw
     assert MJ4.strength == 0
 
     WR2 = Card(category=Category.rock, strength=2)
@@ -77,7 +77,7 @@ def test_joker_joker_draws() -> None:
     for joker_strength in range(0, 4):
         MJ = Card(category=Category.joker, strength=joker_strength)
         WJ = Card(category=Category.joker, strength=joker_strength)
-        assert not card_battle.battle_winner(MJ, WJ)
+        assert card_battle.battle_winner(MJ, WJ).status == BattleStatus.draw
         assert MJ.strength == 0
         assert WJ.strength == 0
 
@@ -98,9 +98,12 @@ def test_joker_joker_wins() -> None:
 def assert_battle_draw(category: Category, strength: int) -> None:
     monkey = Card(category=category, strength=strength)
     wolf = Card(category=category, strength=strength)
-    assert not card_battle.battle_winner(monkey, wolf)
+    battle_result = card_battle.battle_winner(monkey, wolf)
+    assert battle_result.status == BattleStatus.draw
+    assert battle_result.winner is None
 
 
 def assert_battle_winner(expected_winner: Card, expected_loser: Card) -> None:
-    actual_winner = card_battle.battle_winner(expected_winner, expected_loser)
-    assert expected_winner == actual_winner
+    battle_result_1 = card_battle.battle_winner(expected_winner, expected_loser)
+    assert battle_result_1.status == BattleStatus.card_a_wins
+    assert battle_result_1.winner == expected_winner

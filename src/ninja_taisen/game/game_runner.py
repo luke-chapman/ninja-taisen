@@ -13,7 +13,7 @@ from ninja_taisen.algos import board_builder, board_inspector, board_state_gathe
 from ninja_taisen.dtos import InstructionDto, ResultDto
 from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import Team
+from ninja_taisen.objects.types import TEAM_TYPE_TO_DTO, Team
 from ninja_taisen.strategy.strategy import IStrategy
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
@@ -48,7 +48,7 @@ class GameRunner:
             seed=instruction.seed,
             monkey_strategy=instruction.monkey_strategy,
             wolf_strategy=instruction.wolf_strategy,
-            winner=str(victorious_team),
+            winner=TEAM_TYPE_TO_DTO[victorious_team].value if victorious_team is not None else "none",
             turn_count=turn_count,
             start_time=start_time,
             end_time=end_time,

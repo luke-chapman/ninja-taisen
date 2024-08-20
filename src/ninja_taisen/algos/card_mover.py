@@ -1,5 +1,5 @@
 from ninja_taisen.algos import card_battle
-from ninja_taisen.objects.types import BOARD_LENGTH, Board, Card, CardPiles, Category, Team
+from ninja_taisen.objects.types import BOARD_LENGTH, BattleStatus, Board, CardPiles, Category, Team
 
 
 def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
@@ -9,7 +9,7 @@ def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Tea
 
 
 def _move_card_recursive(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
-    team_cards = board.monkey_cards if team == Team.monkey else board.wolf_cards
+    team_cards = board.cards(team)
     old_pile_index = position[0]
     new_pile_index = old_pile_index + dice_roll if team == Team.monkey else old_pile_index - dice_roll
     new_pile_index = max(0, min(new_pile_index, BOARD_LENGTH - 1))
@@ -31,30 +31,32 @@ def _resolve_battles(board: Board, pile_index: int, team: Team) -> None:
     wolf_pile = board.wolf_cards[pile_index]
 
     while monkey_pile and wolf_pile:
-        winning_card = card_battle.battle_winner(monkey_pile[-1], wolf_pile[-1])
-        if winning_card:
-            if winning_card == monkey_pile[-1]:
-                wolf_pile.pop()
-            else:
-                assert winning_card == wolf_pile[-1]
-                monkey_pile.pop()
-        else:
+        battle_result = card_battle.battle_winner(monkey_pile[-1], wolf_pile[-1])
+        if battle_result.status == BattleStatus.card_a_wins:
+            wolf_pile.pop()
+        elif battle_result.status == BattleStatus.card_b_wins:
+            monkey_pile.pop()
+        elif battle_result.status == BattleStatus.draw:
+            #  If the result is a draw, both cards move one space back (unless the battle takes place on a home)
+            #  Any future battles are resolved starting with those closest to the team's home
             if team == Team.monkey:
                 if pile_index == BOARD_LENGTH - 1:
                     wolf_pile.pop()
                 else:
-                    move_card(board, (pile_index, len(monkey_pile) - 1), -1, Team.monkey)
-                    move_card(board, (pile_index, len(wolf_pile) - 1), -1, Team.wolf)
+                    _move_card_recursive(board, (pile_index, len(monkey_pile) - 1), -1, Team.monkey)
+                    _move_card_recursive(board, (pile_index, len(wolf_pile) - 1), -1, Team.wolf)
             else:
                 if pile_index == 0:
                     monkey_pile.pop()
                 else:
-                    move_card(board, (pile_index, len(wolf_pile) - 1), -1, Team.wolf)
-                    move_card(board, (pile_index, len(monkey_pile) - 1), -1, Team.monkey)
+                    _move_card_recursive(board, (pile_index, len(wolf_pile) - 1), -1, Team.wolf)
+                    _move_card_recursive(board, (pile_index, len(monkey_pile) - 1), -1, Team.monkey)
+        else:
+            raise ValueError(f"Unexpected battle_result.winner: {battle_result.status}")
 
 
 def _restore_jokers(cards: CardPiles) -> None:
-    for position_cards in cards:
-        for i, card in enumerate(position_cards):
+    for pile in cards:
+        for card in pile:
             if card.category == Category.joker:
-                position_cards[i] = Card(category=card.category, strength=4)
+                card.strength = 4

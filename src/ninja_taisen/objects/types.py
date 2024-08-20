@@ -40,13 +40,16 @@ TEAM_DTO_TO_TYPE = {TeamDto.monkey: Team.monkey, TeamDto.wolf: Team.wolf}
 TEAM_TYPE_TO_DTO = {v: k for k, v in TEAM_DTO_TO_TYPE.items()}
 
 
-@dataclass(order=True)
+@dataclass(order=True, eq=True)
 class Card:
     category: Category
     strength: int  # mutable - the strength of a joker decreases after each fight, but resets after a move is complete
 
     def __str__(self) -> str:
         return f"{CATEGORY_TYPE_TO_DTO[self.category].value[0]}{self.strength}".upper()
+
+    def display(self, team: Team) -> str:
+        return TEAM_TYPE_TO_DTO[team].value[0].upper() + str(self)
 
     @classmethod
     def from_dto(cls, dto: CardDto) -> "Card":
@@ -181,25 +184,25 @@ class Board(NamedTuple):
 
         max_monkey_height = max([len(pile_cards) for pile_cards in self.monkey_cards])
         for row_index in range(max_monkey_height - 1, -1, -1):
-            self_str += self.__row_str(self.monkey_cards, row_index) + "\n"
+            self_str += self.__row_str(self.monkey_cards, row_index, Team.monkey) + "\n"
 
         self_str += "--- " * 11 + "\n"
 
         max_wolf_height = max([len(pile_cards) for pile_cards in self.wolf_cards])
         for row_index in range(max_wolf_height):
-            self_str += self.__row_str(self.wolf_cards, row_index) + "\n"
+            self_str += self.__row_str(self.wolf_cards, row_index, Team.wolf) + "\n"
 
         return self_str
 
     @staticmethod
-    def __row_str(cards: CardPiles, row_index: int) -> str:
+    def __row_str(cards: CardPiles, row_index: int, team: Team) -> str:
         row_str = ""
 
         for pile_index in range(11):
             if len(cards[pile_index]) <= row_index:
                 row_str += "    "
             else:
-                row_str += cards[pile_index][row_index].__str__() + " "
+                row_str += cards[pile_index][row_index].display(team) + " "
 
         return row_str
 
@@ -208,6 +211,20 @@ class BoardStateMidTurn(NamedTuple):
     board: Board
     used_joker: bool
     dice_used: list[tuple[Category, int]]
+
+
+class BattleStatus(IntEnum):
+    card_a_wins = -1
+    draw = 0
+    card_b_wins = 1
+
+    def other(self) -> "BattleStatus":
+        return BattleStatus(-self.value)
+
+
+class BattleResult(NamedTuple):
+    status: BattleStatus
+    winner: Card | None
 
 
 ALL_STRATEGY_NAMES = list(s.value for s in StrategyName)
