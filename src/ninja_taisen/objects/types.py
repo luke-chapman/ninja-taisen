@@ -7,7 +7,7 @@ from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, StrategyName, Team
 
 
 # We represent Category as an IntEnum internally for speed
-# We check for rock/paper/scissors winners using arithemtic modulo 3
+# We check for rock/paper/scissors winners using arithmetic modulo 3
 class Category(IntEnum):
     rock = 0
     paper = 1
@@ -113,63 +113,47 @@ class Board(NamedTuple):
 
     @classmethod
     def from_dto(cls, dto: BoardDto) -> "Board":
+        def __monkey_cards(index: int) -> list[Card]:
+            return [Card.from_dto(d) for d in dto.monkey_cards.get(index, [])]
+
+        def __wolf_cards(index: int) -> list[Card]:
+            return [Card.from_dto(d) for d in dto.wolf_cards.get(index, [])]
+
         return Board(
             monkey_cards=(
-                [Card.from_dto(d) for d in dto.monkey_cards[0]],
-                [Card.from_dto(d) for d in dto.monkey_cards[1]],
-                [Card.from_dto(d) for d in dto.monkey_cards[2]],
-                [Card.from_dto(d) for d in dto.monkey_cards[3]],
-                [Card.from_dto(d) for d in dto.monkey_cards[4]],
-                [Card.from_dto(d) for d in dto.monkey_cards[5]],
-                [Card.from_dto(d) for d in dto.monkey_cards[6]],
-                [Card.from_dto(d) for d in dto.monkey_cards[7]],
-                [Card.from_dto(d) for d in dto.monkey_cards[8]],
-                [Card.from_dto(d) for d in dto.monkey_cards[9]],
-                [Card.from_dto(d) for d in dto.monkey_cards[10]],
+                __monkey_cards(0),
+                __monkey_cards(1),
+                __monkey_cards(2),
+                __monkey_cards(3),
+                __monkey_cards(4),
+                __monkey_cards(5),
+                __monkey_cards(6),
+                __monkey_cards(7),
+                __monkey_cards(8),
+                __monkey_cards(9),
+                __monkey_cards(10),
             ),
             wolf_cards=(
-                [Card.from_dto(d) for d in dto.wolf_cards[0]],
-                [Card.from_dto(d) for d in dto.wolf_cards[1]],
-                [Card.from_dto(d) for d in dto.wolf_cards[2]],
-                [Card.from_dto(d) for d in dto.wolf_cards[3]],
-                [Card.from_dto(d) for d in dto.wolf_cards[4]],
-                [Card.from_dto(d) for d in dto.wolf_cards[5]],
-                [Card.from_dto(d) for d in dto.wolf_cards[6]],
-                [Card.from_dto(d) for d in dto.wolf_cards[7]],
-                [Card.from_dto(d) for d in dto.wolf_cards[8]],
-                [Card.from_dto(d) for d in dto.wolf_cards[9]],
-                [Card.from_dto(d) for d in dto.wolf_cards[10]],
+                __wolf_cards(0),
+                __wolf_cards(1),
+                __wolf_cards(2),
+                __wolf_cards(3),
+                __wolf_cards(4),
+                __wolf_cards(5),
+                __wolf_cards(6),
+                __wolf_cards(7),
+                __wolf_cards(8),
+                __wolf_cards(9),
+                __wolf_cards(10),
             ),
         )
 
     def to_dto(self) -> BoardDto:
         return BoardDto(
-            monkey_cards=(
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[0]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[1]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[2]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[3]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[4]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[5]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[6]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[7]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[8]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[9]],
-                [c.to_dto(TeamDto.monkey) for c in self.monkey_cards[10]],
-            ),
-            wolf_cards=(
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[0]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[1]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[2]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[3]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[4]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[5]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[6]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[7]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[8]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[9]],
-                [c.to_dto(TeamDto.wolf) for c in self.wolf_cards[10]],
-            ),
+            monkey_cards={
+                i: [c.to_dto(TeamDto.monkey) for c in cs] for i, cs in enumerate(self.monkey_cards) if len(cs) > 0
+            },
+            wolf_cards={i: [c.to_dto(TeamDto.wolf) for c in cs] for i, cs in enumerate(self.wolf_cards) if len(cs) > 0},
         )
 
     def cards(self, team: Team) -> CardPiles:

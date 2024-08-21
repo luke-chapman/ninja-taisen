@@ -41,22 +41,6 @@ class CardDto(BaseModel):
     strength: int
 
 
-CardPilesDto = tuple[
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-    list[CardDto],
-]
-BOARD_LENGTH = 11
-
-
 class DiceRollDto(BaseModel):
     rock: int
     paper: int
@@ -64,8 +48,8 @@ class DiceRollDto(BaseModel):
 
 
 class BoardDto(BaseModel):
-    monkey_cards: CardPilesDto
-    wolf_cards: CardPilesDto
+    monkey_cards: dict[int, list[CardDto]]
+    wolf_cards: dict[int, list[CardDto]]
 
 
 class StrategyName(StrEnum):

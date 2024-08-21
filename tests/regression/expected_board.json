@@ -1,6 +1,6 @@
 {
-  "monkey_cards": [
-    [
+  "monkey_cards": {
+    "0": [
       {
         "team": "monkey",
         "category": "joker",
@@ -22,7 +22,7 @@
         "strength": 1
       }
     ],
-    [
+    "1": [
       {
         "team": "monkey",
         "category": "paper",
@@ -39,7 +39,7 @@
         "strength": 1
       }
     ],
-    [
+    "2": [
       {
         "team": "monkey",
         "category": "scissors",
@@ -51,37 +51,23 @@
         "strength": 2
       }
     ],
-    [
+    "3": [
       {
         "team": "monkey",
         "category": "paper",
         "strength": 1
       }
-    ],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    []
-  ],
-  "wolf_cards": [
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [
+    ]
+  },
+  "wolf_cards": {
+    "7": [
       {
         "team": "wolf",
         "category": "paper",
         "strength": 1
       }
     ],
-    [
+    "8": [
       {
         "team": "wolf",
         "category": "scissors",
@@ -93,7 +79,7 @@
         "strength": 2
       }
     ],
-    [
+    "9": [
       {
         "team": "wolf",
         "category": "paper",
@@ -110,7 +96,7 @@
         "strength": 3
       }
     ],
-    [
+    "10": [
       {
         "team": "wolf",
         "category": "joker",
@@ -132,5 +118,5 @@
         "strength": 3
       }
     ]
-  ]
+  }
 }
