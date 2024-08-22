@@ -7,15 +7,15 @@ from pstats import SortKey
 
 import polars as pl
 
+from ninja_taisen.dtos import InstructionDto, ResultDto
 from ninja_taisen.game.game_runner import simulate_many_multi_process
 from ninja_taisen.logging_setup import setup_logging
-from ninja_taisen.public_types import Instruction, Result
 
 log = getLogger(__name__)
 
 
 def simulate(
-    instructions: list[Instruction],
+    instructions: list[InstructionDto],
     max_processes: int = 1,
     per_process: int = 100,
     csv_results: Path | None = None,
@@ -23,7 +23,7 @@ def simulate(
     verbosity: int = logging.INFO,
     log_file: Path | None = None,
     profile: bool = False,
-) -> list[Result]:
+) -> list[ResultDto]:
     setup_logging(verbosity, log_file)
 
     if max_processes <= 0:
@@ -40,6 +40,7 @@ def simulate(
                 instructions=instructions,
                 max_processes=max_processes,
                 per_process=per_process,
+                verbosity=verbosity,
                 log_file=log_file,
             )
         profiler.print_stats(SortKey.TIME)
@@ -48,6 +49,7 @@ def simulate(
             instructions=instructions,
             max_processes=max_processes,
             per_process=per_process,
+            verbosity=verbosity,
             log_file=log_file,
         )
 
@@ -64,16 +66,16 @@ def simulate(
     return results
 
 
-def make_data_frame(results: list[Result]) -> pl.DataFrame:
+def make_data_frame(results: list[ResultDto]) -> pl.DataFrame:
     return pl.DataFrame(data=results, orient="row")
 
 
-def write_csv_results(results: list[Result], filename: Path) -> None:
+def write_csv_results(results: list[ResultDto], filename: Path) -> None:
     df = make_data_frame(results)
     df.write_csv(filename)
 
 
-def write_parquet_results(results: list[Result], filename: Path) -> None:
+def write_parquet_results(results: list[ResultDto], filename: Path) -> None:
     df = make_data_frame(results)
     df.write_parquet(filename)
 

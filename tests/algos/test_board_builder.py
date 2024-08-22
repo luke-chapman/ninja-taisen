@@ -3,9 +3,8 @@ from itertools import chain
 from more_itertools import unique_everseen
 
 from ninja_taisen.algos.board_builder import make_board
-from ninja_taisen.objects.board import BOARD_LENGTH, Board
-from ninja_taisen.objects.card import Card, CombatCategory, Team
 from ninja_taisen.objects.safe_random import SafeRandom
+from ninja_taisen.objects.types import BOARD_LENGTH, Board, Card, CardPiles, Category
 
 
 def test_make_board_not_shuffled() -> None:
@@ -32,30 +31,31 @@ def test_make_board_shuffled() -> None:
 
     unique_monkey_cards = sorted(unique_everseen(chain.from_iterable(shuffled_board.monkey_cards)))
     unique_wolf_cards = sorted(unique_everseen(chain.from_iterable(shuffled_board.wolf_cards)))
+    unique_ordered_cards = make_ordered_cards()
 
-    assert unique_monkey_cards == make_ordered_cards(Team.MONKEY)
-    assert unique_wolf_cards == make_ordered_cards(Team.WOLF)
+    assert unique_monkey_cards == unique_ordered_cards
+    assert unique_wolf_cards == unique_ordered_cards
 
 
 def make_non_shuffled_board() -> Board:
-    monkey_cards: list[list[Card]] = [
+    monkey_cards: CardPiles = (
         [
-            Card(Team.MONKEY, CombatCategory.JOKER, 4),
-            Card(Team.MONKEY, CombatCategory.ROCK, 1),
-            Card(Team.MONKEY, CombatCategory.ROCK, 2),
-            Card(Team.MONKEY, CombatCategory.ROCK, 3),
+            Card(category=Category.joker, strength=4),
+            Card(category=Category.rock, strength=1),
+            Card(category=Category.rock, strength=2),
+            Card(category=Category.rock, strength=3),
         ],
         [
-            Card(Team.MONKEY, CombatCategory.PAPER, 1),
-            Card(Team.MONKEY, CombatCategory.PAPER, 2),
-            Card(Team.MONKEY, CombatCategory.PAPER, 3),
+            Card(category=Category.paper, strength=1),
+            Card(category=Category.paper, strength=2),
+            Card(category=Category.paper, strength=3),
         ],
         [
-            Card(Team.MONKEY, CombatCategory.SCISSORS, 1),
-            Card(Team.MONKEY, CombatCategory.SCISSORS, 2),
+            Card(category=Category.scissors, strength=1),
+            Card(category=Category.scissors, strength=2),
         ],
         [
-            Card(Team.MONKEY, CombatCategory.SCISSORS, 3),
+            Card(category=Category.scissors, strength=3),
         ],
         [],
         [],
@@ -64,9 +64,9 @@ def make_non_shuffled_board() -> Board:
         [],
         [],
         [],
-    ]
+    )
 
-    wolf_cards: list[list[Card]] = [
+    wolf_cards: CardPiles = (
         [],
         [],
         [],
@@ -75,38 +75,38 @@ def make_non_shuffled_board() -> Board:
         [],
         [],
         [
-            Card(Team.WOLF, CombatCategory.SCISSORS, 3),
+            Card(category=Category.scissors, strength=3),
         ],
         [
-            Card(Team.WOLF, CombatCategory.SCISSORS, 1),
-            Card(Team.WOLF, CombatCategory.SCISSORS, 2),
+            Card(category=Category.scissors, strength=1),
+            Card(category=Category.scissors, strength=2),
         ],
         [
-            Card(Team.WOLF, CombatCategory.PAPER, 1),
-            Card(Team.WOLF, CombatCategory.PAPER, 2),
-            Card(Team.WOLF, CombatCategory.PAPER, 3),
+            Card(category=Category.paper, strength=1),
+            Card(category=Category.paper, strength=2),
+            Card(category=Category.paper, strength=3),
         ],
         [
-            Card(Team.WOLF, CombatCategory.JOKER, 4),
-            Card(Team.WOLF, CombatCategory.ROCK, 1),
-            Card(Team.WOLF, CombatCategory.ROCK, 2),
-            Card(Team.WOLF, CombatCategory.ROCK, 3),
+            Card(category=Category.joker, strength=4),
+            Card(category=Category.rock, strength=1),
+            Card(category=Category.rock, strength=2),
+            Card(category=Category.rock, strength=3),
         ],
-    ]
+    )
 
-    return Board(monkey_cards, wolf_cards)
+    return Board(monkey_cards=monkey_cards, wolf_cards=wolf_cards)
 
 
-def make_ordered_cards(team: Team) -> list[Card]:
+def make_ordered_cards() -> list[Card]:
     return [
-        Card(team, CombatCategory.ROCK, 1),
-        Card(team, CombatCategory.ROCK, 2),
-        Card(team, CombatCategory.ROCK, 3),
-        Card(team, CombatCategory.PAPER, 1),
-        Card(team, CombatCategory.PAPER, 2),
-        Card(team, CombatCategory.PAPER, 3),
-        Card(team, CombatCategory.SCISSORS, 1),
-        Card(team, CombatCategory.SCISSORS, 2),
-        Card(team, CombatCategory.SCISSORS, 3),
-        Card(team, CombatCategory.JOKER, 4),
+        Card(category=Category.rock, strength=1),
+        Card(category=Category.rock, strength=2),
+        Card(category=Category.rock, strength=3),
+        Card(category=Category.paper, strength=1),
+        Card(category=Category.paper, strength=2),
+        Card(category=Category.paper, strength=3),
+        Card(category=Category.scissors, strength=1),
+        Card(category=Category.scissors, strength=2),
+        Card(category=Category.scissors, strength=3),
+        Card(category=Category.joker, strength=4),
     ]

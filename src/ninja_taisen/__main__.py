@@ -6,8 +6,8 @@ from logging import getLogger
 from pathlib import Path
 
 from ninja_taisen.api import simulate
-from ninja_taisen.public_types import Instruction
-from ninja_taisen.strategy.strategy_names import StrategyNames
+from ninja_taisen.dtos import InstructionDto
+from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 log = getLogger(__name__)
 
@@ -16,8 +16,8 @@ def main(override_args: list[str] | None = None) -> int:
 
     parser = ArgumentParser()
     parser.add_argument("--games", type=int, default=1, help="Number of games to simulate")
-    parser.add_argument("--monkey-strategy", type=str, default="random", choices=StrategyNames.ALL)
-    parser.add_argument("--wolf-strategy", type=str, default="random", choices=StrategyNames.ALL)
+    parser.add_argument("--monkey-strategy", type=str, default="random", choices=ALL_STRATEGY_NAMES)
+    parser.add_argument("--wolf-strategy", type=str, default="random", choices=ALL_STRATEGY_NAMES)
     parser.add_argument("--verbosity", action="count", default=logging.INFO, help="Verbosity level for logging")
     parser.add_argument("--profile", action="store_true", help="Profile the code")
     parser.add_argument("--results-file", type=Path, help="Filename to store results in csv format")
@@ -29,7 +29,7 @@ def main(override_args: list[str] | None = None) -> int:
         results_file = Path.cwd() / ".ninja-taisen" / f"results_{timestamp}.csv"
 
     instructions = [
-        Instruction(id=index, seed=index, monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy)
+        InstructionDto(id=index, seed=index, monkey_strategy=args.monkey_strategy, wolf_strategy=args.wolf_strategy)
         for index in range(args.games)
     ]
 

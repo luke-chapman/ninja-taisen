@@ -7,14 +7,13 @@ from logging import getLogger
 from pathlib import Path
 from time import perf_counter
 
-from more_itertools import unique_everseen
 from pydantic import BaseModel
 
-from ninja_taisen.algos import board_builder, board_context_gatherer, board_inspector
+from ninja_taisen.algos import board_builder, board_inspector, board_state_gatherer
+from ninja_taisen.dtos import InstructionDto, ResultDto
 from ninja_taisen.logging_setup import setup_logging
-from ninja_taisen.objects.card import Team
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.public_types import Instruction, Result
+from ninja_taisen.objects.types import TEAM_TYPE_TO_DTO, Team
 from ninja_taisen.strategy.strategy import IStrategy
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
@@ -26,11 +25,11 @@ class GameRunner:
         self, monkey_strategy: IStrategy, wolf_strategy: IStrategy, starting_team: Team, random: SafeRandom
     ) -> None:
         self.board = board_builder.make_board(random=random)
-        self.strategies = {Team.MONKEY: monkey_strategy, Team.WOLF: wolf_strategy}
+        self.strategies = {Team.monkey: monkey_strategy, Team.wolf: wolf_strategy}
         self.starting_team = starting_team
         self.random = random
 
-    def execute(self, instruction: Instruction) -> Result:
+    def execute(self, instruction: InstructionDto) -> ResultDto:
         start_time = datetime.datetime.now(datetime.UTC)
 
         team = self.starting_team
@@ -44,12 +43,12 @@ class GameRunner:
             turn_count += 1
 
         end_time = datetime.datetime.now(datetime.UTC)
-        result = Result(
+        result = ResultDto(
             id=instruction.id,
             seed=instruction.seed,
             monkey_strategy=instruction.monkey_strategy,
             wolf_strategy=instruction.wolf_strategy,
-            winner=str(victorious_team),
+            winner=TEAM_TYPE_TO_DTO[victorious_team].value if victorious_team is not None else "none",
             turn_count=turn_count,
             start_time=start_time,
             end_time=end_time,
@@ -63,13 +62,12 @@ class GameRunner:
         return result
 
     def __execute_turn(self, team: Team) -> None:
-        board_contexts = board_context_gatherer.gather_complete_move_contexts(self.board, team, random=self.random)
-        unique_boards = list(unique_everseen(context.board for context in board_contexts))
-        if unique_boards:
-            self.board = self.strategies[team].choose_board(unique_boards, team)
+        board_states = board_state_gatherer.gather_all_board_states_post_move(self.board, team, random=self.random)
+        if board_states:
+            self.board = self.strategies[team].choose_board([s.board for s in board_states], team)
 
 
-def simulate_one(instruction: Instruction) -> Result:
+def simulate_one(instruction: InstructionDto) -> ResultDto:
     random = SafeRandom(instruction.seed)
 
     monkey_strategy = lookup_strategy(instruction.monkey_strategy, random)
@@ -78,7 +76,7 @@ def simulate_one(instruction: Instruction) -> Result:
     game_runner = GameRunner(
         monkey_strategy=monkey_strategy,
         wolf_strategy=wolf_strategy,
-        starting_team=Team.MONKEY,
+        starting_team=Team.monkey,
         random=random,
     )
     return game_runner.execute(instruction)
@@ -86,12 +84,13 @@ def simulate_one(instruction: Instruction) -> Result:
 
 # We have to put all arguments for the multiprocessing subprocess into a class which can be pickled
 class SubprocessArgs(BaseModel):
-    instructions: list[Instruction]
+    instructions: list[InstructionDto]
+    verbosity: int
     log_file: Path | None
 
 
-def simulate_many_single_thread(args: SubprocessArgs) -> list[Result]:
-    setup_logging(verbosity=logging.INFO, log_file=args.log_file)
+def simulate_many_single_thread(args: SubprocessArgs) -> list[ResultDto]:
+    setup_logging(verbosity=args.verbosity, log_file=args.log_file)
 
     suffix = (
         f"block with ids {args.instructions[0].id}-{args.instructions[-1].id} "
@@ -106,8 +105,14 @@ def simulate_many_single_thread(args: SubprocessArgs) -> list[Result]:
 
 
 def simulate_many_multi_process(
-    instructions: list[Instruction], max_processes: int, per_process: int, log_file: Path | None
-) -> list[Result]:
+    instructions: list[InstructionDto], max_processes: int, per_process: int, verbosity: int, log_file: Path | None
+) -> list[ResultDto]:
+    if max_processes == 1:
+        log.info("Bypassing multiprocessing.Pool because max_processes=1 specified")
+        return simulate_many_single_thread(
+            SubprocessArgs(instructions=instructions, verbosity=log.level, log_file=log_file)
+        )
+
     assert max_processes > 0
     assert per_process > 0
     log.info(
@@ -116,7 +121,9 @@ def simulate_many_multi_process(
 
     blocks_count = int(math.ceil(len(instructions) / per_process))
     i_blocks = [instructions[i * per_process : (i + 1) * per_process] for i in range(blocks_count)]
-    subprocess_args = [SubprocessArgs(instructions=i_block, log_file=log_file) for i_block in i_blocks]
+    subprocess_args = [
+        SubprocessArgs(instructions=i_block, verbosity=verbosity, log_file=log_file) for i_block in i_blocks
+    ]
 
     with multiprocessing.Pool(processes=max_processes) as pool:
         r_blocks = pool.map(simulate_many_single_thread, subprocess_args)

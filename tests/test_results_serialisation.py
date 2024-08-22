@@ -4,15 +4,15 @@ from pathlib import Path
 import pytest
 from polars.testing import assert_frame_equal
 
-from ninja_taisen import Result
+from ninja_taisen import ResultDto
 from ninja_taisen.api import (
     read_csv_results,
     read_parquet_results,
     write_csv_results,
     write_parquet_results,
 )
-from ninja_taisen.objects.card import Team
-from ninja_taisen.strategy.strategy_names import StrategyNames
+from ninja_taisen.dtos import TeamDto
+from ninja_taisen.objects.types import StrategyName
 
 
 @pytest.mark.parametrize("file_format", ["csv", "parquet"])
@@ -20,23 +20,23 @@ def test_csv_round_trip(file_format: str, tmp_path: Path) -> None:
     now = datetime.datetime.now(datetime.UTC)
 
     results = [
-        Result(
+        ResultDto(
             id=0,
             seed=5,
-            monkey_strategy=StrategyNames.random,
-            wolf_strategy=StrategyNames.metric_count,
-            winner=str(Team.MONKEY),
+            monkey_strategy=StrategyName.random,
+            wolf_strategy=StrategyName.metric_count,
+            winner=str(TeamDto.monkey),
             turn_count=18,
             start_time=now,
             end_time=now + datetime.timedelta(milliseconds=100),
             process_name="process-1",
         ),
-        Result(
+        ResultDto(
             id=1,
             seed=55,
-            monkey_strategy=StrategyNames.random_spot_win,
-            wolf_strategy=StrategyNames.metric_position,
-            winner=str(Team.WOLF),
+            monkey_strategy=StrategyName.random_spot_win,
+            wolf_strategy=StrategyName.metric_position,
+            winner=str(TeamDto.wolf),
             turn_count=22,
             start_time=datetime.datetime.now(datetime.UTC) + datetime.timedelta(milliseconds=110),
             end_time=datetime.datetime.now(datetime.UTC) + datetime.timedelta(milliseconds=211),

@@ -1,43 +1,42 @@
-from ninja_taisen.objects.board import BOARD_LENGTH, Board
-from ninja_taisen.objects.card import Card, CombatCategory, Team
 from ninja_taisen.objects.safe_random import SafeRandom
+from ninja_taisen.objects.types import Board, Card, CardPiles, Category
 
 
 def make_board(random: SafeRandom, shuffle_cards: bool = True) -> Board:
-    return Board(_monkey_cards(random, shuffle_cards), _wolf_cards(random, shuffle_cards))
+    return Board(monkey_cards=_monkey_cards(random, shuffle_cards), wolf_cards=_wolf_cards(random, shuffle_cards))
 
 
-def _monkey_cards(random: SafeRandom, shuffle_cards: bool) -> list[list[Card]]:
-    cards: list[list[Card]] = [[] for _ in range(BOARD_LENGTH)]
-    cards[0].append(Card(Team.MONKEY, CombatCategory.JOKER, 4))
+def _monkey_cards(random: SafeRandom, shuffle_cards: bool) -> CardPiles:
+    cards: CardPiles = ([], [], [], [], [], [], [], [], [], [], [])
+    cards[0].append(Card(category=Category.joker, strength=4))
 
-    remaining_cards = _non_jokers(Team.MONKEY, random, shuffle_cards)
+    remaining_cards = _non_jokers(random, shuffle_cards)
     _add_remaining_cards(cards, remaining_cards, {0: 3, 1: 3, 2: 2, 3: 1})
 
     return cards
 
 
-def _wolf_cards(random: SafeRandom, shuffle_cards: bool) -> list[list[Card]]:
-    cards: list[list[Card]] = [[] for _ in range(BOARD_LENGTH)]
-    cards[-1].append(Card(Team.WOLF, CombatCategory.JOKER, 4))
+def _wolf_cards(random: SafeRandom, shuffle_cards: bool) -> CardPiles:
+    cards: CardPiles = ([], [], [], [], [], [], [], [], [], [], [])
+    cards[-1].append(Card(category=Category.joker, strength=4))
 
-    remaining_cards = _non_jokers(Team.WOLF, random, shuffle_cards)
+    remaining_cards = _non_jokers(random, shuffle_cards)
     _add_remaining_cards(cards, remaining_cards, {-1: 3, -2: 3, -3: 2, -4: 1})
 
     return cards
 
 
-def _non_jokers(team: Team, random: SafeRandom, shuffle_cards: bool) -> list[Card]:
+def _non_jokers(random: SafeRandom, shuffle_cards: bool) -> list[Card]:
     non_jokers = [
-        Card(team, CombatCategory.ROCK, 1),
-        Card(team, CombatCategory.ROCK, 2),
-        Card(team, CombatCategory.ROCK, 3),
-        Card(team, CombatCategory.PAPER, 1),
-        Card(team, CombatCategory.PAPER, 2),
-        Card(team, CombatCategory.PAPER, 3),
-        Card(team, CombatCategory.SCISSORS, 1),
-        Card(team, CombatCategory.SCISSORS, 2),
-        Card(team, CombatCategory.SCISSORS, 3),
+        Card(category=Category.rock, strength=1),
+        Card(category=Category.rock, strength=2),
+        Card(category=Category.rock, strength=3),
+        Card(category=Category.paper, strength=1),
+        Card(category=Category.paper, strength=2),
+        Card(category=Category.paper, strength=3),
+        Card(category=Category.scissors, strength=1),
+        Card(category=Category.scissors, strength=2),
+        Card(category=Category.scissors, strength=3),
     ]
 
     if shuffle_cards:
@@ -47,7 +46,7 @@ def _non_jokers(team: Team, random: SafeRandom, shuffle_cards: bool) -> list[Car
 
 
 def _add_remaining_cards(
-    cards: list[list[Card]],
+    cards: CardPiles,
     shuffled_cards: list[Card],
     initial_positions: dict[int, int],
 ) -> None:

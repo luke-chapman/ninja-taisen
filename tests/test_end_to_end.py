@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from ninja_taisen import Instruction, simulate
+from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.__main__ import main
 from ninja_taisen.api import make_data_frame, read_csv_results
-from ninja_taisen.strategy.strategy_names import StrategyNames
+from ninja_taisen.objects.types import ALL_STRATEGY_NAMES, StrategyName
 
 
 def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocation: str, tmp_path: Path) -> None:
@@ -25,7 +25,7 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
         frame = read_csv_results(results_file)
     elif invocation == "library_api":
         results = simulate(
-            [Instruction(id=0, seed=0, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)],
+            [InstructionDto(id=0, seed=0, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)],
             csv_results=results_file,
         )
         frame = make_data_frame(results)
@@ -46,7 +46,7 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
     assert frame["monkey_strategy"][0] == monkey_strategy
     assert frame["wolf_strategy"][0] == wolf_strategy
     assert frame["seed"][0] == 0
-    assert frame["winner"][0] in ("MONKEY", "WOLF", "NONE")
+    assert frame["winner"][0] in ("monkey", "wolf", "none")
     assert 0 < frame["turn_count"][0] < 100
 
     time_taken_s = (frame["end_time"][0] - frame["start_time"][0]).total_seconds()
@@ -54,8 +54,8 @@ def __launch_and_assert_game(monkey_strategy: str, wolf_strategy: str, invocatio
     assert frame["process_name"][0]
 
 
-@pytest.mark.parametrize("monkey_strategy", StrategyNames.ALL)
-@pytest.mark.parametrize("wolf_strategy", StrategyNames.ALL)
+@pytest.mark.parametrize("monkey_strategy", ALL_STRATEGY_NAMES)
+@pytest.mark.parametrize("wolf_strategy", ALL_STRATEGY_NAMES)
 def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path: Path) -> None:
     __launch_and_assert_game(
         monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy, invocation="library_api", tmp_path=tmp_path
@@ -65,8 +65,8 @@ def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path
 # We only test one strategy-pair from the command line because launching a subprocess is slow
 def test_from_command_line(tmp_path: Path) -> None:
     __launch_and_assert_game(
-        monkey_strategy=StrategyNames.random_spot_win,
-        wolf_strategy=StrategyNames.metric_strength,
+        monkey_strategy=StrategyName.random_spot_win,
+        wolf_strategy=StrategyName.metric_strength,
         invocation="command_line",
         tmp_path=tmp_path,
     )
