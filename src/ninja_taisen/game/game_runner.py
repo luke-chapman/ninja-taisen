@@ -85,11 +85,12 @@ def simulate_one(instruction: InstructionDto) -> ResultDto:
 # We have to put all arguments for the multiprocessing subprocess into a class which can be pickled
 class SubprocessArgs(BaseModel):
     instructions: list[InstructionDto]
+    verbosity: int
     log_file: Path | None
 
 
 def simulate_many_single_thread(args: SubprocessArgs) -> list[ResultDto]:
-    setup_logging(verbosity=logging.INFO, log_file=args.log_file)
+    setup_logging(verbosity=args.verbosity, log_file=args.log_file)
 
     suffix = (
         f"block with ids {args.instructions[0].id}-{args.instructions[-1].id} "
@@ -108,7 +109,9 @@ def simulate_many_multi_process(
 ) -> list[ResultDto]:
     if max_processes == 1:
         log.info("Bypassing multiprocessing.Pool because max_processes=1 specified")
-        return simulate_many_single_thread(SubprocessArgs(instructions=instructions, log_file=log_file))
+        return simulate_many_single_thread(
+            SubprocessArgs(instructions=instructions, verbosity=log.level, log_file=log_file)
+        )
 
     assert max_processes > 0
     assert per_process > 0
@@ -118,7 +121,9 @@ def simulate_many_multi_process(
 
     blocks_count = int(math.ceil(len(instructions) / per_process))
     i_blocks = [instructions[i * per_process : (i + 1) * per_process] for i in range(blocks_count)]
-    subprocess_args = [SubprocessArgs(instructions=i_block, log_file=log_file) for i_block in i_blocks]
+    subprocess_args = [
+        SubprocessArgs(instructions=i_block, verbosity=log.level, log_file=log_file) for i_block in i_blocks
+    ]
 
     with multiprocessing.Pool(processes=max_processes) as pool:
         r_blocks = pool.map(simulate_many_single_thread, subprocess_args)
