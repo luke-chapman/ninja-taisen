@@ -1,6 +1,7 @@
 from logging import getLogger
 
-from ninja_taisen.algos import board_inspector, card_mover
+from ninja_taisen.algos import board_inspector
+from ninja_taisen.algos.card_mover import CardMover
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import CATEGORY_TYPE_TO_DTO, TEAM_TYPE_TO_DTO, Board, BoardStateMidTurn, Category, Team
 
@@ -60,11 +61,14 @@ def gather_board_state_post_move(
             using_joker = cards[pile_index][card_index].category == Category.joker
 
             try:
-                card_mover.move_card(cloned_board, (pile_index, card_index), dice_roll, team)
+                card_mover = CardMover(board=cloned_board)
+                card_mover.move_card_and_resolve_battles(
+                    team=team, dice_roll=dice_roll, pile_index=pile_index, card_index=card_index
+                )
             except Exception as e:
                 log.error(e)
                 log.error("Error moving card!")
-                log.error(f"Starting board\n\n{initial_state.board}")
+                log.error(f"Starting board\n{initial_state.board}")
                 log.error(
                     f"team={TEAM_TYPE_TO_DTO[team].value}, "
                     f"category={CATEGORY_TYPE_TO_DTO[category].value}, "

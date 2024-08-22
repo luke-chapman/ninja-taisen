@@ -223,4 +223,4 @@ class BattleResult(NamedTuple):
     winner: Card | None
 
 
-ALL_STRATEGY_NAMES = list(s.value for s in StrategyName)
+ALL_STRATEGY_NAMES = list(StrategyName)
