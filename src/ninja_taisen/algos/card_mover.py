@@ -58,8 +58,6 @@ class CardMover:
         log.debug(f"Board after card move, pre-battles\n{self.board}")
 
     def __resolve_battle(self, pile_index: int, team: Team) -> None:
-        self.remaining_battles = [i for i in self.remaining_battles if i != pile_index]
-
         monkey_pile = self.board.monkey_cards[pile_index]
         wolf_pile = self.board.wolf_cards[pile_index]
 
@@ -113,7 +111,8 @@ class CardMover:
             else:
                 raise ValueError(f"Unexpected battle_result.status: {battle_result.status}")
 
-        log.debug("Battle at pile_index %s resolved - board\n%s", pile_index, self.board)
+        log.debug("All battles at pile_index %s resolved - board\n%s", pile_index, self.board)
+        self.remaining_battles = [i for i in self.remaining_battles if i != pile_index]
 
     @staticmethod
     def __restore_jokers(card_piles: CardPiles) -> None:
