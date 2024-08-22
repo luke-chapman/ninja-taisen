@@ -1,5 +1,17 @@
+import logging
+
 from ninja_taisen.algos import card_battle
-from ninja_taisen.objects.types import BOARD_LENGTH, BattleStatus, Board, CardPiles, Category, Team
+from ninja_taisen.objects.types import (
+    BOARD_LENGTH,
+    TEAM_TYPE_TO_DTO,
+    BattleStatus,
+    Board,
+    CardPiles,
+    Category,
+    Team,
+)
+
+log = logging.getLogger(__name__)
 
 
 def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
@@ -7,8 +19,16 @@ def move_card(board: Board, position: tuple[int, int], dice_roll: int, team: Tea
     __restore_jokers(board.monkey_cards)
     __restore_jokers(board.wolf_cards)
 
+    if log.level <= logging.DEBUG:
+        log.debug(f"Final board\n\n{board}")
+
 
 def __move_card_recursive(board: Board, position: tuple[int, int], dice_roll: int, team: Team) -> None:
+    if log.level <= logging.DEBUG:
+        log.debug(f"Starting board\n\n{board}")
+        log.debug(f"team={TEAM_TYPE_TO_DTO[team].value}, dice_roll={dice_roll}")
+        log.debug(f"pile_index={position[0]}, card_index={position[1]}")
+
     team_cards = board.cards(team)
     old_pile_index = position[0]
     new_pile_index = old_pile_index + dice_roll if team == Team.monkey else old_pile_index - dice_roll

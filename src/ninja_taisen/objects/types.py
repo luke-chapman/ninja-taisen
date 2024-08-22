@@ -1,5 +1,4 @@
 from copy import deepcopy
-from dataclasses import dataclass
 from enum import IntEnum
 from typing import NamedTuple
 
@@ -40,10 +39,23 @@ TEAM_DTO_TO_TYPE = {TeamDto.monkey: Team.monkey, TeamDto.wolf: Team.wolf}
 TEAM_TYPE_TO_DTO = {v: k for k, v in TEAM_DTO_TO_TYPE.items()}
 
 
-@dataclass(order=True, eq=True)
 class Card:
-    category: Category
-    strength: int  # mutable - the strength of a joker decreases after each fight, but resets after a move is complete
+    def __init__(self, category: Category, strength: int) -> None:
+        self.category = category
+        self.strength = strength
+
+    def __eq__(self, other):
+        if not isinstance(other, Card):
+            raise TypeError(f"Unexpected type {type(other)}")
+        return (self.category, self.strength) == (other.strength, other.category)
+
+    def __hash__(self) -> int:
+        return hash((self.category, self.strength))
+
+    def __lt__(self, other):
+        if not isinstance(other, Card):
+            raise TypeError(f"Unexpected type {type(other)}")
+        return (self.category, self.strength) < (other.strength, other.category)
 
     def __str__(self) -> str:
         return f"{CATEGORY_TYPE_TO_DTO[self.category].value[0]}{self.strength}".upper()

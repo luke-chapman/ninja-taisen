@@ -68,7 +68,7 @@ def gather_board_state_post_move(
                 log.error(
                     f"team={TEAM_TYPE_TO_DTO[team].value}, "
                     f"category={CATEGORY_TYPE_TO_DTO[category].value}, "
-                    f"dice_roll={dice_roll}, "
+                    f"dice_roll={dice_roll}"
                 )
                 log.error(f"pile_index={pile_index}, card_index={card_index}")
                 raise
