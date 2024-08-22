@@ -1,4 +1,5 @@
 from ninja_taisen.algos import card_battle
+from ninja_taisen.algos.card_battle import battle_winner
 from ninja_taisen.objects.types import BattleStatus, Card, Category
 
 
@@ -6,6 +7,10 @@ def test_battle_draws() -> None:
     assert_battle_draw(Category.rock, 1)
     assert_battle_draw(Category.paper, 2)
     assert_battle_draw(Category.scissors, 3)
+    assert_battle_draw(Category.joker, 0)
+    assert_battle_draw(Category.joker, 1)
+    assert_battle_draw(Category.joker, 2)
+    assert_battle_draw(Category.joker, 3)
     assert_battle_draw(Category.joker, 4)
 
 
@@ -85,14 +90,22 @@ def test_joker_joker_draws() -> None:
 def test_joker_joker_wins() -> None:
     MJ = Card(category=Category.joker, strength=4)
     WJ2 = Card(category=Category.joker, strength=1)
-    winner_a = card_battle.battle_winner(MJ, WJ2)
-    assert winner_a is not None
+    result_a = card_battle.battle_winner(MJ, WJ2)
+    assert result_a.status == BattleStatus.card_a_wins
+    assert result_a.winner == MJ
     assert MJ.strength == 3
 
     WJ1 = Card(category=Category.joker, strength=2)
-    winner_b = card_battle.battle_winner(MJ, WJ1)
-    assert winner_b is not None
+    result_b = card_battle.battle_winner(WJ1, MJ)
+    assert result_b.status == BattleStatus.card_b_wins
+    assert result_b.winner == MJ
     assert MJ.strength == 1
+
+    WJ4 = Card(category=Category.joker, strength=4)
+    result_c = card_battle.battle_winner(MJ, WJ4)
+    assert result_c.status == BattleStatus.card_b_wins
+    assert result_c.winner == WJ4
+    assert WJ4.strength == 3
 
 
 def assert_battle_draw(category: Category, strength: int) -> None:
@@ -103,7 +116,17 @@ def assert_battle_draw(category: Category, strength: int) -> None:
     assert battle_result.winner is None
 
 
-def assert_battle_winner(expected_winner: Card, expected_loser: Card) -> None:
-    battle_result_1 = card_battle.battle_winner(expected_winner, expected_loser)
+def assert_battle_winner(winner: Card, loser: Card) -> None:
+    winner_copy = Card(winner.category, winner.strength)
+    loser_copy = Card(loser.category, loser.strength)
+
+    battle_result_1 = card_battle.battle_winner(winner, loser)
     assert battle_result_1.status == BattleStatus.card_a_wins
-    assert battle_result_1.winner == expected_winner
+    assert battle_result_1.winner == winner
+
+    battle_result_2 = card_battle.battle_winner(loser_copy, winner_copy)
+    assert battle_result_2.status == BattleStatus.card_b_wins
+    assert battle_result_2.winner == winner_copy
+
+    assert winner_copy.strength == winner.strength
+    assert loser_copy.strength == loser.strength

@@ -28,7 +28,7 @@ def run() -> None:
     log.info(f"Will simulate {len(instructions)} games")
     simulate(
         instructions=instructions,
-        max_processes=-1,
+        max_processes=1,
         parquet_results=results_file,
         verbosity=logging.INFO,
         log_file=results_dir / "log.txt",
