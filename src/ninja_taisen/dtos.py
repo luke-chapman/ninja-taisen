@@ -1,17 +1,22 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from pydantic.alias_generators import to_camel
 
 
-class InstructionDto(BaseModel):
+class NinjaTaisenModel(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
+
+class InstructionDto(NinjaTaisenModel):
     id: int
     seed: int
     monkey_strategy: str
     wolf_strategy: str
 
 
-class ResultDto(BaseModel):
+class ResultDto(NinjaTaisenModel):
     id: int
     seed: int
     monkey_strategy: str
@@ -35,13 +40,13 @@ class TeamDto(StrEnum):
     wolf = "wolf"
 
 
-class DiceRollDto(BaseModel):
+class DiceRollDto(NinjaTaisenModel):
     rock: int
     paper: int
     scissors: int
 
 
-class BoardDto(BaseModel):
+class BoardDto(NinjaTaisenModel):
     monkey: dict[int, list[str]]
     wolf: dict[int, list[str]]
 
@@ -54,16 +59,16 @@ class StrategyName(StrEnum):
     metric_strength = "metric_strength"
 
 
-class MoveRequestBody(BaseModel):
+class MoveRequestBody(NinjaTaisenModel):
     board: BoardDto
     dice: DiceRollDto
     team: TeamDto
 
 
-class MoveDto(BaseModel):
+class MoveDto(NinjaTaisenModel):
     dice_category: CategoryDto
     card: str
 
 
-class MoveResponseBody(BaseModel):
+class MoveResponseBody(NinjaTaisenModel):
     moves: list[MoveDto]
