@@ -58,6 +58,8 @@ class CardMover:
         log.debug(f"Board after card move, pre-battles\n{self.board}")
 
     def __resolve_battle(self, pile_index: int, team: Team) -> None:
+        self.remaining_battles = [i for i in self.remaining_battles if i != pile_index]
+
         monkey_pile = self.board.monkey_cards[pile_index]
         wolf_pile = self.board.wolf_cards[pile_index]
 
@@ -82,7 +84,7 @@ class CardMover:
                         wolf_pile.pop()
                     else:
                         log.debug(
-                            "Draw - both cards retreat, run adjacent battles, continue this battle later\n%s",
+                            "Draw - both cards retreat, schedule adjacent battles\n%s",
                             self.board,
                         )
                         self.__move_card(
@@ -91,14 +93,13 @@ class CardMover:
                         self.__move_card(
                             team=Team.monkey, pile_index=pile_index, card_index=len(monkey_pile) - 1, dice_roll=-1
                         )
-                        return
                 elif team == Team.wolf:
                     if pile_index == 0:
                         log.debug("Draw in monkey home - removing M%s", monkey_pile[-1])
                         monkey_pile.pop()
                     else:
                         log.debug(
-                            "Draw - both cards retreat, run adjacent battles, continue this battle later\n%s",
+                            "Draw - both cards retreat, schedule adjacent battles\n%s",
                             self.board,
                         )
                         self.__move_card(
@@ -107,14 +108,12 @@ class CardMover:
                         self.__move_card(
                             team=Team.wolf, pile_index=pile_index, card_index=len(wolf_pile) - 1, dice_roll=-1
                         )
-                        return
                 else:
                     raise ValueError(f"Unexpected team: {team}")
             else:
                 raise ValueError(f"Unexpected battle_result.status: {battle_result.status}")
 
-        log.debug("All battles at pile_index %s resolved - board\n%s", pile_index, self.board)
-        self.remaining_battles = [i for i in self.remaining_battles if i != pile_index]
+        log.debug("Battle at pile_index %s resolved - board\n%s", pile_index, self.board)
 
     @staticmethod
     def __restore_jokers(card_piles: CardPiles) -> None:
