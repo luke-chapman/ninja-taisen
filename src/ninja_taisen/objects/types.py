@@ -67,8 +67,8 @@ class Card:
     def from_dto(cls, dto: CardDto) -> "Card":
         return Card(category=CATEGORY_DTO_TO_TYPE[dto.category], strength=dto.strength)
 
-    def to_dto(self, team: TeamDto) -> CardDto:
-        return CardDto(team=team, category=CATEGORY_TYPE_TO_DTO[self.category], strength=self.strength)
+    def to_dto(self) -> CardDto:
+        return CardDto(category=CATEGORY_TYPE_TO_DTO[self.category], strength=self.strength)
 
 
 BOARD_LENGTH = 11
@@ -162,10 +162,8 @@ class Board(NamedTuple):
 
     def to_dto(self) -> BoardDto:
         return BoardDto(
-            monkey_cards={
-                i: [c.to_dto(TeamDto.monkey) for c in cs] for i, cs in enumerate(self.monkey_cards) if len(cs) > 0
-            },
-            wolf_cards={i: [c.to_dto(TeamDto.wolf) for c in cs] for i, cs in enumerate(self.wolf_cards) if len(cs) > 0},
+            monkey_cards={i: [c.to_dto() for c in cs] for i, cs in enumerate(self.monkey_cards) if len(cs) > 0},
+            wolf_cards={i: [c.to_dto() for c in cs] for i, cs in enumerate(self.wolf_cards) if len(cs) > 0},
         )
 
     def cards(self, team: Team) -> CardPiles:

@@ -20,7 +20,7 @@ def run() -> None:
     results_file = results_dir / "results.parquet"
 
     instructions: list[InstructionDto] = []
-    enumeration = enumerate(itertools.product(ALL_STRATEGY_NAMES, ALL_STRATEGY_NAMES, range(100)))
+    enumeration = enumerate(itertools.product(ALL_STRATEGY_NAMES, ALL_STRATEGY_NAMES, range(100, 1100)))
     for index, (monkey_strategy, wolf_strategy, seed) in enumeration:
         instruction = InstructionDto(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         instructions.append(instruction)

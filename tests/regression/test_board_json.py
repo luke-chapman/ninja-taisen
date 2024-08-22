@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, TeamDto
+from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto
 from ninja_taisen.objects.types import Board
 
 
@@ -8,42 +8,42 @@ def sample_board_dto() -> BoardDto:
     return BoardDto(
         monkey_cards={
             0: [
-                CardDto(team=TeamDto.monkey, category=CategoryDto.joker, strength=4),
-                CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=3),
-                CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=2),
-                CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=1),
+                CardDto(category=CategoryDto.joker, strength=4),
+                CardDto(category=CategoryDto.rock, strength=3),
+                CardDto(category=CategoryDto.paper, strength=2),
+                CardDto(category=CategoryDto.scissors, strength=1),
             ],
             1: [
-                CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=3),
-                CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=2),
-                CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=1),
+                CardDto(category=CategoryDto.paper, strength=3),
+                CardDto(category=CategoryDto.scissors, strength=2),
+                CardDto(category=CategoryDto.rock, strength=1),
             ],
             2: [
-                CardDto(team=TeamDto.monkey, category=CategoryDto.scissors, strength=3),
-                CardDto(team=TeamDto.monkey, category=CategoryDto.rock, strength=2),
+                CardDto(category=CategoryDto.scissors, strength=3),
+                CardDto(category=CategoryDto.rock, strength=2),
             ],
             3: [
-                CardDto(team=TeamDto.monkey, category=CategoryDto.paper, strength=1),
+                CardDto(category=CategoryDto.paper, strength=1),
             ],
         },
         wolf_cards={
             7: [
-                CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=1),
+                CardDto(category=CategoryDto.paper, strength=1),
             ],
             8: [
-                CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=3),
-                CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=2),
+                CardDto(category=CategoryDto.scissors, strength=3),
+                CardDto(category=CategoryDto.rock, strength=2),
             ],
             9: [
-                CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=1),
-                CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=2),
-                CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=3),
+                CardDto(category=CategoryDto.paper, strength=1),
+                CardDto(category=CategoryDto.scissors, strength=2),
+                CardDto(category=CategoryDto.rock, strength=3),
             ],
             10: [
-                CardDto(team=TeamDto.wolf, category=CategoryDto.joker, strength=4),
-                CardDto(team=TeamDto.wolf, category=CategoryDto.rock, strength=1),
-                CardDto(team=TeamDto.wolf, category=CategoryDto.paper, strength=2),
-                CardDto(team=TeamDto.wolf, category=CategoryDto.scissors, strength=3),
+                CardDto(category=CategoryDto.joker, strength=4),
+                CardDto(category=CategoryDto.rock, strength=1),
+                CardDto(category=CategoryDto.paper, strength=2),
+                CardDto(category=CategoryDto.scissors, strength=3),
             ],
         },
     )

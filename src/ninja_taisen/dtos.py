@@ -36,7 +36,6 @@ class TeamDto(StrEnum):
 
 
 class CardDto(BaseModel):
-    team: TeamDto
     category: CategoryDto
     strength: int
 
