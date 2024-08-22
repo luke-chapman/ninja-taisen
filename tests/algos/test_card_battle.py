@@ -1,5 +1,4 @@
 from ninja_taisen.algos import card_battle
-from ninja_taisen.algos.card_battle import battle_winner
 from ninja_taisen.objects.types import BattleStatus, Card, Category
 
 
