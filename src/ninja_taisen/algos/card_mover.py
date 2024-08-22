@@ -82,7 +82,7 @@ class CardMover:
                         wolf_pile.pop()
                     else:
                         log.debug(
-                            "Draw - both cards retreat, run adjacent battles, continue this battle later\n%s",
+                            "Draw - both cards retreat, schedule adjacent battles\n%s",
                             self.board,
                         )
                         self.__move_card(
@@ -91,14 +91,13 @@ class CardMover:
                         self.__move_card(
                             team=Team.monkey, pile_index=pile_index, card_index=len(monkey_pile) - 1, dice_roll=-1
                         )
-                        return
                 elif team == Team.wolf:
                     if pile_index == 0:
                         log.debug("Draw in monkey home - removing M%s", monkey_pile[-1])
                         monkey_pile.pop()
                     else:
                         log.debug(
-                            "Draw - both cards retreat, run adjacent battles, continue this battle later\n%s",
+                            "Draw - both cards retreat, schedule adjacent battles\n%s",
                             self.board,
                         )
                         self.__move_card(
@@ -107,7 +106,6 @@ class CardMover:
                         self.__move_card(
                             team=Team.wolf, pile_index=pile_index, card_index=len(wolf_pile) - 1, dice_roll=-1
                         )
-                        return
                 else:
                     raise ValueError(f"Unexpected team: {team}")
             else:

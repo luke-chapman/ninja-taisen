@@ -2,7 +2,7 @@ from copy import deepcopy
 from enum import IntEnum
 from typing import NamedTuple
 
-from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto, StrategyName, TeamDto
+from ninja_taisen.dtos import BoardDto, CategoryDto, StrategyName, TeamDto
 
 
 # We represent Category as an IntEnum internally for speed
@@ -21,6 +21,13 @@ CATEGORY_DTO_TO_TYPE = {
     CategoryDto.joker: Category.joker,
 }
 CATEGORY_TYPE_TO_DTO = {v: k for k, v in CATEGORY_DTO_TO_TYPE.items()}
+CATEGORY_SHORTHAND_TO_TYPE = {
+    "R": Category.rock,
+    "P": Category.paper,
+    "S": Category.scissors,
+    "J": Category.joker,
+}
+CATEGORY_TYPE_TO_SHORTHAND = {v: k for k, v in CATEGORY_SHORTHAND_TO_TYPE.items()}
 
 
 class Team(IntEnum):
@@ -32,7 +39,7 @@ class Team(IntEnum):
             return Team.wolf
         if self == Team.wolf:
             return Team.monkey
-        raise ValueError(f"Unknown team {self.value}")
+        raise ValueError(f"Unknown team {self}")
 
 
 TEAM_DTO_TO_TYPE = {TeamDto.monkey: Team.monkey, TeamDto.wolf: Team.wolf}
@@ -58,17 +65,17 @@ class Card:
         return (self.category, self.strength) < (other.category, other.strength)
 
     def __str__(self) -> str:
-        return f"{CATEGORY_TYPE_TO_DTO[self.category].value[0]}{self.strength}".upper()
+        return self.to_dto()
 
     def display(self, team: Team) -> str:
         return TEAM_TYPE_TO_DTO[team].value[0].upper() + str(self)
 
     @classmethod
-    def from_dto(cls, dto: CardDto) -> "Card":
-        return Card(category=CATEGORY_DTO_TO_TYPE[dto.category], strength=dto.strength)
+    def from_dto(cls, dto: str) -> "Card":
+        return Card(category=CATEGORY_SHORTHAND_TO_TYPE[dto[0]], strength=int(dto[1]))
 
-    def to_dto(self, team: TeamDto) -> CardDto:
-        return CardDto(team=team, category=CATEGORY_TYPE_TO_DTO[self.category], strength=self.strength)
+    def to_dto(self) -> str:
+        return CATEGORY_TYPE_TO_SHORTHAND[self.category] + str(self.strength)
 
 
 BOARD_LENGTH = 11
@@ -126,10 +133,10 @@ class Board(NamedTuple):
     @classmethod
     def from_dto(cls, dto: BoardDto) -> "Board":
         def __monkey_cards(index: int) -> list[Card]:
-            return [Card.from_dto(d) for d in dto.monkey_cards.get(index, [])]
+            return [Card.from_dto(d) for d in dto.monkey.get(index, [])]
 
         def __wolf_cards(index: int) -> list[Card]:
-            return [Card.from_dto(d) for d in dto.wolf_cards.get(index, [])]
+            return [Card.from_dto(d) for d in dto.wolf.get(index, [])]
 
         return Board(
             monkey_cards=(
@@ -162,10 +169,8 @@ class Board(NamedTuple):
 
     def to_dto(self) -> BoardDto:
         return BoardDto(
-            monkey_cards={
-                i: [c.to_dto(TeamDto.monkey) for c in cs] for i, cs in enumerate(self.monkey_cards) if len(cs) > 0
-            },
-            wolf_cards={i: [c.to_dto(TeamDto.wolf) for c in cs] for i, cs in enumerate(self.wolf_cards) if len(cs) > 0},
+            monkey={i: [c.to_dto() for c in cs] for i, cs in enumerate(self.monkey_cards) if len(cs) > 0},
+            wolf={i: [c.to_dto() for c in cs] for i, cs in enumerate(self.wolf_cards) if len(cs) > 0},
         )
 
     def cards(self, team: Team) -> CardPiles:

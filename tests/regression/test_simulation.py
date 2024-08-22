@@ -12,7 +12,7 @@ from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
 def __run_simulation_regression_test(regen: bool, max_processes: int) -> None:
-    expected = Path(__file__).resolve().parent / "expected_results.csv"
+    expected = Path(__file__).resolve().parent / "results.csv"
 
     instructions: list[InstructionDto] = []
     for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(ALL_STRATEGY_NAMES, ALL_STRATEGY_NAMES)):
