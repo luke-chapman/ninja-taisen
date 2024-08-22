@@ -35,11 +35,6 @@ class TeamDto(StrEnum):
     wolf = "wolf"
 
 
-class CardDto(BaseModel):
-    category: CategoryDto
-    strength: int
-
-
 class DiceRollDto(BaseModel):
     rock: int
     paper: int
@@ -47,8 +42,8 @@ class DiceRollDto(BaseModel):
 
 
 class BoardDto(BaseModel):
-    monkey_cards: dict[int, list[CardDto]]
-    wolf_cards: dict[int, list[CardDto]]
+    monkey: dict[int, list[str]]
+    wolf: dict[int, list[str]]
 
 
 class StrategyName(StrEnum):
@@ -57,3 +52,18 @@ class StrategyName(StrEnum):
     metric_count = "metric_count"
     metric_position = "metric_position"
     metric_strength = "metric_strength"
+
+
+class MoveRequestBody(BaseModel):
+    board: BoardDto
+    dice: DiceRollDto
+    team: TeamDto
+
+
+class MoveDto(BaseModel):
+    dice_category: CategoryDto
+    card: str
+
+
+class MoveResponseBody(BaseModel):
+    moves: list[MoveDto]

@@ -1,102 +1,42 @@
 {
-  "monkey_cards": {
+  "monkey": {
     "0": [
-      {
-        "category": "joker",
-        "strength": 4
-      },
-      {
-        "category": "rock",
-        "strength": 3
-      },
-      {
-        "category": "paper",
-        "strength": 2
-      },
-      {
-        "category": "scissors",
-        "strength": 1
-      }
+      "J4",
+      "R3",
+      "P2",
+      "S1"
     ],
     "1": [
-      {
-        "category": "paper",
-        "strength": 3
-      },
-      {
-        "category": "scissors",
-        "strength": 2
-      },
-      {
-        "category": "rock",
-        "strength": 1
-      }
+      "P3",
+      "S2",
+      "R1"
     ],
     "2": [
-      {
-        "category": "scissors",
-        "strength": 3
-      },
-      {
-        "category": "rock",
-        "strength": 2
-      }
+      "S3",
+      "R2"
     ],
     "3": [
-      {
-        "category": "paper",
-        "strength": 1
-      }
+      "P1"
     ]
   },
-  "wolf_cards": {
+  "wolf": {
     "7": [
-      {
-        "category": "paper",
-        "strength": 1
-      }
+      "P3"
     ],
     "8": [
-      {
-        "category": "scissors",
-        "strength": 3
-      },
-      {
-        "category": "rock",
-        "strength": 2
-      }
+      "S1",
+      "R2"
     ],
     "9": [
-      {
-        "category": "paper",
-        "strength": 1
-      },
-      {
-        "category": "scissors",
-        "strength": 2
-      },
-      {
-        "category": "rock",
-        "strength": 3
-      }
+      "P1",
+      "S2",
+      "R3"
     ],
     "10": [
-      {
-        "category": "joker",
-        "strength": 4
-      },
-      {
-        "category": "rock",
-        "strength": 1
-      },
-      {
-        "category": "paper",
-        "strength": 2
-      },
-      {
-        "category": "scissors",
-        "strength": 3
-      }
+      "J4",
+      "R1",
+      "P2",
+      "S3"
     ]
   }
 }

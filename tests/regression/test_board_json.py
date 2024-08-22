@@ -1,50 +1,22 @@
 from pathlib import Path
 
-from ninja_taisen.dtos import BoardDto, CardDto, CategoryDto
+from ninja_taisen.dtos import BoardDto
 from ninja_taisen.objects.types import Board
 
 
 def sample_board_dto() -> BoardDto:
     return BoardDto(
-        monkey_cards={
-            0: [
-                CardDto(category=CategoryDto.joker, strength=4),
-                CardDto(category=CategoryDto.rock, strength=3),
-                CardDto(category=CategoryDto.paper, strength=2),
-                CardDto(category=CategoryDto.scissors, strength=1),
-            ],
-            1: [
-                CardDto(category=CategoryDto.paper, strength=3),
-                CardDto(category=CategoryDto.scissors, strength=2),
-                CardDto(category=CategoryDto.rock, strength=1),
-            ],
-            2: [
-                CardDto(category=CategoryDto.scissors, strength=3),
-                CardDto(category=CategoryDto.rock, strength=2),
-            ],
-            3: [
-                CardDto(category=CategoryDto.paper, strength=1),
-            ],
+        monkey={
+            0: ["J4", "R3", "P2", "S1"],
+            1: ["P3", "S2", "R1"],
+            2: ["S3", "R2"],
+            3: ["P1"],
         },
-        wolf_cards={
-            7: [
-                CardDto(category=CategoryDto.paper, strength=1),
-            ],
-            8: [
-                CardDto(category=CategoryDto.scissors, strength=3),
-                CardDto(category=CategoryDto.rock, strength=2),
-            ],
-            9: [
-                CardDto(category=CategoryDto.paper, strength=1),
-                CardDto(category=CategoryDto.scissors, strength=2),
-                CardDto(category=CategoryDto.rock, strength=3),
-            ],
-            10: [
-                CardDto(category=CategoryDto.joker, strength=4),
-                CardDto(category=CategoryDto.rock, strength=1),
-                CardDto(category=CategoryDto.paper, strength=2),
-                CardDto(category=CategoryDto.scissors, strength=3),
-            ],
+        wolf={
+            7: ["P3"],
+            8: ["S1", "R2"],
+            9: ["P1", "S2", "R3"],
+            10: ["J4", "R1", "P2", "S3"],
         },
     )
 
