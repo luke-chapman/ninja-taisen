@@ -105,7 +105,7 @@ def simulate_many_single_thread(args: SubprocessArgs) -> list[ResultDto]:
 
 
 def simulate_many_multi_process(
-    instructions: list[InstructionDto], max_processes: int, per_process: int, log_file: Path | None
+    instructions: list[InstructionDto], max_processes: int, per_process: int, verbosity: int, log_file: Path | None
 ) -> list[ResultDto]:
     if max_processes == 1:
         log.info("Bypassing multiprocessing.Pool because max_processes=1 specified")
@@ -122,7 +122,7 @@ def simulate_many_multi_process(
     blocks_count = int(math.ceil(len(instructions) / per_process))
     i_blocks = [instructions[i * per_process : (i + 1) * per_process] for i in range(blocks_count)]
     subprocess_args = [
-        SubprocessArgs(instructions=i_block, verbosity=log.level, log_file=log_file) for i_block in i_blocks
+        SubprocessArgs(instructions=i_block, verbosity=verbosity, log_file=log_file) for i_block in i_blocks
     ]
 
     with multiprocessing.Pool(processes=max_processes) as pool:

@@ -14,16 +14,13 @@ def setup_logging(verbosity: int, log_file: Path | None = None) -> None:
 
     # Create a console handler with the specified format, if it doesn't already exist
     if not any(isinstance(h, logging.StreamHandler) for h in logger.handlers):
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(
-            UTCFormatter("%(asctime)s - %(levelname)s - %(module)s - %(message)s", "%Y-%m-%d %H:%M:%S")
-        )
-        logger.addHandler(console_handler)
+        logger.addHandler(logging.StreamHandler())
 
     if log_file is not None and not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
-        # Create a file handler with the specified format
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setFormatter(
+        logger.addHandler(logging.FileHandler(log_file))
+
+    for handler in logger.handlers:
+        handler.setLevel(verbosity)
+        handler.setFormatter(
             UTCFormatter("%(asctime)s - %(levelname)s - %(module)s - %(message)s", "%Y-%m-%d %H:%M:%S")
         )
-        logger.addHandler(file_handler)

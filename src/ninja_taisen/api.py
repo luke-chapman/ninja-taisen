@@ -40,6 +40,7 @@ def simulate(
                 instructions=instructions,
                 max_processes=max_processes,
                 per_process=per_process,
+                verbosity=verbosity,
                 log_file=log_file,
             )
         profiler.print_stats(SortKey.TIME)
@@ -48,6 +49,7 @@ def simulate(
             instructions=instructions,
             max_processes=max_processes,
             per_process=per_process,
+            verbosity=verbosity,
             log_file=log_file,
         )
 
