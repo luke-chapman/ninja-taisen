@@ -47,7 +47,7 @@ class Card:
     def __eq__(self, other):
         if not isinstance(other, Card):
             raise TypeError(f"Unexpected type {type(other)}")
-        return (self.category, self.strength) == (other.strength, other.category)
+        return (self.category, self.strength) == (other.category, other.strength)
 
     def __hash__(self) -> int:
         return hash((self.category, self.strength))
@@ -55,7 +55,7 @@ class Card:
     def __lt__(self, other):
         if not isinstance(other, Card):
             raise TypeError(f"Unexpected type {type(other)}")
-        return (self.category, self.strength) < (other.strength, other.category)
+        return (self.category, self.strength) < (other.category, other.strength)
 
     def __str__(self) -> str:
         return f"{CATEGORY_TYPE_TO_DTO[self.category].value[0]}{self.strength}".upper()
@@ -201,6 +201,22 @@ class Board(NamedTuple):
                 row_str += cards[pile_index][row_index].display(team) + " "
 
         return row_str
+
+    def __eq__(self, other):
+        if not isinstance(other, Board):
+            raise TypeError(f"Unexpected type {type(other)}")
+        for i in range(BOARD_LENGTH):
+            if len(self.monkey_cards[i]) != len(other.monkey_cards[i]):
+                return False
+            if len(self.wolf_cards[i]) != len(other.wolf_cards[i]):
+                return False
+            for self_monkey, other_monkey in zip(self.monkey_cards[i], other.monkey_cards[i], strict=False):
+                if self_monkey != other_monkey:
+                    return False
+            for self_wolf, other_wolf in zip(self.wolf_cards[i], other.wolf_cards[i], strict=False):
+                if self_wolf != other_wolf:
+                    return False
+        return True
 
 
 class BoardStateMidTurn(NamedTuple):

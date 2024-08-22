@@ -20,6 +20,7 @@ class CardMover:
         self.remaining_battles: list[int] = []
 
     def move_card_and_resolve_battles(self, team: Team, dice_roll: int, pile_index: int, card_index: int) -> None:
+        log.debug("Starting board\n%s", self.board)
         self.__move_card(team=team, dice_roll=dice_roll, pile_index=pile_index, card_index=card_index)
 
         while self.remaining_battles:
@@ -32,12 +33,13 @@ class CardMover:
         log.debug("Final board\n%s", self.board)
 
     def __move_card(self, team: Team, dice_roll: int, pile_index: int, card_index: int) -> None:
-        if log.level <= logging.DEBUG:
-            log.debug(f"Starting board\n{self.board}")
-            log.debug(
-                f"Moving team={TEAM_TYPE_TO_DTO[team].value}, dice_roll={dice_roll}, "
-                f"pile_index={pile_index}, card_index={card_index}"
-            )
+        log.debug(
+            "Moving team=%s, dice_roll=%s, pile_index=%s, card_index=%s",
+            TEAM_TYPE_TO_DTO[team].value,
+            dice_roll,
+            pile_index,
+            card_index,
+        )
 
         team_cards = self.board.cards(team)
         new_pile_index = pile_index + dice_roll if team == Team.monkey else pile_index - dice_roll
@@ -53,14 +55,13 @@ class CardMover:
             team_cards[pile_index].pop()
 
         self.remaining_battles.append(new_pile_index)
+        log.debug(f"Board after card move, pre-battles\n{self.board}")
 
     def __resolve_battle(self, pile_index: int, team: Team) -> None:
         monkey_pile = self.board.monkey_cards[pile_index]
         wolf_pile = self.board.wolf_cards[pile_index]
 
         while monkey_pile and wolf_pile:
-            log.debug(f"Current board\n%s", self.board)
-
             log.debug("Battle between M%s and W%s in pile %s", monkey_pile[-1], wolf_pile[-1], pile_index)
             battle_result = card_battle.battle_winner(monkey_pile[-1], wolf_pile[-1])
 
@@ -80,34 +81,40 @@ class CardMover:
                         log.debug("Draw in wolf home - removing W%s", wolf_pile[-1])
                         wolf_pile.pop()
                     else:
-                        self.__move_card(
-                            team=Team.monkey, pile_index=pile_index, card_index=len(monkey_pile) - 1, dice_roll=-1
+                        log.debug(
+                            "Draw - both cards retreat, run adjacent battles, continue this battle later\n%s",
+                            self.board,
                         )
                         self.__move_card(
                             team=Team.wolf, pile_index=pile_index, card_index=len(wolf_pile) - 1, dice_roll=-1
                         )
-                        self.remaining_battles.append(pile_index - 1)
-                        self.remaining_battles.append(pile_index + 1)
+                        self.__move_card(
+                            team=Team.monkey, pile_index=pile_index, card_index=len(monkey_pile) - 1, dice_roll=-1
+                        )
                         return
                 elif team == Team.wolf:
                     if pile_index == 0:
                         log.debug("Draw in monkey home - removing M%s", monkey_pile[-1])
                         monkey_pile.pop()
                     else:
-                        self.__move_card(
-                            team=Team.wolf, pile_index=pile_index, card_index=len(wolf_pile) - 1, dice_roll=-1
+                        log.debug(
+                            "Draw - both cards retreat, run adjacent battles, continue this battle later\n%s",
+                            self.board,
                         )
                         self.__move_card(
                             team=Team.monkey, pile_index=pile_index, card_index=len(monkey_pile) - 1, dice_roll=-1
                         )
-                        self.remaining_battles.append(pile_index + 1)
-                        self.remaining_battles.append(pile_index - 1)
+                        self.__move_card(
+                            team=Team.wolf, pile_index=pile_index, card_index=len(wolf_pile) - 1, dice_roll=-1
+                        )
                         return
                 else:
                     raise ValueError(f"Unexpected team: {team}")
             else:
                 raise ValueError(f"Unexpected battle_result.status: {battle_result.status}")
-        self.remaining_battles.remove(pile_index)
+
+        log.debug("All battles at pile_index %s resolved - board\n%s", pile_index, self.board)
+        self.remaining_battles = [i for i in self.remaining_battles if i != pile_index]
 
     @staticmethod
     def __restore_jokers(card_piles: CardPiles) -> None:
