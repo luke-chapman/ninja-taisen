@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 
 from ninja_taisen.algos import card_battle
 from ninja_taisen.objects.types import (
@@ -6,7 +7,7 @@ from ninja_taisen.objects.types import (
     DTO_BY_TEAM,
     BattleStatus,
     Board,
-    CardPiles,
+    Card,
     Category,
     Team,
 )
@@ -115,8 +116,8 @@ class CardMover:
         self.remaining_battles = [i for i in self.remaining_battles if i != pile_index]
 
     @staticmethod
-    def __restore_jokers(card_piles: CardPiles) -> None:
-        for pile in card_piles:
+    def __restore_jokers(card_piles: defaultdict[int, list[Card]]) -> None:
+        for pile in card_piles.values():
             for card in pile:
                 if card.category == Category.joker:
                     card.strength = 4
