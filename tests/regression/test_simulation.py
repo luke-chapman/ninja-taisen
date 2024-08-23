@@ -13,7 +13,7 @@ from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 @pytest.mark.parametrize("max_processes", (1, -1))
 def test_all_strategies(max_processes: int, regen: bool) -> None:
     if regen and max_processes != -1:
-        # We only regenerate the output on the all-threads variant of this test
+        # We only regenerate the output on the all-but-one-thread variant of this test
         return
 
     instructions: list[InstructionDto] = []
