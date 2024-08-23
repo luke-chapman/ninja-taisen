@@ -9,11 +9,11 @@ from time import perf_counter
 
 from pydantic import BaseModel
 
-from ninja_taisen.algos import board_builder, board_inspector, board_state_gatherer
+from ninja_taisen.algos import board_builder, board_inspector, move_gatherer
 from ninja_taisen.dtos import InstructionDto, ResultDto
 from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import DTO_BY_TEAM, Team
+from ninja_taisen.objects.types import DTO_BY_TEAM, Category, Team
 from ninja_taisen.strategy.strategy import IStrategy
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
@@ -62,7 +62,14 @@ class GameRunner:
         return result
 
     def __execute_turn(self, team: Team) -> None:
-        board_states = board_state_gatherer.gather_all_board_states_post_move(self.board, team, random=self.random)
+        dice_rolls = {
+            Category.rock: self.random.roll_dice(),
+            Category.paper: self.random.roll_dice(),
+            Category.scissors: self.random.roll_dice(),
+        }
+        board_states = move_gatherer.gather_all_permitted_moves(
+            starting_board=self.board, team=team, dice_rolls=dice_rolls
+        )
         if board_states:
             self.board = self.strategies[team].choose_board([s.board for s in board_states], team)
 

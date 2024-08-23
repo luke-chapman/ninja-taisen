@@ -8,8 +8,8 @@ from pstats import SortKey
 import polars as pl
 
 from ninja_taisen.algos.card_mover import CardMover
+from ninja_taisen.algos.game_runner import simulate_many_multi_process
 from ninja_taisen.dtos import BoardDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto, StrategyName
-from ninja_taisen.game.game_runner import simulate_many_multi_process
 from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Board, Card, Category

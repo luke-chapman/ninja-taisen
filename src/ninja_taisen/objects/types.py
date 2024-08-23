@@ -235,12 +235,6 @@ class Board(NamedTuple):
         return True
 
 
-class BoardStateMidTurn(NamedTuple):
-    board: Board
-    used_joker: bool
-    dice_used: list[tuple[Category, int]]
-
-
 class BattleStatus(IntEnum):
     card_a_wins = -1
     draw = 0
@@ -256,3 +250,18 @@ class BattleResult(NamedTuple):
 
 
 ALL_STRATEGY_NAMES = list(StrategyName)
+
+
+class Move(NamedTuple):
+    dice_category: Category
+    dice_roll: int
+    card: Card
+
+
+class CompletedMoves(NamedTuple):
+    moves: list[Move]
+    team: Team
+    board: Board
+
+    def used_joker(self) -> bool:
+        return any(m.card.category == Category.joker for m in self.moves)
