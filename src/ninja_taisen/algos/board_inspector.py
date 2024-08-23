@@ -1,4 +1,4 @@
-from ninja_taisen.objects.types import Board, CardPiles, Category, Team
+from ninja_taisen.objects.types import Board, CardPiles, Category, CompletedMoves, Team
 
 
 def victorious_team(board: Board) -> Team | None:
@@ -10,10 +10,10 @@ def victorious_team(board: Board) -> Team | None:
     return None
 
 
-def find_winning_board(boards: list[Board], team: Team) -> Board | None:
-    for board in boards:
-        if victorious_team(board) == team:
-            return board
+def find_first_winning_move(all_completed_moves: list[CompletedMoves], team: Team) -> CompletedMoves | None:
+    for completed_moves in all_completed_moves:
+        if victorious_team(completed_moves.board) == team:
+            return completed_moves
     return None
 
 

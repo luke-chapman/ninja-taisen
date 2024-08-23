@@ -93,7 +93,7 @@ def read_parquet_results(filename: Path) -> pl.DataFrame:
     return pl.read_parquet(filename)
 
 
-def choose_move(request: MoveRequestBody, strategy: StrategyName, random: SafeRandom | None) -> MoveResponseBody:
+def choose_move(request: MoveRequestBody, strategy_name: StrategyName, random: SafeRandom | None) -> MoveResponseBody:
     setup_logging()
 
     random = random or SafeRandom(seed=None)
@@ -103,15 +103,16 @@ def choose_move(request: MoveRequestBody, strategy: StrategyName, random: SafeRa
         Category.scissors: random.roll_dice(),
     }
     team = TEAM_BY_DTO[request.team]
-    strategy = lookup_strategy(strategy, random)
+    strategy = lookup_strategy(strategy_name, random)
+
     all_permitted_moves = gather_all_permitted_moves(
         starting_board=Board.from_dto(request.board),
         team=team,
         dice_rolls=dice_rolls,
     )
+    chosen_moves = strategy.choose_moves(all_permitted_moves=all_permitted_moves, team=team)
 
-    moves = random.choice(all_permitted_moves)
-    return MoveResponseBody(moves=[m.to_dto(team) for m in moves])
+    return MoveResponseBody(moves=[m.to_dto(team) for m in chosen_moves.moves])
 
 
 def execute_move(request: MoveRequestBody, response: MoveResponseBody) -> BoardDto:

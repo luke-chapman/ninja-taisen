@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from logging import getLogger
 
-from ninja_taisen.algos.board_inspector import find_winning_board
+from ninja_taisen.algos.board_inspector import find_first_winning_move
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import Board, Team
+from ninja_taisen.objects.types import CompletedMoves, Team
 from ninja_taisen.strategy.metric import IMetric
 
 log = getLogger(__name__)
@@ -12,7 +12,7 @@ log = getLogger(__name__)
 
 class IStrategy(ABC):
     @abstractmethod
-    def choose_board(self, boards: list[Board], team: Team) -> Board:
+    def choose_moves(self, all_permitted_moves: list[CompletedMoves], team: Team) -> CompletedMoves:
         pass
 
 
@@ -20,20 +20,20 @@ class RandomStrategy(IStrategy):
     def __init__(self, random: SafeRandom) -> None:
         self.random = random
 
-    def choose_board(self, boards: list[Board], team: Team) -> Board:
-        return self.random.choice(boards)
+    def choose_moves(self, all_permitted_moves: list[CompletedMoves], team: Team) -> CompletedMoves:
+        return self.random.choice(all_permitted_moves)
 
 
 class RandomSpotWinStrategy(IStrategy):
     def __init__(self, random: SafeRandom) -> None:
         self.random = random
 
-    def choose_board(self, boards: list[Board], team: Team) -> Board:
-        winning_board = find_winning_board(boards, team)
+    def choose_moves(self, all_permitted_moves: list[CompletedMoves], team: Team) -> CompletedMoves:
+        winning_board = find_first_winning_move(all_permitted_moves, team)
         if winning_board:
             return winning_board
 
-        return self.random.choice(boards)
+        return self.random.choice(all_permitted_moves)
 
 
 class MetricStrategy(IStrategy):
@@ -41,16 +41,16 @@ class MetricStrategy(IStrategy):
         self.metric = metric
         self.random = random
 
-    def choose_board(self, boards: list[Board], team: Team) -> Board:
-        winning_board = find_winning_board(boards, team)
+    def choose_moves(self, all_permitted_moves: list[CompletedMoves], team: Team) -> CompletedMoves:
+        winning_board = find_first_winning_move(all_permitted_moves, team)
         if winning_board:
             return winning_board
 
-        metric_to_boards: dict[float, list[Board]] = defaultdict(list)
-        for board in boards:
-            metric = self.metric.calculate(board, team)
-            metric_to_boards[metric].append(board)
+        metric_to_moves: dict[float, list[CompletedMoves]] = defaultdict(list)
+        for completed_moves in all_permitted_moves:
+            metric = self.metric.calculate(completed_moves.board, team)
+            metric_to_moves[metric].append(completed_moves)
 
-        max_metric = max(metric_to_boards.keys())
-        max_metrics_boards = metric_to_boards[max_metric]
+        max_metric = max(metric_to_moves.keys())
+        max_metrics_boards = metric_to_moves[max_metric]
         return self.random.choice(max_metrics_boards)

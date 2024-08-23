@@ -67,11 +67,12 @@ class GameRunner:
             Category.paper: self.random.roll_dice(),
             Category.scissors: self.random.roll_dice(),
         }
-        board_states = move_gatherer.gather_all_permitted_moves(
+        all_permitted_moves = move_gatherer.gather_all_permitted_moves(
             starting_board=self.board, team=team, dice_rolls=dice_rolls
         )
-        if board_states:
-            self.board = self.strategies[team].choose_board([s.board for s in board_states], team)
+        if all_permitted_moves:
+            chosen_moves = self.strategies[team].choose_moves(all_permitted_moves, team)
+            self.board = chosen_moves.board
 
 
 def simulate_one(instruction: InstructionDto) -> ResultDto:
