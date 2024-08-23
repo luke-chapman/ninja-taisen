@@ -41,11 +41,9 @@ def test_for_board_json_changes(regen: bool) -> None:
     move_response_body_json = json_dir / "move_response_body.json"
 
     if regen:
-        board_json.write_text(board_dto_1.model_dump_json(indent=2, round_trip=True, by_alias=True))
-        move_request_body_json.write_text(move_request_body_1.model_dump_json(indent=2, round_trip=True, by_alias=True))
-        move_response_body_json.write_text(
-            move_response_body_1.model_dump_json(indent=2, round_trip=True, by_alias=True)
-        )
+        board_json.write_text(board_dto_1.to_json())
+        move_request_body_json.write_text(move_request_body_1.to_json())
+        move_response_body_json.write_text(move_response_body_1.to_json())
     else:
         board_content = board_json.read_text()
         board_dto_3 = BoardDto.model_validate_json(board_content)
