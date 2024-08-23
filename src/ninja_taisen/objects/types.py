@@ -2,7 +2,7 @@ from copy import deepcopy
 from enum import IntEnum
 from typing import NamedTuple
 
-from ninja_taisen.dtos import BoardDto, CategoryDto, StrategyName, TeamDto
+from ninja_taisen.dtos import BoardDto, CategoryDto, MoveDto, StrategyName, TeamDto
 
 
 # We represent Category as an IntEnum internally for speed
@@ -256,6 +256,9 @@ class Move(NamedTuple):
     dice_category: Category
     dice_roll: int
     card: Card
+
+    def to_dto(self, team: Team) -> MoveDto:
+        return MoveDto(dice_category=DTO_BY_CATEGORY[self.dice_category], card=self.card.to_dto(team))
 
 
 class CompletedMoves(NamedTuple):
