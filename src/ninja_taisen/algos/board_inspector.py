@@ -10,9 +10,9 @@ def victorious_team(board: Board) -> Team | None:
     return None
 
 
-def find_first_winning_move(all_completed_moves: list[CompletedMoves], team: Team) -> CompletedMoves | None:
+def find_first_winning_move(all_completed_moves: list[CompletedMoves]) -> CompletedMoves | None:
     for completed_moves in all_completed_moves:
-        if victorious_team(completed_moves.board) == team:
+        if victorious_team(completed_moves.board) == completed_moves.team:
             return completed_moves
     return None
 

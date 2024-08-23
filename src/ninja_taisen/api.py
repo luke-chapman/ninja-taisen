@@ -110,7 +110,7 @@ def choose_move(request: MoveRequestBody, strategy_name: StrategyName, random: S
         team=team,
         dice_rolls=dice_rolls,
     )
-    chosen_moves = strategy.choose_moves(all_permitted_moves=all_permitted_moves, team=team)
+    chosen_moves = strategy.choose_moves(all_permitted_moves)
 
     return MoveResponseBody(moves=[m.to_dto(team) for m in chosen_moves.moves])
 

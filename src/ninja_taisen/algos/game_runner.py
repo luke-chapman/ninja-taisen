@@ -71,7 +71,7 @@ class GameRunner:
             starting_board=self.board, team=team, dice_rolls=dice_rolls
         )
         if all_permitted_moves:
-            chosen_moves = self.strategies[team].choose_moves(all_permitted_moves, team)
+            chosen_moves = self.strategies[team].choose_moves(all_permitted_moves)
             self.board = chosen_moves.board
 
 
