@@ -39,7 +39,7 @@ format = [
   "ruff check --fix --unsafe-fixes"
 ]
 test = "pytest {args: tests}"
-regen = "pytest tests/regression/test_simulation.py::test_single_process tests/regression/test_board_json.py --regen"
+regen = "pytest tests/regression --regen"
 check = [
   "hatch run format",
   "hatch run lint",
