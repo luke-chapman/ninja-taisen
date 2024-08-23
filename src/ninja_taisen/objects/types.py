@@ -14,20 +14,20 @@ class Category(IntEnum):
     joker = 3
 
 
-CATEGORY_DTO_TO_TYPE = {
+CATEGORY_BY_DTO = {
     CategoryDto.rock: Category.rock,
     CategoryDto.paper: Category.paper,
     CategoryDto.scissors: Category.scissors,
     CategoryDto.joker: Category.joker,
 }
-CATEGORY_TYPE_TO_DTO = {v: k for k, v in CATEGORY_DTO_TO_TYPE.items()}
-CATEGORY_SHORTHAND_TO_TYPE = {
+DTO_BY_CATEGORY = {v: k for k, v in CATEGORY_BY_DTO.items()}
+CATEGORY_BY_SHORTHAND = {
     "R": Category.rock,
     "P": Category.paper,
     "S": Category.scissors,
     "J": Category.joker,
 }
-CATEGORY_TYPE_TO_SHORTHAND = {v: k for k, v in CATEGORY_SHORTHAND_TO_TYPE.items()}
+SHORTHAND_BY_CATEGORY = {v: k for k, v in CATEGORY_BY_SHORTHAND.items()}
 
 
 class Team(IntEnum):
@@ -42,8 +42,10 @@ class Team(IntEnum):
         raise ValueError(f"Unknown team {self}")
 
 
-TEAM_DTO_TO_TYPE = {TeamDto.monkey: Team.monkey, TeamDto.wolf: Team.wolf}
-TEAM_TYPE_TO_DTO = {v: k for k, v in TEAM_DTO_TO_TYPE.items()}
+TEAM_BY_DTO = {TeamDto.monkey: Team.monkey, TeamDto.wolf: Team.wolf}
+DTO_BY_TEAM = {v: k for k, v in TEAM_BY_DTO.items()}
+TEAM_BY_SHORTHAND = {"M": Team.monkey, "W": Team.wolf}
+SHORTHAND_BY_TEAM = {v: k for k, v in TEAM_BY_SHORTHAND.items()}
 
 
 class Card:
@@ -65,17 +67,18 @@ class Card:
         return (self.category, self.strength) < (other.category, other.strength)
 
     def __str__(self) -> str:
-        return self.to_dto()
+        return SHORTHAND_BY_CATEGORY[self.category] + str(self.strength)
 
     def display(self, team: Team) -> str:
-        return TEAM_TYPE_TO_DTO[team].value[0].upper() + str(self)
+        return self.to_dto(team)
 
     @classmethod
     def from_dto(cls, dto: str) -> "Card":
-        return Card(category=CATEGORY_SHORTHAND_TO_TYPE[dto[0]], strength=int(dto[1]))
+        assert len(dto) == 3
+        return Card(category=CATEGORY_BY_SHORTHAND[dto[1]], strength=int(dto[2]))
 
-    def to_dto(self) -> str:
-        return CATEGORY_TYPE_TO_SHORTHAND[self.category] + str(self.strength)
+    def to_dto(self, team: Team) -> str:
+        return SHORTHAND_BY_TEAM[team] + str(self)
 
 
 BOARD_LENGTH = 11
@@ -169,8 +172,8 @@ class Board(NamedTuple):
 
     def to_dto(self) -> BoardDto:
         return BoardDto(
-            monkey={i: [c.to_dto() for c in cs] for i, cs in enumerate(self.monkey_cards) if len(cs) > 0},
-            wolf={i: [c.to_dto() for c in cs] for i, cs in enumerate(self.wolf_cards) if len(cs) > 0},
+            monkey={i: [c.to_dto(Team.monkey) for c in cs] for i, cs in enumerate(self.monkey_cards) if len(cs) > 0},
+            wolf={i: [c.to_dto(Team.wolf) for c in cs] for i, cs in enumerate(self.wolf_cards) if len(cs) > 0},
         )
 
     def cards(self, team: Team) -> CardPiles:

@@ -3,7 +3,7 @@ import logging
 from ninja_taisen.algos import card_battle
 from ninja_taisen.objects.types import (
     BOARD_LENGTH,
-    TEAM_TYPE_TO_DTO,
+    DTO_BY_TEAM,
     BattleStatus,
     Board,
     CardPiles,
@@ -35,7 +35,7 @@ class CardMover:
     def __move_card(self, team: Team, dice_roll: int, pile_index: int, card_index: int) -> None:
         log.debug(
             "Moving team=%s, dice_roll=%s, pile_index=%s, card_index=%s",
-            TEAM_TYPE_TO_DTO[team].value,
+            DTO_BY_TEAM[team].value,
             dice_roll,
             pile_index,
             card_index,

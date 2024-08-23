@@ -7,16 +7,16 @@ from ninja_taisen.objects.types import Board
 def sample_board_dto() -> BoardDto:
     return BoardDto(
         monkey={
-            0: ["J4", "R3", "P2", "S1"],
-            1: ["P3", "S2", "R1"],
-            2: ["S3", "R2"],
-            3: ["P1"],
+            0: ["MJ4", "MR3", "MP2", "MS1"],
+            1: ["MP3", "MS2", "MR1"],
+            2: ["MS3", "MR2"],
+            3: ["MP1"],
         },
         wolf={
-            7: ["P3"],
-            8: ["S1", "R2"],
-            9: ["P1", "S2", "R3"],
-            10: ["J4", "R1", "P2", "S3"],
+            7: ["WP3"],
+            8: ["WS1", "WR2"],
+            9: ["WP1", "WS2", "WR3"],
+            10: ["WJ4", "WR1", "WP2", "WS3"],
         },
     )
 
