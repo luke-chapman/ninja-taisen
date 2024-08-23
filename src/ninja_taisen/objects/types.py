@@ -183,6 +183,14 @@ class Board(NamedTuple):
             return self.wolf_cards
         raise ValueError(f"Unsupported team {team}")
 
+    def locate_card(self, card: Card, team: Team) -> tuple[int, int]:
+        team_cards = self.cards(team)
+        for pile_index in range(BOARD_LENGTH):
+            for card_index in range(len(team_cards[pile_index])):
+                if team_cards[pile_index][card_index] == card:
+                    return pile_index, card_index
+        raise ValueError(f"Unable to find card {card.display(team)} in board")
+
     def __str__(self) -> str:
         self_str = ""
 
