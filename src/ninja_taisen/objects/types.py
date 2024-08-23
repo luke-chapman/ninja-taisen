@@ -2,7 +2,7 @@ from copy import deepcopy
 from enum import IntEnum
 from typing import NamedTuple
 
-from ninja_taisen.dtos import BoardDto, CategoryDto, StrategyName, TeamDto
+from ninja_taisen.dtos import BoardDto, CategoryDto, MoveDto, StrategyName, TeamDto
 
 
 # We represent Category as an IntEnum internally for speed
@@ -183,6 +183,14 @@ class Board(NamedTuple):
             return self.wolf_cards
         raise ValueError(f"Unsupported team {team}")
 
+    def locate_card(self, card: Card, team: Team) -> tuple[int, int]:
+        team_cards = self.cards(team)
+        for pile_index in range(BOARD_LENGTH):
+            for card_index in range(len(team_cards[pile_index])):
+                if team_cards[pile_index][card_index] == card:
+                    return pile_index, card_index
+        raise ValueError(f"Unable to find card {card.display(team)} in board")
+
     def __str__(self) -> str:
         self_str = ""
 
@@ -227,12 +235,6 @@ class Board(NamedTuple):
         return True
 
 
-class BoardStateMidTurn(NamedTuple):
-    board: Board
-    used_joker: bool
-    dice_used: list[tuple[Category, int]]
-
-
 class BattleStatus(IntEnum):
     card_a_wins = -1
     draw = 0
@@ -248,3 +250,21 @@ class BattleResult(NamedTuple):
 
 
 ALL_STRATEGY_NAMES = list(StrategyName)
+
+
+class Move(NamedTuple):
+    dice_category: Category
+    dice_roll: int
+    card: Card
+
+    def to_dto(self, team: Team) -> MoveDto:
+        return MoveDto(dice_category=DTO_BY_CATEGORY[self.dice_category], card=self.card.to_dto(team))
+
+
+class CompletedMoves(NamedTuple):
+    moves: list[Move]
+    team: Team
+    board: Board
+
+    def used_joker(self) -> bool:
+        return any(m.card.category == Category.joker for m in self.moves)
