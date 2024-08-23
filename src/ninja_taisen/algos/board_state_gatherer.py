@@ -3,7 +3,7 @@ from logging import getLogger
 from ninja_taisen.algos import board_inspector
 from ninja_taisen.algos.card_mover import CardMover
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import CATEGORY_TYPE_TO_DTO, TEAM_TYPE_TO_DTO, Board, BoardStateMidTurn, Category, Team
+from ninja_taisen.objects.types import DTO_BY_CATEGORY, DTO_BY_TEAM, Board, BoardStateMidTurn, Category, Team
 
 log = getLogger(__name__)
 
@@ -70,8 +70,8 @@ def gather_board_state_post_move(
                 log.error("Error moving card!")
                 log.error(f"Starting board\n{initial_state.board}")
                 log.error(
-                    f"team={TEAM_TYPE_TO_DTO[team].value}, "
-                    f"category={CATEGORY_TYPE_TO_DTO[category].value}, "
+                    f"team={DTO_BY_TEAM[team].value}, "
+                    f"category={DTO_BY_CATEGORY[category].value}, "
                     f"dice_roll={dice_roll}"
                 )
                 log.error(f"pile_index={pile_index}, card_index={card_index}")

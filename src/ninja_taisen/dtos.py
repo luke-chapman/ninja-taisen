@@ -8,6 +8,9 @@ from pydantic.alias_generators import to_camel
 class NinjaTaisenModel(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
+    def to_json(self) -> str:
+        return self.model_dump_json(indent=2, round_trip=True, by_alias=True)
+
 
 class InstructionDto(NinjaTaisenModel):
     id: int
