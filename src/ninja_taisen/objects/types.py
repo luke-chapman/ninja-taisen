@@ -119,13 +119,15 @@ class Board(NamedTuple):
     def __str__(self) -> str:
         self_str = ""
 
-        max_monkey_height = max([len(pile_cards) for pile_cards in self.monkey_cards.values()])
+        max_monkey_height = (
+            max([len(pile_cards) for pile_cards in self.monkey_cards.values()]) if self.monkey_cards else 0
+        )
         for row_index in range(max_monkey_height - 1, -1, -1):
             self_str += self.__row_str(self.monkey_cards, row_index, Team.monkey) + "\n"
 
         self_str += "--- " * 11 + "\n"
 
-        max_wolf_height = max([len(pile_cards) for pile_cards in self.wolf_cards.values()])
+        max_wolf_height = max([len(pile_cards) for pile_cards in self.wolf_cards.values()]) if self.wolf_cards else 0
         for row_index in range(max_wolf_height):
             self_str += self.__row_str(self.wolf_cards, row_index, Team.wolf) + "\n"
 
@@ -151,10 +153,10 @@ class Board(NamedTuple):
                 return False
             if len(self.wolf_cards[i]) != len(other.wolf_cards[i]):
                 return False
-            for self_monkey, other_monkey in zip(self.monkey_cards[i], other.monkey_cards[i], strict=False):
+            for self_monkey, other_monkey in zip(self.monkey_cards[i], other.monkey_cards[i], strict=True):
                 if self_monkey != other_monkey:
                     return False
-            for self_wolf, other_wolf in zip(self.wolf_cards[i], other.wolf_cards[i], strict=False):
+            for self_wolf, other_wolf in zip(self.wolf_cards[i], other.wolf_cards[i], strict=True):
                 if self_wolf != other_wolf:
                     return False
         return True

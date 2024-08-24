@@ -35,8 +35,8 @@ class PositionMetric(IMetric):
     @staticmethod
     def __calculate_team_metric(piles: defaultdict[int, list[Card]], pile_weights: list[int]) -> float:
         metric = 0.0
-        for pile, pile_weight in zip(piles.values(), pile_weights, strict=True):
-            metric += len(pile) * pile_weight
+        for index, pile in piles.items():
+            metric += len(pile) * pile_weights[index]
         return metric
 
 
