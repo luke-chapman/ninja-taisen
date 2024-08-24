@@ -5,7 +5,7 @@ from more_itertools import unique_everseen
 
 from ninja_taisen.algos.board_builder import make_board
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import BOARD_LENGTH, Board, Card, Category
+from ninja_taisen.objects.types import BOARD_LENGTH, Board, Card, Category, Team
 
 
 def test_make_board_not_shuffled() -> None:
@@ -57,36 +57,36 @@ def make_non_shuffled_board() -> Board:
     ]
 
     board.wolf_cards[7] = [
-        Card(category=Category.scissors, strength=3),
+        Card(team=Team.wolf, category=Category.scissors, strength=3),
     ]
     board.wolf_cards[8] = [
-        Card(category=Category.scissors, strength=1),
-        Card(category=Category.scissors, strength=2),
+        Card(team=Team.wolf, category=Category.scissors, strength=1),
+        Card(team=Team.wolf, category=Category.scissors, strength=2),
     ]
     board.wolf_cards[9] = [
-        Card(category=Category.paper, strength=1),
-        Card(category=Category.paper, strength=2),
-        Card(category=Category.paper, strength=3),
+        Card(team=Team.wolf, category=Category.paper, strength=1),
+        Card(team=Team.wolf, category=Category.paper, strength=2),
+        Card(team=Team.wolf, category=Category.paper, strength=3),
     ]
     board.wolf_cards[10] = [
-        Card(category=Category.joker, strength=4),
-        Card(category=Category.rock, strength=1),
-        Card(category=Category.rock, strength=2),
-        Card(category=Category.rock, strength=3),
+        Card(team=Team.wolf, category=Category.joker, strength=4),
+        Card(team=Team.wolf, category=Category.rock, strength=1),
+        Card(team=Team.wolf, category=Category.rock, strength=2),
+        Card(team=Team.wolf, category=Category.rock, strength=3),
     ]
     return board
 
 
-def make_ordered_cards() -> list[Card]:
+def make_ordered_cards(team: Team) -> list[Card]:
     return [
-        Card(category=Category.rock, strength=1),
-        Card(category=Category.rock, strength=2),
-        Card(category=Category.rock, strength=3),
-        Card(category=Category.paper, strength=1),
-        Card(category=Category.paper, strength=2),
-        Card(category=Category.paper, strength=3),
-        Card(category=Category.scissors, strength=1),
-        Card(category=Category.scissors, strength=2),
-        Card(category=Category.scissors, strength=3),
-        Card(category=Category.joker, strength=4),
+        Card(team=team, category=Category.rock, strength=1),
+        Card(team=team, category=Category.rock, strength=2),
+        Card(team=team, category=Category.rock, strength=3),
+        Card(team=team, category=Category.paper, strength=1),
+        Card(team=team, category=Category.paper, strength=2),
+        Card(team=team, category=Category.paper, strength=3),
+        Card(team=team, category=Category.scissors, strength=1),
+        Card(team=team, category=Category.scissors, strength=2),
+        Card(team=team, category=Category.scissors, strength=3),
+        Card(team=team, category=Category.joker, strength=4),
     ]

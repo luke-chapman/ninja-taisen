@@ -8,7 +8,6 @@ from ninja_taisen.objects.types import (
     BattleStatus,
     Board,
     Card,
-    Category,
     Team,
 )
 
@@ -19,6 +18,7 @@ class CardMover:
     def __init__(self, board: Board) -> None:
         self.board = board
         self.remaining_battles: list[int] = []
+        self.joker_strengths = {Team.monkey: 4, Team.wolf: 4}
 
     def move_card_and_resolve_battles(self, team: Team, dice_roll: int, pile_index: int, card_index: int) -> None:
         log.debug("Starting board\n%s", self.board)
@@ -28,8 +28,8 @@ class CardMover:
             log.debug("remaining_battles=%s", self.remaining_battles)
             self.__resolve_battle(pile_index=self.remaining_battles[-1], team=team)
 
-        self.__restore_jokers_and_remove_empty_piles(self.board.monkey_cards)
-        self.__restore_jokers_and_remove_empty_piles(self.board.wolf_cards)
+        self.__remove_empty_piles(self.board.monkey_cards)
+        self.__remove_empty_piles(self.board.wolf_cards)
 
         log.debug("Final board\n%s", self.board)
 
@@ -64,7 +64,7 @@ class CardMover:
 
         while monkey_pile and wolf_pile:
             log.debug("Battle between M%s and W%s in pile %s", monkey_pile[-1], wolf_pile[-1], pile_index)
-            battle_result = card_battle.battle_winner(monkey_pile[-1], wolf_pile[-1])
+            battle_result = card_battle.battle_winner(monkey_pile[-1], wolf_pile[-1], self.joker_strengths)
 
             if battle_result.status == BattleStatus.card_a_wins:
                 log.debug("Removing W%s on top of pile %s", wolf_pile[-1], pile_index)
@@ -116,12 +116,7 @@ class CardMover:
         self.remaining_battles = [i for i in self.remaining_battles if i != pile_index]
 
     @staticmethod
-    def __restore_jokers_and_remove_empty_piles(card_piles: defaultdict[int, list[Card]]) -> None:
-        for pile in card_piles.values():
-            for card in pile:
-                if card.category == Category.joker:
-                    card.strength = 4
-
+    def __remove_empty_piles(card_piles: defaultdict[int, list[Card]]) -> None:
         empty_pile_indices = [i for i in card_piles if len(card_piles[i]) == 0]
         for index in empty_pile_indices:
             card_piles.pop(index)

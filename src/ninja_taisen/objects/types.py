@@ -48,37 +48,21 @@ TEAM_BY_SHORTHAND = {"M": Team.monkey, "W": Team.wolf}
 SHORTHAND_BY_TEAM = {v: k for k, v in TEAM_BY_SHORTHAND.items()}
 
 
-class Card:
-    def __init__(self, category: Category, strength: int) -> None:
-        self.category = category
-        self.strength = strength
-
-    def __eq__(self, other):
-        if not isinstance(other, Card):
-            raise TypeError(f"Unexpected type {type(other)}")
-        return (self.category, self.strength) == (other.category, other.strength)
-
-    def __hash__(self) -> int:
-        return hash((self.category, self.strength))
-
-    def __lt__(self, other):
-        if not isinstance(other, Card):
-            raise TypeError(f"Unexpected type {type(other)}")
-        return (self.category, self.strength) < (other.category, other.strength)
+class Card(NamedTuple):
+    team: Team
+    category: Category
+    strength: int
 
     def __str__(self) -> str:
-        return SHORTHAND_BY_CATEGORY[self.category] + str(self.strength)
-
-    def display(self, team: Team) -> str:
-        return self.to_dto(team)
+        return SHORTHAND_BY_TEAM[self.team] + SHORTHAND_BY_CATEGORY[self.category] + str(self.strength)
 
     @classmethod
     def from_dto(cls, dto: str) -> "Card":
         assert len(dto) == 3
-        return Card(category=CATEGORY_BY_SHORTHAND[dto[1]], strength=int(dto[2]))
+        return Card(team=TEAM_BY_SHORTHAND[dto[0]], category=CATEGORY_BY_SHORTHAND[dto[1]], strength=int(dto[2]))
 
-    def to_dto(self, team: Team) -> str:
-        return SHORTHAND_BY_TEAM[team] + str(self)
+    def to_dto(self) -> str:
+        return str(self)
 
 
 BOARD_LENGTH = 11
@@ -97,8 +81,8 @@ class Board(NamedTuple):
 
     def to_dto(self) -> BoardDto:
         return BoardDto(
-            monkey={i: [c.to_dto(Team.monkey) for c in cs] for i, cs in self.monkey_cards.items() if len(cs) > 0},
-            wolf={i: [c.to_dto(Team.wolf) for c in cs] for i, cs in self.wolf_cards.items() if len(cs) > 0},
+            monkey={i: [c.to_dto() for c in cs] for i, cs in self.monkey_cards.items() if len(cs) > 0},
+            wolf={i: [c.to_dto() for c in cs] for i, cs in self.wolf_cards.items() if len(cs) > 0},
         )
 
     def cards(self, team: Team) -> defaultdict[int, list[Card]]:
@@ -114,7 +98,7 @@ class Board(NamedTuple):
             for card_index in range(len(team_cards[pile_index])):
                 if team_cards[pile_index][card_index] == card:
                     return pile_index, card_index
-        raise ValueError(f"Unable to find card {card.display(team)} in board")
+        raise ValueError(f"Unable to find card {card} in board")
 
     def __str__(self) -> str:
         self_str = ""
@@ -141,7 +125,7 @@ class Board(NamedTuple):
             if len(cards[pile_index]) <= row_index:
                 row_str += "    "
             else:
-                row_str += cards[pile_index][row_index].display(team) + " "
+                row_str += str(cards[pile_index][row_index]) + " "
 
         return row_str
 
@@ -185,7 +169,7 @@ class Move(NamedTuple):
     card: Card
 
     def to_dto(self, team: Team) -> MoveDto:
-        return MoveDto(dice_category=DTO_BY_CATEGORY[self.dice_category], card=self.card.to_dto(team))
+        return MoveDto(dice_category=DTO_BY_CATEGORY[self.dice_category], card=self.card.to_dto())
 
 
 class CompletedMoves(NamedTuple):
