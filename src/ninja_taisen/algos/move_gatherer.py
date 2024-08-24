@@ -1,4 +1,4 @@
-from copy import copy
+from copy import copy, deepcopy
 from logging import getLogger
 
 from ninja_taisen.algos import board_inspector
@@ -44,20 +44,18 @@ def __gather_moves_for_dice_roll(
     final_states = []
 
     for initial_state in initial_states:
-        board = initial_state.board
-        if board_inspector.victorious_team(board) is not None:
+        if board_inspector.victorious_team(initial_state.board) is not None:
             continue
 
-        cards = board.cards(team)
+        cards = initial_state.board.cards(team)
         movable_card_indices = board_inspector.movable_card_indices(cards, category, initial_state.used_joker())
 
         for pile_index, card_index in movable_card_indices:
-            cloned_board = board.clone()
-            moves = list(initial_state.moves)  # Take a copy
-            card = copy(cards[pile_index][card_index])  # Take a copy just in case
+            copied_state = deepcopy(initial_state)
+            card = copy(cards[pile_index][card_index])
 
             try:
-                card_mover = CardMover(board=cloned_board)
+                card_mover = CardMover(board=copied_state.board)
                 card_mover.move_card_and_resolve_battles(
                     team=team, dice_roll=dice_roll, pile_index=pile_index, card_index=card_index
                 )
@@ -73,7 +71,7 @@ def __gather_moves_for_dice_roll(
                 log.error(f"pile_index={pile_index}, card_index={card_index}")
                 raise
 
-            moves.append(Move(dice_category=category, dice_roll=dice_roll, card=card))
-            final_states.append(CompletedMoves(moves=moves, team=team, board=cloned_board))
+            copied_state.moves.append(Move(dice_category=category, dice_roll=dice_roll, card=card))
+            final_states.append(copied_state)
 
     return final_states

@@ -96,7 +96,7 @@ def read_parquet_results(filename: Path) -> pl.DataFrame:
 def choose_move(request: MoveRequestBody, strategy_name: StrategyName, random: SafeRandom | None) -> MoveResponseBody:
     setup_logging()
 
-    random = random or SafeRandom(seed=None)
+    random = random or SafeRandom()  # Seeded with current time by default
     dice_rolls = {
         Category.rock: random.roll_dice(),
         Category.paper: random.roll_dice(),

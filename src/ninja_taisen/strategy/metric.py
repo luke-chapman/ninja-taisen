@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from collections import defaultdict
 
-from ninja_taisen.objects.types import Board, CardPiles, Team
+from ninja_taisen.objects.types import Board, Card, Team
 
 
 class IMetric(ABC):
@@ -16,8 +17,8 @@ class CountMetric(IMetric):
         return team_metric - other_team_metric
 
     @staticmethod
-    def __count_cards(cards: CardPiles) -> float:
-        return float(sum(len(pile) for pile in cards))
+    def __count_cards(cards: defaultdict[int, list[Card]]) -> float:
+        return float(sum(len(pile) for pile in cards.values()))
 
 
 MONKEY_PILE_WEIGHTS = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]
@@ -32,10 +33,10 @@ class PositionMetric(IMetric):
         return team_metric - other_team_metric
 
     @staticmethod
-    def __calculate_team_metric(piles: CardPiles, pile_weights: list[int]) -> float:
+    def __calculate_team_metric(piles: defaultdict[int, list[Card]], pile_weights: list[int]) -> float:
         metric = 0.0
-        for pile, pile_weight in zip(piles, pile_weights, strict=True):
-            metric += len(pile) * pile_weight
+        for index, pile in piles.items():
+            metric += len(pile) * pile_weights[index]
         return metric
 
 
@@ -50,9 +51,9 @@ class StrengthMetric(IMetric):
         return team_metric - other_team_metric
 
     @staticmethod
-    def __calculate_team_metric(piles: CardPiles) -> float:
+    def __calculate_team_metric(piles: defaultdict[int, list[Card]]) -> float:
         metric = 0.0
-        for pile in piles:
+        for pile in piles.values():
             for card in pile:
                 metric += STRENGTHS_TO_WEIGHTS[card.strength]
         return metric
