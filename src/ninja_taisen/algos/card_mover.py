@@ -28,8 +28,8 @@ class CardMover:
             log.debug("remaining_battles=%s", self.remaining_battles)
             self.__resolve_battle(pile_index=self.remaining_battles[-1], team=team)
 
-        self.__restore_jokers(self.board.monkey_cards)
-        self.__restore_jokers(self.board.wolf_cards)
+        self.__restore_jokers_and_remove_empty_piles(self.board.monkey_cards)
+        self.__restore_jokers_and_remove_empty_piles(self.board.wolf_cards)
 
         log.debug("Final board\n%s", self.board)
 
@@ -116,8 +116,12 @@ class CardMover:
         self.remaining_battles = [i for i in self.remaining_battles if i != pile_index]
 
     @staticmethod
-    def __restore_jokers(card_piles: defaultdict[int, list[Card]]) -> None:
+    def __restore_jokers_and_remove_empty_piles(card_piles: defaultdict[int, list[Card]]) -> None:
         for pile in card_piles.values():
             for card in pile:
                 if card.category == Category.joker:
                     card.strength = 4
+
+        empty_pile_indices = [i for i in card_piles if len(card_piles[i]) == 0]
+        for index in empty_pile_indices:
+            card_piles.pop(index)
