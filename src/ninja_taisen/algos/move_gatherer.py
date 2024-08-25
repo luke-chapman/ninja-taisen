@@ -1,4 +1,4 @@
-from copy import copy, deepcopy
+from copy import deepcopy
 from logging import getLogger
 
 from ninja_taisen.algos import board_inspector
@@ -52,7 +52,7 @@ def __gather_moves_for_dice_roll(
 
         for pile_index, card_index in movable_card_indices:
             copied_state = deepcopy(initial_state)
-            card = copy(cards[pile_index][card_index])
+            card = cards[pile_index][card_index]
 
             try:
                 card_mover = CardMover(board=copied_state.board)

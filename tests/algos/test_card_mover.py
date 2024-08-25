@@ -128,15 +128,15 @@ from ninja_taisen.objects.types import Board, Team
 #
 def test_complex_battle() -> None:
     board = Board(
-        monkey_cards=defaultdict(list, {1: [MS2()], 4: [MP2(), MJ4()], 5: [MR2(), MS1(), MS3()]}),
-        wolf_cards=defaultdict(list, {6: [WS1(), WP1()], 7: [WJ4()], 8: [WR3()], 9: [WP3()]}),
+        monkey_cards=defaultdict(list, {1: [MS2], 4: [MP2, MJ4], 5: [MR2, MS1, MS3]}),
+        wolf_cards=defaultdict(list, {6: [WS1, WP1], 7: [WJ4], 8: [WR3], 9: [WP3]}),
     )
     card_mover = CardMover(board=board)
     card_mover.move_card_and_resolve_battles(team=Team.monkey, dice_roll=2, pile_index=5, card_index=0)
 
     final_board = Board(
-        monkey_cards=defaultdict(list, {1: [MS2()], 4: [MP2(), MJ4()], 5: [MS1()], 7: [MR2()]}),
-        wolf_cards=defaultdict(list, {8: [WR3(), WJ4()], 9: [WP3()]}),
+        monkey_cards=defaultdict(list, {1: [MS2], 4: [MP2, MJ4], 5: [MS1], 7: [MR2]}),
+        wolf_cards=defaultdict(list, {8: [WR3, WJ4], 9: [WP3]}),
     )
 
     assert board == final_board

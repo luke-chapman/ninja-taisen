@@ -4,8 +4,30 @@ from itertools import chain
 from more_itertools import unique_everseen
 
 from ninja_taisen.algos.board_builder import make_board
+from ninja_taisen.objects.cards import (
+    MJ4,
+    MP1,
+    MP2,
+    MP3,
+    MR1,
+    MR2,
+    MR3,
+    MS1,
+    MS2,
+    MS3,
+    WJ4,
+    WP1,
+    WP2,
+    WP3,
+    WR1,
+    WR2,
+    WR3,
+    WS1,
+    WS2,
+    WS3,
+)
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import BOARD_LENGTH, Board, Card, Category
+from ninja_taisen.objects.types import BOARD_LENGTH, Board, Card, Category, Team
 
 
 def test_make_board_not_shuffled() -> None:
@@ -29,64 +51,35 @@ def test_make_board_shuffled() -> None:
 
     unique_monkey_cards = sorted(unique_everseen(chain.from_iterable(shuffled_board.monkey_cards.values())))
     unique_wolf_cards = sorted(unique_everseen(chain.from_iterable(shuffled_board.wolf_cards.values())))
-    unique_ordered_cards = make_ordered_cards()
 
-    assert unique_monkey_cards == unique_ordered_cards
-    assert unique_wolf_cards == unique_ordered_cards
+    assert unique_monkey_cards == make_ordered_cards(team=Team.monkey)
+    assert unique_wolf_cards == make_ordered_cards(team=Team.wolf)
 
 
 def make_non_shuffled_board() -> Board:
     board = Board(monkey_cards=defaultdict(list), wolf_cards=defaultdict(list))
-    board.monkey_cards[0] = [
-        Card(category=Category.joker, strength=4),
-        Card(category=Category.rock, strength=1),
-        Card(category=Category.rock, strength=2),
-        Card(category=Category.rock, strength=3),
-    ]
-    board.monkey_cards[1] = [
-        Card(category=Category.paper, strength=1),
-        Card(category=Category.paper, strength=2),
-        Card(category=Category.paper, strength=3),
-    ]
-    board.monkey_cards[2] = [
-        Card(category=Category.scissors, strength=1),
-        Card(category=Category.scissors, strength=2),
-    ]
-    board.monkey_cards[3] = [
-        Card(category=Category.scissors, strength=3),
-    ]
+    board.monkey_cards[0] = [MJ4, MR1, MR2, MR3]
+    board.monkey_cards[1] = [MP1, MP2, MP3]
+    board.monkey_cards[2] = [MS1, MS2]
+    board.monkey_cards[3] = [MS3]
 
-    board.wolf_cards[7] = [
-        Card(category=Category.scissors, strength=3),
-    ]
-    board.wolf_cards[8] = [
-        Card(category=Category.scissors, strength=1),
-        Card(category=Category.scissors, strength=2),
-    ]
-    board.wolf_cards[9] = [
-        Card(category=Category.paper, strength=1),
-        Card(category=Category.paper, strength=2),
-        Card(category=Category.paper, strength=3),
-    ]
-    board.wolf_cards[10] = [
-        Card(category=Category.joker, strength=4),
-        Card(category=Category.rock, strength=1),
-        Card(category=Category.rock, strength=2),
-        Card(category=Category.rock, strength=3),
-    ]
+    board.wolf_cards[7] = [WS3]
+    board.wolf_cards[8] = [WS1, WS2]
+    board.wolf_cards[9] = [WP1, WP2, WP3]
+    board.wolf_cards[10] = [WJ4, WR1, WR2, WR3]
     return board
 
 
-def make_ordered_cards() -> list[Card]:
+def make_ordered_cards(team: Team) -> list[Card]:
     return [
-        Card(category=Category.rock, strength=1),
-        Card(category=Category.rock, strength=2),
-        Card(category=Category.rock, strength=3),
-        Card(category=Category.paper, strength=1),
-        Card(category=Category.paper, strength=2),
-        Card(category=Category.paper, strength=3),
-        Card(category=Category.scissors, strength=1),
-        Card(category=Category.scissors, strength=2),
-        Card(category=Category.scissors, strength=3),
-        Card(category=Category.joker, strength=4),
+        Card(team=team, category=Category.rock, strength=1),
+        Card(team=team, category=Category.rock, strength=2),
+        Card(team=team, category=Category.rock, strength=3),
+        Card(team=team, category=Category.paper, strength=1),
+        Card(team=team, category=Category.paper, strength=2),
+        Card(team=team, category=Category.paper, strength=3),
+        Card(team=team, category=Category.scissors, strength=1),
+        Card(team=team, category=Category.scissors, strength=2),
+        Card(team=team, category=Category.scissors, strength=3),
+        Card(team=team, category=Category.joker, strength=4),
     ]
