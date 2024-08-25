@@ -4,6 +4,28 @@ from itertools import chain
 from more_itertools import unique_everseen
 
 from ninja_taisen.algos.board_builder import make_board
+from ninja_taisen.objects.cards import (
+    MJ4,
+    MP1,
+    MP2,
+    MP3,
+    MR1,
+    MR2,
+    MR3,
+    MS1,
+    MS2,
+    MS3,
+    WJ4,
+    WP1,
+    WP2,
+    WP3,
+    WR1,
+    WR2,
+    WR3,
+    WS1,
+    WS2,
+    WS3,
+)
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import BOARD_LENGTH, Board, Card, Category, Team
 
@@ -36,43 +58,15 @@ def test_make_board_shuffled() -> None:
 
 def make_non_shuffled_board() -> Board:
     board = Board(monkey_cards=defaultdict(list), wolf_cards=defaultdict(list))
-    board.monkey_cards[0] = [
-        Card(team=Team.monkey, category=Category.joker, strength=4),
-        Card(team=Team.monkey, category=Category.rock, strength=1),
-        Card(team=Team.monkey, category=Category.rock, strength=2),
-        Card(team=Team.monkey, category=Category.rock, strength=3),
-    ]
-    board.monkey_cards[1] = [
-        Card(team=Team.monkey, category=Category.paper, strength=1),
-        Card(team=Team.monkey, category=Category.paper, strength=2),
-        Card(team=Team.monkey, category=Category.paper, strength=3),
-    ]
-    board.monkey_cards[2] = [
-        Card(team=Team.monkey, category=Category.scissors, strength=1),
-        Card(team=Team.monkey, category=Category.scissors, strength=2),
-    ]
-    board.monkey_cards[3] = [
-        Card(team=Team.monkey, category=Category.scissors, strength=3),
-    ]
+    board.monkey_cards[0] = [MJ4, MR1, MR2, MR3]
+    board.monkey_cards[1] = [MP1, MP2, MP3]
+    board.monkey_cards[2] = [MS1, MS2]
+    board.monkey_cards[3] = [MS3]
 
-    board.wolf_cards[7] = [
-        Card(team=Team.wolf, category=Category.scissors, strength=3),
-    ]
-    board.wolf_cards[8] = [
-        Card(team=Team.wolf, category=Category.scissors, strength=1),
-        Card(team=Team.wolf, category=Category.scissors, strength=2),
-    ]
-    board.wolf_cards[9] = [
-        Card(team=Team.wolf, category=Category.paper, strength=1),
-        Card(team=Team.wolf, category=Category.paper, strength=2),
-        Card(team=Team.wolf, category=Category.paper, strength=3),
-    ]
-    board.wolf_cards[10] = [
-        Card(team=Team.wolf, category=Category.joker, strength=4),
-        Card(team=Team.wolf, category=Category.rock, strength=1),
-        Card(team=Team.wolf, category=Category.rock, strength=2),
-        Card(team=Team.wolf, category=Category.rock, strength=3),
-    ]
+    board.wolf_cards[7] = [WS3]
+    board.wolf_cards[8] = [WS1, WS2]
+    board.wolf_cards[9] = [WP1, WP2, WP3]
+    board.wolf_cards[10] = [WJ4, WR1, WR2, WR3]
     return board
 
 

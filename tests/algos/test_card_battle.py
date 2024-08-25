@@ -18,7 +18,7 @@ def test_non_joker_draws(category: Category, strength: int) -> None:
 @pytest.mark.parametrize("strength", (0, 1, 2, 3, 4))
 def test_joker_joker_draws(strength: int) -> None:
     joker_strengths = {Team.wolf: strength, Team.monkey: strength}
-    battle_result = card_battle.battle_winner(MJ4(), WJ4(), joker_strengths)
+    battle_result = card_battle.battle_winner(MJ4, WJ4, joker_strengths)
     assert battle_result.status == BattleStatus.draw
     assert battle_result.winner is None
     assert joker_strengths[Team.monkey] == 0
@@ -26,11 +26,11 @@ def test_joker_joker_draws(strength: int) -> None:
 
 
 def test_rock_paper_scissors_wins() -> None:
-    for monkey_rock in (MR1(), MR2(), MR3()):
-        for wolf_paper in (WP1(), WP2(), WP3()):
+    for monkey_rock in (MR1, MR2, MR3):
+        for wolf_paper in (WP1, WP2, WP3):
             assert_battle_winner(wolf_paper, monkey_rock)
 
-        for wolf_scissors in (WS1(), WS2(), WS3()):
+        for wolf_scissors in (WS1, WS2, WS3):
             assert_battle_winner(monkey_rock, wolf_scissors)
 
 
@@ -55,45 +55,45 @@ def test_strength_wins(category: Category) -> None:
 
 def test_joker_non_joker_wins_MJ4_WR1() -> None:
     joker_strengths = {Team.monkey: 4, Team.wolf: 4}
-    battle_result = card_battle.battle_winner(MJ4(), WR1(), joker_strengths)
+    battle_result = card_battle.battle_winner(MJ4, WR1, joker_strengths)
     assert battle_result.status == BattleStatus.card_a_wins
-    assert battle_result.winner == MJ4()
+    assert battle_result.winner == MJ4
     assert joker_strengths[Team.monkey] == 3
     assert joker_strengths[Team.wolf] == 4
 
 
 def test_joker_non_joker_wins_MJ3_WR1() -> None:
     joker_strengths = {Team.monkey: 3, Team.wolf: 4}
-    battle_result = card_battle.battle_winner(MJ4(), WR1(), joker_strengths)
+    battle_result = card_battle.battle_winner(MJ4, WR1, joker_strengths)
     assert battle_result.status == BattleStatus.card_a_wins
-    assert battle_result.winner == MJ4()
+    assert battle_result.winner == MJ4
     assert joker_strengths[Team.monkey] == 2
     assert joker_strengths[Team.wolf] == 4
 
 
 def test_joker_non_joker_wins_MJ2_WR1() -> None:
     joker_strengths = {Team.monkey: 2, Team.wolf: 4}
-    battle_result = card_battle.battle_winner(MJ4(), WR1(), joker_strengths)
+    battle_result = card_battle.battle_winner(MJ4, WR1, joker_strengths)
     assert battle_result.status == BattleStatus.card_a_wins
-    assert battle_result.winner == MJ4()
+    assert battle_result.winner == MJ4
     assert joker_strengths[Team.monkey] == 1
     assert joker_strengths[Team.wolf] == 4
 
 
 def test_joker_non_joker_wins_MP2_WJ4() -> None:
     joker_strengths = {Team.monkey: 4, Team.wolf: 4}
-    battle_result = card_battle.battle_winner(MP2(), WJ4(), joker_strengths)
+    battle_result = card_battle.battle_winner(MP2, WJ4, joker_strengths)
     assert battle_result.status == BattleStatus.card_b_wins
-    assert battle_result.winner == WJ4()
+    assert battle_result.winner == WJ4
     assert joker_strengths[Team.monkey] == 4
     assert joker_strengths[Team.wolf] == 2
 
 
 def test_joker_non_joker_wins_MJ4_WS3() -> None:
     joker_strengths = {Team.monkey: 4, Team.wolf: 4}
-    battle_result = card_battle.battle_winner(MJ4(), WS3(), joker_strengths)
+    battle_result = card_battle.battle_winner(MJ4, WS3, joker_strengths)
     assert battle_result.status == BattleStatus.card_a_wins
-    assert battle_result.winner == MJ4()
+    assert battle_result.winner == MJ4
     assert joker_strengths[Team.monkey] == 1
     assert joker_strengths[Team.wolf] == 4
 
@@ -103,12 +103,9 @@ def test_joker_non_joker_wins_MJ4_WS3() -> None:
 )
 def test_joker_joker_wins(monkey_strength: int, wolf_strength: int) -> None:
     joker_strengths = {Team.monkey: monkey_strength, Team.wolf: wolf_strength}
-    MJ = Card(team=Team.monkey, category=Category.joker, strength=monkey_strength)
-    WJ = Card(team=Team.wolf, category=Category.joker, strength=wolf_strength)
-
-    battle_result = card_battle.battle_winner(MJ, WJ, joker_strengths)
+    battle_result = card_battle.battle_winner(MJ4, WJ4, joker_strengths)
     assert battle_result.status == BattleStatus.card_b_wins
-    assert battle_result.winner == WJ
+    assert battle_result.winner == WJ4
 
     assert joker_strengths[Team.monkey] == monkey_strength
     assert joker_strengths[Team.wolf] == wolf_strength - monkey_strength
