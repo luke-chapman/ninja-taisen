@@ -16,6 +16,10 @@ log = logging.getLogger(__name__)
 
 class CardMover:
     def __init__(self, board: Board) -> None:
+        """
+        Class for moving a card and resolving battles. Can be used for multiple card moves
+        :param board: Reference to the board; this board's state will be edited when cards are moved
+        """
         self.board = board
         self.remaining_battles: list[int] = []
         self.joker_strengths = {Team.monkey: 4, Team.wolf: 4}
@@ -30,10 +34,22 @@ class CardMover:
 
         self.__remove_empty_piles(self.board.monkey_cards)
         self.__remove_empty_piles(self.board.wolf_cards)
+        self.joker_strengths[Team.monkey] = 4
+        self.joker_strengths[Team.wolf] = 4
 
         log.debug("Final board\n%s", self.board)
 
     def __move_card(self, team: Team, dice_roll: int, pile_index: int, card_index: int) -> None:
+        """
+        Move the card in question and all cards on top of it to the new space.
+        Register the card's destination as requiring battle resolution, but do not resolve the battle
+
+        :param team: Which team's card to move
+        :param dice_roll: How many spaces to move the card
+        :param pile_index: Index of the pile containing the card (from 0-10)
+        :param card_index: Index of the card within the pile
+        :return:
+        """
         log.debug(
             "Moving team=%s, dice_roll=%s, pile_index=%s, card_index=%s",
             DTO_BY_TEAM[team].value,
@@ -59,6 +75,12 @@ class CardMover:
         log.debug(f"Board after card move, pre-battles\n{self.board}")
 
     def __resolve_battle(self, pile_index: int, team: Team) -> None:
+        """
+        Resolve an individual battle. Drawn battles may involve moving cards and scheduling new battles
+        :param pile_index: Index of the pile where the battle takes place (from 0-10)
+        :param team: The team whose turn it is. This affects how a draw is resolved
+        :return:
+        """
         monkey_pile = self.board.monkey_cards[pile_index]
         wolf_pile = self.board.wolf_cards[pile_index]
 
@@ -117,6 +139,11 @@ class CardMover:
 
     @staticmethod
     def __remove_empty_piles(card_piles: defaultdict[int, list[Card]]) -> None:
+        """
+        Save memory by removing empty card piles from the final board
+        :param card_piles: Remaining cards for a team
+        :return:
+        """
         empty_pile_indices = [i for i in card_piles if len(card_piles[i]) == 0]
         for index in empty_pile_indices:
             card_piles.pop(index)

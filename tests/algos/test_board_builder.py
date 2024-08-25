@@ -29,31 +29,30 @@ def test_make_board_shuffled() -> None:
 
     unique_monkey_cards = sorted(unique_everseen(chain.from_iterable(shuffled_board.monkey_cards.values())))
     unique_wolf_cards = sorted(unique_everseen(chain.from_iterable(shuffled_board.wolf_cards.values())))
-    unique_ordered_cards = make_ordered_cards()
 
-    assert unique_monkey_cards == unique_ordered_cards
-    assert unique_wolf_cards == unique_ordered_cards
+    assert unique_monkey_cards == make_ordered_cards(team=Team.monkey)
+    assert unique_wolf_cards == make_ordered_cards(team=Team.wolf)
 
 
 def make_non_shuffled_board() -> Board:
     board = Board(monkey_cards=defaultdict(list), wolf_cards=defaultdict(list))
     board.monkey_cards[0] = [
-        Card(category=Category.joker, strength=4),
-        Card(category=Category.rock, strength=1),
-        Card(category=Category.rock, strength=2),
-        Card(category=Category.rock, strength=3),
+        Card(team=Team.monkey, category=Category.joker, strength=4),
+        Card(team=Team.monkey, category=Category.rock, strength=1),
+        Card(team=Team.monkey, category=Category.rock, strength=2),
+        Card(team=Team.monkey, category=Category.rock, strength=3),
     ]
     board.monkey_cards[1] = [
-        Card(category=Category.paper, strength=1),
-        Card(category=Category.paper, strength=2),
-        Card(category=Category.paper, strength=3),
+        Card(team=Team.monkey, category=Category.paper, strength=1),
+        Card(team=Team.monkey, category=Category.paper, strength=2),
+        Card(team=Team.monkey, category=Category.paper, strength=3),
     ]
     board.monkey_cards[2] = [
-        Card(category=Category.scissors, strength=1),
-        Card(category=Category.scissors, strength=2),
+        Card(team=Team.monkey, category=Category.scissors, strength=1),
+        Card(team=Team.monkey, category=Category.scissors, strength=2),
     ]
     board.monkey_cards[3] = [
-        Card(category=Category.scissors, strength=3),
+        Card(team=Team.monkey, category=Category.scissors, strength=3),
     ]
 
     board.wolf_cards[7] = [
