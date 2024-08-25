@@ -2,11 +2,11 @@
   "moves": [
     {
       "diceCategory": "paper",
-      "card": "P2"
+      "card": "WP2"
     },
     {
       "diceCategory": "rock",
-      "card": "R3"
+      "card": "WR3"
     }
   ]
 }

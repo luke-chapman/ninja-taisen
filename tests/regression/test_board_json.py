@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from ninja_taisen.dtos import BoardDto, CategoryDto, DiceRollDto, MoveDto, MoveRequestBody, MoveResponseBody, TeamDto
+from ninja_taisen.objects.cards import WP2, WR3
 from ninja_taisen.objects.types import Board
 
 
@@ -32,7 +33,10 @@ def test_for_board_json_changes(regen: bool) -> None:
         board=board_dto_1, dice=DiceRollDto(rock=1, paper=3, scissors=2), team=TeamDto.wolf
     )
     move_response_body_1 = MoveResponseBody(
-        moves=[MoveDto(dice_category=CategoryDto.paper, card="P2"), MoveDto(dice_category=CategoryDto.rock, card="R3")]
+        moves=[
+            MoveDto(dice_category=CategoryDto.paper, card=WP2.to_dto()),
+            MoveDto(dice_category=CategoryDto.rock, card=WR3.to_dto()),
+        ]
     )
 
     json_dir = Path(__file__).resolve().parent
