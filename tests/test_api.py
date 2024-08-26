@@ -28,7 +28,7 @@ def test_execute(game: str, turn_index: int) -> None:
 
     request = ChooseRequest.model_validate_json(request_json.read_text())
     response = ChooseResponse.model_validate_json(response_json.read_text())
-    execute_request = ExecuteRequest(board=request.board, dice=request.board, team=request.team, moves=response.moves)
+    execute_request = ExecuteRequest(board=request.board, dice=request.dice, team=request.team, moves=response.moves)
 
     next_request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index + 1}.json"
     if next_request_json.exists():

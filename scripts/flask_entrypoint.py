@@ -2,8 +2,7 @@ from logging import getLogger
 
 from flask import Flask, Response, jsonify, request
 
-from ninja_taisen import execute_move
-from ninja_taisen.api import move
+from ninja_taisen import choose_move, execute_move
 from ninja_taisen.dtos import ChooseRequest, ExecuteRequest, Strategy
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.utils.logging_setup import setup_logging
@@ -27,7 +26,7 @@ def handle_choose() -> tuple[Response, int]:
     try:
         data = request.get_json()
         request_body = ChooseRequest.model_validate_json(data)
-        response_body = move(request=request_body, strategy_name=STRATEGY, random=random)
+        response_body = choose_move(request=request_body, strategy_name=STRATEGY, random=random)
         response = jsonify(response_body.model_dump(round_trip=True, by_alias=True))
         return response, 200
     except Exception as e:
