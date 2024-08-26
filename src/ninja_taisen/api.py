@@ -99,20 +99,18 @@ def read_parquet_results(filename: Path) -> pl.DataFrame:
 def choose_move(request: MoveRequestBody, strategy_name: StrategyName, random: SafeRandom | None) -> MoveResponseBody:
     setup_logging()
 
-    random = random or SafeRandom()  # Seeded with current time by default
-    dice_rolls = {
-        Category.rock: random.roll_dice(),
-        Category.paper: random.roll_dice(),
-        Category.scissors: random.roll_dice(),
-    }
-    team = TEAM_BY_DTO[request.team]
-    strategy = lookup_strategy(strategy_name, random)
-
     all_permitted_moves = gather_all_permitted_moves(
         starting_board=Board.from_dto(request.board),
-        team=team,
-        dice_rolls=dice_rolls,
+        team=TEAM_BY_DTO[request.team],
+        dice_rolls={
+            Category.rock: request.dice.rock,
+            Category.paper: request.dice.paper,
+            Category.scissors: request.dice.scissors,
+        },
     )
+
+    random = random or SafeRandom()  # Seeded with current time by default
+    strategy = lookup_strategy(strategy_name, random)
     chosen_moves = strategy.choose_moves(all_permitted_moves)
 
     return MoveResponseBody(moves=[m.to_dto() for m in chosen_moves.moves])
