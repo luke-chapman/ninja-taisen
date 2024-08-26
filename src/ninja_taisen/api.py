@@ -28,6 +28,7 @@ def simulate(
     verbosity: int = logging.INFO,
     log_file: Path | None = None,
     profile: bool = False,
+    serialisation_dir: Path | None = None,
 ) -> list[ResultDto]:
     setup_logging(verbosity, log_file)
 
@@ -47,6 +48,7 @@ def simulate(
                 per_process=per_process,
                 verbosity=verbosity,
                 log_file=log_file,
+                serialisation_dir=serialisation_dir,
             )
         profiler.print_stats(SortKey.TIME)
     else:
@@ -56,6 +58,7 @@ def simulate(
             per_process=per_process,
             verbosity=verbosity,
             log_file=log_file,
+            serialisation_dir=serialisation_dir,
         )
 
     if csv_results:
@@ -112,7 +115,7 @@ def choose_move(request: MoveRequestBody, strategy_name: StrategyName, random: S
     )
     chosen_moves = strategy.choose_moves(all_permitted_moves)
 
-    return MoveResponseBody(moves=[m.to_dto(team) for m in chosen_moves.moves])
+    return MoveResponseBody(moves=[m.to_dto() for m in chosen_moves.moves])
 
 
 def execute_move(request: MoveRequestBody, response: MoveResponseBody) -> BoardDto:

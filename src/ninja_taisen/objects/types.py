@@ -168,7 +168,7 @@ class Move(NamedTuple):
     dice_roll: int
     card: Card
 
-    def to_dto(self, team: Team) -> MoveDto:
+    def to_dto(self) -> MoveDto:
         return MoveDto(dice_category=DTO_BY_CATEGORY[self.dice_category], card=self.card.to_dto())
 
 

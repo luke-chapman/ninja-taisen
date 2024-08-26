@@ -1,0 +1,28 @@
+{
+  "board": {
+    "monkey": {},
+    "wolf": {
+      "9": [
+        "WS3",
+        "WS1",
+        "WR3",
+        "WR1"
+      ],
+      "2": [
+        "WP3"
+      ],
+      "3": [
+        "WS2"
+      ],
+      "8": [
+        "WP1"
+      ]
+    }
+  },
+  "dice": {
+    "rock": 1,
+    "paper": 3,
+    "scissors": 2
+  },
+  "team": "monkey"
+}

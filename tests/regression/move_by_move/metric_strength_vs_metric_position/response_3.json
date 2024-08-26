@@ -1,0 +1,16 @@
+{
+  "moves": [
+    {
+      "diceCategory": "paper",
+      "card": "WP2"
+    },
+    {
+      "diceCategory": "scissors",
+      "card": "WS1"
+    },
+    {
+      "diceCategory": "rock",
+      "card": "WR2"
+    }
+  ]
+}

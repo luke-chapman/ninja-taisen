@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import StrEnum
+from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
@@ -8,8 +9,9 @@ from pydantic.alias_generators import to_camel
 class NinjaTaisenModel(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
-    def to_json(self) -> str:
-        return self.model_dump_json(indent=2, round_trip=True, by_alias=True)
+    def to_json_file(self, filename: Path) -> None:
+        content = self.model_dump_json(indent=2, round_trip=True, by_alias=True)
+        filename.write_text(content)
 
 
 class InstructionDto(NinjaTaisenModel):
