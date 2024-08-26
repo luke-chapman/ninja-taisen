@@ -26,7 +26,7 @@ def is_local_run() -> bool:
     return getpass.getuser() == "lrrch"
 
 
-@pytest.mark.skip_if(not is_local_run())
+@pytest.mark.skipif(not is_local_run(), reason=f"Test is skipped for user {getpass.getuser()}")
 def test_choose(tmp_path: Path) -> None:
     random = SafeRandom(0)
     team = TeamDto.monkey
@@ -48,7 +48,7 @@ def test_choose(tmp_path: Path) -> None:
     validate_choose_response(choose_response, team)
 
 
-@pytest.mark.skip_if(not is_local_run())
+@pytest.mark.skipif(not is_local_run(), reason=f"Test is skipped for user {getpass.getuser()}")
 def test_execute(tmp_path: Path) -> None:
     random = SafeRandom(0)
     team = TeamDto.wolf
