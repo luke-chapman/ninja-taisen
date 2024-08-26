@@ -13,7 +13,7 @@ from ninja_taisen.algos import board_builder, board_inspector, move_gatherer
 from ninja_taisen.dtos import DiceRollDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto
 from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import DTO_BY_TEAM, Category, Team, Move
+from ninja_taisen.objects.types import DTO_BY_TEAM, Category, Move, Team
 from ninja_taisen.strategy.strategy import IStrategy
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 
@@ -111,6 +111,7 @@ class GameRunner:
 
         move_response_body = MoveResponseBody(moves=[m.to_dto() for m in moves])
         move_response_body.to_json_file(self.serialisation_dir / f"response_{turn_index}.json")
+
 
 def simulate_one(instruction: InstructionDto, serialisation_dir: Path | None) -> ResultDto:
     random = SafeRandom(instruction.seed)
