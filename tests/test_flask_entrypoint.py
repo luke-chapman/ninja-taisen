@@ -1,8 +1,10 @@
+import getpass
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any
 
+import pytest
 import requests
 
 from ninja_taisen import ChooseRequest, execute_move
@@ -20,6 +22,11 @@ from ninja_taisen.objects.safe_random import SafeRandom
 from tests.conftest import validate_choose_response
 
 
+def is_local_run() -> bool:
+    return getpass.getuser() == "lrrch"
+
+
+@pytest.mark.skip_if(not is_local_run())
 def test_choose(tmp_path: Path) -> None:
     random = SafeRandom(0)
     team = TeamDto.monkey
@@ -41,6 +48,7 @@ def test_choose(tmp_path: Path) -> None:
     validate_choose_response(choose_response, team)
 
 
+@pytest.mark.skip_if(not is_local_run())
 def test_execute(tmp_path: Path) -> None:
     random = SafeRandom(0)
     team = TeamDto.wolf
