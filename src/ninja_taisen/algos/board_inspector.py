@@ -9,7 +9,19 @@ def victorious_team(board: Board) -> Team | None:
         return Team.monkey
     if board.wolf_cards[0]:
         return Team.wolf
-    return None
+
+    monkeys_remain = any(len(p) > 0 for p in board.monkey_cards.values())
+    wolves_remain = any(len(p) > 0 for p in board.wolf_cards.values())
+    if monkeys_remain:
+        if wolves_remain:
+            return None
+        else:
+            return Team.monkey
+    else:
+        if wolves_remain:
+            return Team.wolf
+        else:
+            return None
 
 
 def find_first_winning_move(all_completed_moves: list[CompletedMoves]) -> CompletedMoves | None:

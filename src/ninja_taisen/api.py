@@ -10,7 +10,7 @@ import polars as pl
 from ninja_taisen.algos.card_mover import CardMover
 from ninja_taisen.algos.game_runner import simulate_many_multi_process
 from ninja_taisen.algos.move_gatherer import gather_all_permitted_moves
-from ninja_taisen.dtos import BoardDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto, StrategyName
+from ninja_taisen.dtos import BoardDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto
 from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Board, Card, Category
@@ -96,25 +96,24 @@ def read_parquet_results(filename: Path) -> pl.DataFrame:
     return pl.read_parquet(filename)
 
 
-def choose_move(request: MoveRequestBody, strategy_name: StrategyName, random: SafeRandom | None) -> MoveResponseBody:
+def choose_move(request: MoveRequestBody, strategy_name: str, random: SafeRandom | None) -> MoveResponseBody:
     setup_logging()
-
-    random = random or SafeRandom()  # Seeded with current time by default
-    dice_rolls = {
-        Category.rock: random.roll_dice(),
-        Category.paper: random.roll_dice(),
-        Category.scissors: random.roll_dice(),
-    }
-    team = TEAM_BY_DTO[request.team]
-    strategy = lookup_strategy(strategy_name, random)
 
     all_permitted_moves = gather_all_permitted_moves(
         starting_board=Board.from_dto(request.board),
-        team=team,
-        dice_rolls=dice_rolls,
+        team=TEAM_BY_DTO[request.team],
+        dice_rolls={
+            Category.rock: request.dice.rock,
+            Category.paper: request.dice.paper,
+            Category.scissors: request.dice.scissors,
+        },
     )
-    chosen_moves = strategy.choose_moves(all_permitted_moves)
+    if len(all_permitted_moves) == 0:
+        return MoveResponseBody(moves=[])
 
+    random = random or SafeRandom()  # Seeded with current time by default
+    strategy = lookup_strategy(strategy_name, random)
+    chosen_moves = strategy.choose_moves(all_permitted_moves)
     return MoveResponseBody(moves=[m.to_dto() for m in chosen_moves.moves])
 
 
