@@ -64,7 +64,7 @@ class Strategy(StrEnum):
     metric_strength = "metric_strength"
 
 
-class MoveRequest(NinjaTaisenModel):
+class ChooseRequest(NinjaTaisenModel):
     board: BoardDto
     dice: DiceRollDto
     team: TeamDto
@@ -75,5 +75,16 @@ class MoveDto(NinjaTaisenModel):
     card: str
 
 
-class MoveResponse(NinjaTaisenModel):
+class ChooseResponse(NinjaTaisenModel):
     moves: list[MoveDto]
+
+
+class ExecuteRequest(NinjaTaisenModel):
+    board: BoardDto
+    dice: DiceRollDto
+    team: TeamDto
+    moves: list[MoveDto]
+
+
+class ExecuteResponse(NinjaTaisenModel):
+    board: BoardDto
