@@ -18,10 +18,9 @@ def test_choose() -> None:
         dice=DiceRollDto(rock=random.roll_dice(), paper=random.roll_dice(), scissors=random.roll_dice()),
         team=team,
     )
-    request_json = choose_request.model_dump_json(by_alias=True, round_trip=True)
-    headers = {"Content-Type": "application/json"}
+    request_json = choose_request.model_dump(by_alias=True, round_trip=True)
 
-    response = requests.post(url=URL + "/choose", data=request_json, headers=headers)
+    response = requests.post(url=URL + "/choose", json=request_json)
     assert response.status_code == 200, f"status_code={response.status_code}, text={response.text}"
 
     choose_response = ChooseResponse.model_validate(response.json())
