@@ -25,7 +25,7 @@ def handle_choose() -> tuple[Response, int]:
         return jsonify({"error": "Request must be JSON"}), 400
     try:
         data = request.get_json()
-        request_body = ChooseRequest.model_validate_json(data)
+        request_body = ChooseRequest.model_validate(data)
         response_body = choose_move(request=request_body, strategy_name=STRATEGY, random=random)
         response = jsonify(response_body.model_dump(round_trip=True, by_alias=True))
         return response, 200
@@ -38,7 +38,7 @@ def handle_execute() -> tuple[Response, int]:
         return jsonify({"error": "Request must be JSON"}), 400
     try:
         data = request.get_json()
-        request_body = ExecuteRequest.model_validate_json(data)
+        request_body = ExecuteRequest.model_validate(data)
         response_body = execute_move(request=request_body)
         response = jsonify(response_body.model_dump(round_trip=True, by_alias=True))
         return response, 200

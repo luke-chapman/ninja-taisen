@@ -6,7 +6,7 @@ from ninja_taisen.dtos import ChooseResponse, DiceRollDto, TeamDto
 from ninja_taisen.objects.safe_random import SafeRandom
 from tests.conftest import validate_choose_response
 
-URL = "http://127.0.0.1:5000"
+URL = "http://localhost:5000"
 
 
 def test_choose() -> None:
@@ -18,11 +18,11 @@ def test_choose() -> None:
         dice=DiceRollDto(rock=random.roll_dice(), paper=random.roll_dice(), scissors=random.roll_dice()),
         team=team,
     )
-    request_json_data = choose_request.model_dump_json(by_alias=True, round_trip=True)
+    request_json = choose_request.model_dump_json(by_alias=True, round_trip=True)
     headers = {"Content-Type": "application/json"}
 
-    response = requests.post(url=URL, headers=headers, data=request_json_data)
-    assert response.status_code == 200
+    response = requests.post(url=URL + "/choose", data=request_json, headers=headers)
+    assert response.status_code == 200, f"status_code={response.status_code}, text={response.text}"
 
-    choose_response = ChooseResponse.model_validate_json(response.json())
+    choose_response = ChooseResponse.model_validate(response.json())
     validate_choose_response(choose_response, team)
