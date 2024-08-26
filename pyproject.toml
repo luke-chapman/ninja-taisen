@@ -12,6 +12,7 @@ authors = [
   { name = "Luke Chapman", email = "lrrchapman@gmail.com" },
 ]
 dependencies = [
+  "flask>=3.0.3",
   "more-itertools>=10.4",
   "polars>=1.5.0",
   "pydantic>=2.8.2",
