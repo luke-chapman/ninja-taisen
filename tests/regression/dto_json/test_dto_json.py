@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ninja_taisen.dtos import BoardDto, CategoryDto, DiceRollDto, MoveDto, MoveRequestBody, MoveResponseBody, TeamDto
+from ninja_taisen.dtos import BoardDto, CategoryDto, ChooseRequest, ChooseResponse, DiceRollDto, MoveDto, TeamDto
 from ninja_taisen.objects.cards import WP2, WR3
 from ninja_taisen.objects.types import Board
 
@@ -29,10 +29,10 @@ def test_for_dto_json_changes(regen: bool) -> None:
     board_dto_2 = board.to_dto()
     assert board_dto_1 == board_dto_2
 
-    move_request_body_1 = MoveRequestBody(
+    choose_request_1 = ChooseRequest(
         board=board_dto_1, dice=DiceRollDto(rock=1, paper=3, scissors=2), team=TeamDto.wolf
     )
-    move_response_body_1 = MoveResponseBody(
+    choose_response_1 = ChooseResponse(
         moves=[
             MoveDto(dice_category=CategoryDto.paper, card=WP2.to_dto()),
             MoveDto(dice_category=CategoryDto.rock, card=WR3.to_dto()),
@@ -41,22 +41,22 @@ def test_for_dto_json_changes(regen: bool) -> None:
 
     json_dir = Path(__file__).resolve().parent
     board_json = json_dir / "board.json"
-    move_request_body_json = json_dir / "move_request_body.json"
-    move_response_body_json = json_dir / "move_response_body.json"
+    choose_request_json = json_dir / "choose_request.json"
+    choose_response_json = json_dir / "choose_response.json"
 
     if regen:
         board_dto_1.to_json_file(board_json)
-        move_request_body_1.to_json_file(move_request_body_json)
-        move_response_body_1.to_json_file(move_response_body_json)
+        choose_request_1.to_json_file(choose_request_json)
+        choose_response_1.to_json_file(choose_response_json)
     else:
         board_content = board_json.read_text()
         board_dto_3 = BoardDto.model_validate_json(board_content)
         assert board_dto_1 == board_dto_3
 
-        move_request_body_content = move_request_body_json.read_text()
-        move_request_body_2 = MoveRequestBody.model_validate_json(move_request_body_content)
-        assert move_request_body_2 == move_request_body_1
+        choose_request_content = choose_request_json.read_text()
+        choose_request_2 = ChooseRequest.model_validate_json(choose_request_content)
+        assert choose_request_2 == choose_request_1
 
-        move_response_body_content = move_response_body_json.read_text()
-        move_response_body_2 = MoveResponseBody.model_validate_json(move_response_body_content)
-        assert move_response_body_2 == move_response_body_1
+        choose_response_content = choose_response_json.read_text()
+        choose_response_2 = ChooseResponse.model_validate_json(choose_response_content)
+        assert choose_response_2 == choose_response_1

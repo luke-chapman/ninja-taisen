@@ -10,12 +10,12 @@ from time import perf_counter
 from pydantic import BaseModel
 
 from ninja_taisen.algos import board_builder, board_inspector, move_gatherer
-from ninja_taisen.dtos import DiceRollDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto
-from ninja_taisen.logging_setup import setup_logging
+from ninja_taisen.dtos import ChooseRequest, ChooseResponse, DiceRollDto, InstructionDto, ResultDto
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import DTO_BY_TEAM, Category, Move, Team
 from ninja_taisen.strategy.strategy import IStrategy
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
+from ninja_taisen.utils.logging_setup import setup_logging
 
 log = getLogger(__name__)
 
@@ -93,7 +93,7 @@ class GameRunner:
 
     def __serialise_request(self, turn_index: int, team: Team, dice_rolls: dict[Category, int]) -> None:
         assert self.serialisation_dir is not None
-        request = MoveRequestBody(
+        request = ChooseRequest(
             board=self.board.to_dto(),
             dice=DiceRollDto(
                 rock=dice_rolls[Category.rock],
@@ -106,8 +106,8 @@ class GameRunner:
 
     def __serialise_response(self, turn_index: int, moves: list[Move]) -> None:
         assert self.serialisation_dir is not None
-        move_response_body = MoveResponseBody(moves=[m.to_dto() for m in moves])
-        move_response_body.to_json_file(self.serialisation_dir / f"response_{turn_index}.json")
+        choose_response = ChooseResponse(moves=[m.to_dto() for m in moves])
+        choose_response.to_json_file(self.serialisation_dir / f"response_{turn_index}.json")
 
 
 def simulate_one(instruction: InstructionDto, serialisation_dir: Path | None) -> ResultDto:

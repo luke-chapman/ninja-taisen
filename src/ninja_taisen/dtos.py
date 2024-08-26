@@ -56,7 +56,7 @@ class BoardDto(NinjaTaisenModel):
     wolf: dict[int, list[str]]
 
 
-class StrategyName(StrEnum):
+class Strategy(StrEnum):
     random = "random"
     random_spot_win = "random_spot_win"
     metric_count = "metric_count"
@@ -64,7 +64,7 @@ class StrategyName(StrEnum):
     metric_strength = "metric_strength"
 
 
-class MoveRequestBody(NinjaTaisenModel):
+class ChooseRequest(NinjaTaisenModel):
     board: BoardDto
     dice: DiceRollDto
     team: TeamDto
@@ -75,5 +75,16 @@ class MoveDto(NinjaTaisenModel):
     card: str
 
 
-class MoveResponseBody(NinjaTaisenModel):
+class ChooseResponse(NinjaTaisenModel):
     moves: list[MoveDto]
+
+
+class ExecuteRequest(NinjaTaisenModel):
+    board: BoardDto
+    dice: DiceRollDto
+    team: TeamDto
+    moves: list[MoveDto]
+
+
+class ExecuteResponse(NinjaTaisenModel):
+    board: BoardDto

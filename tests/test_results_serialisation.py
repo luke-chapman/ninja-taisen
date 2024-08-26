@@ -12,7 +12,7 @@ from ninja_taisen.api import (
     write_parquet_results,
 )
 from ninja_taisen.dtos import TeamDto
-from ninja_taisen.objects.types import StrategyName
+from ninja_taisen.objects.types import Strategy
 
 
 @pytest.mark.parametrize("file_format", ["csv", "parquet"])
@@ -23,8 +23,8 @@ def test_csv_round_trip(file_format: str, tmp_path: Path) -> None:
         ResultDto(
             id=0,
             seed=5,
-            monkey_strategy=StrategyName.random,
-            wolf_strategy=StrategyName.metric_count,
+            monkey_strategy=Strategy.random,
+            wolf_strategy=Strategy.metric_count,
             winner=str(TeamDto.monkey),
             turn_count=18,
             start_time=now,
@@ -34,8 +34,8 @@ def test_csv_round_trip(file_format: str, tmp_path: Path) -> None:
         ResultDto(
             id=1,
             seed=55,
-            monkey_strategy=StrategyName.random_spot_win,
-            wolf_strategy=StrategyName.metric_position,
+            monkey_strategy=Strategy.random_spot_win,
+            wolf_strategy=Strategy.metric_position,
             winner=str(TeamDto.wolf),
             turn_count=22,
             start_time=datetime.datetime.now(datetime.UTC) + datetime.timedelta(milliseconds=110),

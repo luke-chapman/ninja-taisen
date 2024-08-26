@@ -12,6 +12,7 @@ authors = [
   { name = "Luke Chapman", email = "lrrchapman@gmail.com" },
 ]
 dependencies = [
+  "flask>=3.0.3",
   "more-itertools>=10.4",
   "polars>=1.5.0",
   "pydantic>=2.8.2",
@@ -21,10 +22,6 @@ dependencies = [
 Documentation = "https://github.com/luke-chapman/ninja-taisen#readme"
 Issues = "https://github.com/luke-chapman/ninja-taisen/issues"
 Source = "https://github.com/luke-chapman/ninja-taisen"
-
-[project.scripts]
-ninja-taisen = "ninja_taisen.__main__:main"
-nt = "ninja_taisen.__main__:main"
 
 [tool.hatch.version]
 path = "src/ninja_taisen/__about__.py"
@@ -57,6 +54,7 @@ dependencies = [
   "black>=24.8.0",
   "mypy>=1.0.0",
   "pytest>=8.3.2",
+  "requests>=2.32.3",
   "ruff>=0.5.6",
 ]
 

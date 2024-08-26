@@ -10,11 +10,11 @@ import polars as pl
 from ninja_taisen.algos.card_mover import CardMover
 from ninja_taisen.algos.game_runner import simulate_many_multi_process
 from ninja_taisen.algos.move_gatherer import gather_all_permitted_moves
-from ninja_taisen.dtos import BoardDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto
-from ninja_taisen.logging_setup import setup_logging
+from ninja_taisen.dtos import ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse, InstructionDto, ResultDto
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Board, Card, Category
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
+from ninja_taisen.utils.logging_setup import setup_logging
 
 log = getLogger(__name__)
 
@@ -96,9 +96,7 @@ def read_parquet_results(filename: Path) -> pl.DataFrame:
     return pl.read_parquet(filename)
 
 
-def choose_move(request: MoveRequestBody, strategy_name: str, random: SafeRandom | None) -> MoveResponseBody:
-    setup_logging()
-
+def choose_move(request: ChooseRequest, strategy_name: str, random: SafeRandom | None) -> ChooseResponse:
     all_permitted_moves = gather_all_permitted_moves(
         starting_board=Board.from_dto(request.board),
         team=TEAM_BY_DTO[request.team],
@@ -109,17 +107,15 @@ def choose_move(request: MoveRequestBody, strategy_name: str, random: SafeRandom
         },
     )
     if len(all_permitted_moves) == 0:
-        return MoveResponseBody(moves=[])
+        return ChooseResponse(moves=[])
 
     random = random or SafeRandom()  # Seeded with current time by default
     strategy = lookup_strategy(strategy_name, random)
     chosen_moves = strategy.choose_moves(all_permitted_moves)
-    return MoveResponseBody(moves=[m.to_dto() for m in chosen_moves.moves])
+    return ChooseResponse(moves=[m.to_dto() for m in chosen_moves.moves])
 
 
-def execute_move(request: MoveRequestBody, response: MoveResponseBody) -> BoardDto:
-    setup_logging()
-
+def execute_move(request: ExecuteRequest) -> ExecuteResponse:
     board = Board.from_dto(request.board)
     dice_by_category = {
         Category.rock: request.dice.rock,
@@ -128,8 +124,8 @@ def execute_move(request: MoveRequestBody, response: MoveResponseBody) -> BoardD
     }
     team = TEAM_BY_DTO[request.team]
 
-    for i, move in enumerate(response.moves):
-        log.info(f"Executing move {i+1} of {len(response.moves)}")
+    for i, move in enumerate(request.moves):
+        log.info(f"Executing move {i+1} of {len(request.moves)}")
         dice_category = CATEGORY_BY_DTO[move.dice_category]
         dice_roll = dice_by_category[dice_category]
         card = Card.from_dto(move.card)
@@ -139,4 +135,4 @@ def execute_move(request: MoveRequestBody, response: MoveResponseBody) -> BoardD
             team=team, dice_roll=dice_roll, pile_index=pile_index, card_index=card_index
         )
 
-    return board.to_dto()
+    return ExecuteResponse(board=board.to_dto())
