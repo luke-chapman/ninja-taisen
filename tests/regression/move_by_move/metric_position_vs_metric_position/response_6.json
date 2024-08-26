@@ -1,11 +1,11 @@
 {
   "moves": [
     {
-      "diceCategory": "paper",
-      "card": "MP1"
+      "diceCategory": "rock",
+      "card": "MR2"
     },
     {
-      "diceCategory": "rock",
+      "diceCategory": "paper",
       "card": "MJ4"
     },
     {
