@@ -93,7 +93,6 @@ class GameRunner:
 
     def __serialise_request(self, turn_index: int, team: Team, dice_rolls: dict[Category, int]) -> None:
         assert self.serialisation_dir is not None
-
         request = MoveRequestBody(
             board=self.board.to_dto(),
             dice=DiceRollDto(
@@ -103,12 +102,10 @@ class GameRunner:
             ),
             team=DTO_BY_TEAM[team],
         )
-
         request.to_json_file(self.serialisation_dir / f"request_{turn_index}.json")
 
     def __serialise_response(self, turn_index: int, moves: list[Move]) -> None:
         assert self.serialisation_dir is not None
-
         move_response_body = MoveResponseBody(moves=[m.to_dto() for m in moves])
         move_response_body.to_json_file(self.serialisation_dir / f"response_{turn_index}.json")
 
