@@ -48,5 +48,10 @@ def handle_execute() -> tuple[Response, int]:
 
 # Instantiate the magic Flask object and add the /choose and /execute rules
 app = Flask(__name__)
-app.add_url_rule(rule="/choose", view_func=handle_choose)
-app.add_url_rule(rule="/execute", view_func=handle_execute)
+log.info(f"Setting up Flask server '{__name__}'")
+
+app.add_url_rule(rule="/choose", methods=["POST"], view_func=handle_choose)
+log.info("Added /choose POST url rule")
+
+app.add_url_rule(rule="/execute", methods=["POST"], view_func=handle_execute)
+log.info("Added /execute POST url rule")

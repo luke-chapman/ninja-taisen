@@ -54,6 +54,7 @@ dependencies = [
   "black>=24.8.0",
   "mypy>=1.0.0",
   "pytest>=8.3.2",
+  "requests>=2.32.3",
   "ruff>=0.5.6",
 ]
 
