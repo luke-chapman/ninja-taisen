@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from ninja_taisen.api import choose_move, execute_move
-from ninja_taisen.dtos import BoardDto, MoveRequestBody, MoveResponseBody
+from ninja_taisen.dtos import BoardDto, MoveRequest, MoveResponse
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES, CATEGORY_BY_DTO, TEAM_BY_DTO, Card, Category
 
 TURN_BY_TURN_DIR = Path(__file__).resolve().parent / "regression" / "turn_by_turn"
@@ -25,12 +25,12 @@ def test_move_is_executed_as_expected(game: str, turn_index: int) -> None:
     request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index}.json"
     response_json = TURN_BY_TURN_DIR / game / f"response_{turn_index}.json"
 
-    request = MoveRequestBody.model_validate_json(request_json.read_text())
-    response = MoveResponseBody.model_validate_json(response_json.read_text())
+    request = MoveRequest.model_validate_json(request_json.read_text())
+    response = MoveResponse.model_validate_json(response_json.read_text())
 
     next_request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index + 1}.json"
     if next_request_json.exists():
-        expected_board = MoveRequestBody.model_validate_json(next_request_json.read_text()).board
+        expected_board = MoveRequest.model_validate_json(next_request_json.read_text()).board
     else:
         final_board_json = TURN_BY_TURN_DIR / game / "final_board.json"
         expected_board = BoardDto.model_validate_json(final_board_json.read_text())
@@ -43,7 +43,7 @@ def test_move_is_executed_as_expected(game: str, turn_index: int) -> None:
 @pytest.mark.parametrize("game,turn_index", __games_and_indices())
 def test_choose_move_gives_sane_output(game: str, turn_index: int, strategy_name: str) -> None:
     request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index}.json"
-    request = MoveRequestBody.model_validate_json(request_json.read_text())
+    request = MoveRequest.model_validate_json(request_json.read_text())
 
     response = choose_move(request=request, strategy_name=strategy_name, random=None)
     assert 0 <= len(response.moves) <= 3

@@ -10,7 +10,7 @@ import polars as pl
 from ninja_taisen.algos.card_mover import CardMover
 from ninja_taisen.algos.game_runner import simulate_many_multi_process
 from ninja_taisen.algos.move_gatherer import gather_all_permitted_moves
-from ninja_taisen.dtos import BoardDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto
+from ninja_taisen.dtos import BoardDto, InstructionDto, MoveRequest, MoveResponse, ResultDto
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Board, Card, Category
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
@@ -96,7 +96,7 @@ def read_parquet_results(filename: Path) -> pl.DataFrame:
     return pl.read_parquet(filename)
 
 
-def choose_move(request: MoveRequestBody, strategy_name: str, random: SafeRandom | None) -> MoveResponseBody:
+def choose_move(request: MoveRequest, strategy_name: str, random: SafeRandom | None) -> MoveResponse:
     all_permitted_moves = gather_all_permitted_moves(
         starting_board=Board.from_dto(request.board),
         team=TEAM_BY_DTO[request.team],
@@ -107,15 +107,15 @@ def choose_move(request: MoveRequestBody, strategy_name: str, random: SafeRandom
         },
     )
     if len(all_permitted_moves) == 0:
-        return MoveResponseBody(moves=[])
+        return MoveResponse(moves=[])
 
     random = random or SafeRandom()  # Seeded with current time by default
     strategy = lookup_strategy(strategy_name, random)
     chosen_moves = strategy.choose_moves(all_permitted_moves)
-    return MoveResponseBody(moves=[m.to_dto() for m in chosen_moves.moves])
+    return MoveResponse(moves=[m.to_dto() for m in chosen_moves.moves])
 
 
-def execute_move(request: MoveRequestBody, response: MoveResponseBody) -> BoardDto:
+def execute_move(request: MoveRequest, response: MoveResponse) -> BoardDto:
     board = Board.from_dto(request.board)
     dice_by_category = {
         Category.rock: request.dice.rock,

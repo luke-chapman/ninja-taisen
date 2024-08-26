@@ -1,12 +1,11 @@
 import sys
 from argparse import ArgumentParser
 from logging import getLogger
-from typing import Any
 
-from flask import Flask, request
+from flask import Flask, Response, jsonify, request
 
 from ninja_taisen.api import choose_move
-from ninja_taisen.dtos import MoveRequestBody, Strategy
+from ninja_taisen.dtos import MoveRequest, Strategy
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
@@ -21,16 +20,17 @@ def main(override_args: list[str] | None = None) -> int:
     strategy = args.strategy
     random = SafeRandom(args.seed)
 
-    def handle_choose() -> tuple[dict[str, Any], int]:
+    def handle_choose() -> tuple[Response, int]:
         if not request.is_json:
-            return {"error": "Request must be JSON"}, 400
+            return jsonify({"error": "Request must be JSON"}), 400
         try:
             data = request.get_json()
-            request_body = MoveRequestBody.model_validate_json(data)
+            request_body = MoveRequest.model_validate_json(data)
             response_body = choose_move(request=request_body, strategy_name=strategy, random=random)
-            return response_body.model_dump(round_trip=True, by_alias=True), 200
+            response = jsonify(response_body.model_dump(round_trip=True, by_alias=True))
+            return response, 200
         except Exception as e:
-            return {"error": str(e)}, 400
+            return jsonify({"error": repr(e)}), 500
 
     app = Flask(__name__)
     app.route("/choose", methods=["POST"])(handle_choose)
