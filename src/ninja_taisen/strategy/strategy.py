@@ -29,9 +29,9 @@ class RandomSpotWinStrategy(IStrategy):
         self.random = random
 
     def choose_moves(self, all_permitted_moves: list[CompletedMoves]) -> CompletedMoves:
-        winning_board = find_first_winning_move(all_permitted_moves)
-        if winning_board:
-            return winning_board
+        winning_move = find_first_winning_move(all_permitted_moves)
+        if winning_move:
+            return winning_move
 
         return self.random.choice(all_permitted_moves)
 
@@ -42,9 +42,9 @@ class MetricStrategy(IStrategy):
         self.random = random
 
     def choose_moves(self, all_permitted_moves: list[CompletedMoves]) -> CompletedMoves:
-        winning_board = find_first_winning_move(all_permitted_moves)
-        if winning_board:
-            return winning_board
+        winning_move = find_first_winning_move(all_permitted_moves)
+        if winning_move:
+            return winning_move
 
         metric_to_moves: dict[float, list[CompletedMoves]] = defaultdict(list)
         for completed_moves in all_permitted_moves:
