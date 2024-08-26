@@ -6,12 +6,12 @@ from ninja_taisen.api import choose_move, execute_move
 from ninja_taisen.dtos import BoardDto, MoveRequestBody, MoveResponseBody
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES, CATEGORY_BY_DTO, TEAM_BY_DTO, Card, Category
 
-MOVE_BY_MOVE_DIR = Path(__file__).resolve().parent / "regression" / "move_by_move"
+TURN_BY_TURN_DIR = Path(__file__).resolve().parent / "regression" / "turn_by_turn"
 
 
 def __games_and_indices() -> list[tuple[str, int]]:
     games_and_indices: list[tuple[str, int]] = []
-    game_dirs = sorted(d for d in MOVE_BY_MOVE_DIR.iterdir() if d.is_dir())
+    game_dirs = sorted(d for d in TURN_BY_TURN_DIR.iterdir() if d.is_dir())
     for game_dir in game_dirs:
         requests_json = sorted(r for r in game_dir.iterdir() if r.name.startswith("request_"))
         for request_json in requests_json:
@@ -22,17 +22,17 @@ def __games_and_indices() -> list[tuple[str, int]]:
 
 @pytest.mark.parametrize("game,turn_index", __games_and_indices())
 def test_move_is_executed_as_expected(game: str, turn_index: int) -> None:
-    request_json = MOVE_BY_MOVE_DIR / game / f"request_{turn_index}.json"
-    response_json = MOVE_BY_MOVE_DIR / game / f"response_{turn_index}.json"
+    request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index}.json"
+    response_json = TURN_BY_TURN_DIR / game / f"response_{turn_index}.json"
 
     request = MoveRequestBody.model_validate_json(request_json.read_text())
     response = MoveResponseBody.model_validate_json(response_json.read_text())
 
-    next_request_json = MOVE_BY_MOVE_DIR / game / f"request_{turn_index+1}.json"
+    next_request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index + 1}.json"
     if next_request_json.exists():
         expected_board = MoveRequestBody.model_validate_json(next_request_json.read_text()).board
     else:
-        final_board_json = MOVE_BY_MOVE_DIR / game / "final_board.json"
+        final_board_json = TURN_BY_TURN_DIR / game / "final_board.json"
         expected_board = BoardDto.model_validate_json(final_board_json.read_text())
 
     board = execute_move(request=request, response=response)
@@ -42,7 +42,7 @@ def test_move_is_executed_as_expected(game: str, turn_index: int) -> None:
 @pytest.mark.parametrize("strategy_name", ALL_STRATEGY_NAMES)
 @pytest.mark.parametrize("game,turn_index", __games_and_indices())
 def test_choose_move_gives_sane_output(game: str, turn_index: int, strategy_name: str) -> None:
-    request_json = MOVE_BY_MOVE_DIR / game / f"request_{turn_index}.json"
+    request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index}.json"
     request = MoveRequestBody.model_validate_json(request_json.read_text())
 
     response = choose_move(request=request, strategy_name=strategy_name, random=None)
