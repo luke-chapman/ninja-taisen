@@ -1,0 +1,24 @@
+{
+  "board": {
+    "monkey": {
+      "8": [
+        "MP1",
+        "MP2"
+      ],
+      "3": [
+        "MS2"
+      ]
+    },
+    "wolf": {
+      "7": [
+        "WJ4"
+      ]
+    }
+  },
+  "dice": {
+    "rock": 2,
+    "paper": 2,
+    "scissors": 1
+  },
+  "team": "monkey"
+}

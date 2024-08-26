@@ -1,0 +1,12 @@
+{
+  "moves": [
+    {
+      "diceCategory": "scissors",
+      "card": "MS1"
+    },
+    {
+      "diceCategory": "paper",
+      "card": "MP2"
+    }
+  ]
+}
