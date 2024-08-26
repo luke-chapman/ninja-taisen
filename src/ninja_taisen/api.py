@@ -11,10 +11,10 @@ from ninja_taisen.algos.card_mover import CardMover
 from ninja_taisen.algos.game_runner import simulate_many_multi_process
 from ninja_taisen.algos.move_gatherer import gather_all_permitted_moves
 from ninja_taisen.dtos import BoardDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto
-from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Board, Card, Category
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
+from ninja_taisen.utils.logging_setup import setup_logging
 
 log = getLogger(__name__)
 
@@ -97,8 +97,6 @@ def read_parquet_results(filename: Path) -> pl.DataFrame:
 
 
 def choose_move(request: MoveRequestBody, strategy_name: str, random: SafeRandom | None) -> MoveResponseBody:
-    setup_logging()
-
     all_permitted_moves = gather_all_permitted_moves(
         starting_board=Board.from_dto(request.board),
         team=TEAM_BY_DTO[request.team],
@@ -118,8 +116,6 @@ def choose_move(request: MoveRequestBody, strategy_name: str, random: SafeRandom
 
 
 def execute_move(request: MoveRequestBody, response: MoveResponseBody) -> BoardDto:
-    setup_logging()
-
     board = Board.from_dto(request.board)
     dice_by_category = {
         Category.rock: request.dice.rock,

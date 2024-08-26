@@ -2,7 +2,7 @@ from collections import defaultdict
 from enum import IntEnum
 from typing import NamedTuple
 
-from ninja_taisen.dtos import BoardDto, CategoryDto, MoveDto, StrategyName, TeamDto
+from ninja_taisen.dtos import BoardDto, CategoryDto, MoveDto, Strategy, TeamDto
 
 
 # We represent Category as an IntEnum internally for speed
@@ -160,7 +160,7 @@ class BattleResult(NamedTuple):
     winner: Card | None
 
 
-ALL_STRATEGY_NAMES = list(StrategyName)
+ALL_STRATEGY_NAMES = list(Strategy)
 
 
 class Move(NamedTuple):

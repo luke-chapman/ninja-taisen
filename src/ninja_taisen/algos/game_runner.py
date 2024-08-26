@@ -11,11 +11,11 @@ from pydantic import BaseModel
 
 from ninja_taisen.algos import board_builder, board_inspector, move_gatherer
 from ninja_taisen.dtos import DiceRollDto, InstructionDto, MoveRequestBody, MoveResponseBody, ResultDto
-from ninja_taisen.logging_setup import setup_logging
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import DTO_BY_TEAM, Category, Move, Team
 from ninja_taisen.strategy.strategy import IStrategy
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
+from ninja_taisen.utils.logging_setup import setup_logging
 
 log = getLogger(__name__)
 

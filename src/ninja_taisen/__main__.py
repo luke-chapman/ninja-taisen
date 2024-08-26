@@ -1,11 +1,12 @@
 import sys
 from argparse import ArgumentParser
 from logging import getLogger
+from typing import Any
 
 from flask import Flask, request
 
 from ninja_taisen.api import choose_move
-from ninja_taisen.dtos import MoveRequestBody, StrategyName
+from ninja_taisen.dtos import MoveRequestBody, Strategy
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
@@ -14,13 +15,13 @@ log = getLogger(__name__)
 
 def main(override_args: list[str] | None = None) -> int:
     parser = ArgumentParser()
-    parser.add_argument("--strategy", default=StrategyName.metric_strength, choices=ALL_STRATEGY_NAMES)
+    parser.add_argument("--strategy", default=Strategy.random, choices=ALL_STRATEGY_NAMES)
     parser.add_argument("--seed", default=0)
     args = parser.parse_args(override_args or sys.argv[1:])
     strategy = args.strategy
     random = SafeRandom(args.seed)
 
-    def handle_choose():
+    def handle_choose() -> tuple[dict[str, Any], int]:
         if not request.is_json:
             return {"error": "Request must be JSON"}, 400
         try:

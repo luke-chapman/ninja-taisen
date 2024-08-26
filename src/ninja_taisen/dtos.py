@@ -56,7 +56,7 @@ class BoardDto(NinjaTaisenModel):
     wolf: dict[int, list[str]]
 
 
-class StrategyName(StrEnum):
+class Strategy(StrEnum):
     random = "random"
     random_spot_win = "random_spot_win"
     metric_count = "metric_count"
