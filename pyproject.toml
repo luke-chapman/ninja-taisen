@@ -50,6 +50,9 @@ yeehaw = [
 ]
 
 [tool.hatch.envs.default]
+post-install-commands = [
+    "pip freeze"
+]
 dependencies = [
   "black>=24.8.0",
   "mypy>=1.0.0",
