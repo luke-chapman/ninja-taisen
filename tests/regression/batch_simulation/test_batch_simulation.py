@@ -6,6 +6,7 @@ import pytest
 from polars.testing import assert_frame_equal
 
 from ninja_taisen import InstructionDto, simulate
+from ninja_taisen.dtos import ResultsFormat
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
@@ -25,7 +26,7 @@ def test_all_strategies(max_processes: int, results_format: str, regen: bool, tm
     simulate(
         instructions=instructions,
         results_dir=tmp_path,
-        results_format=results_format,
+        results_format=ResultsFormat(results_format),
         max_processes=max_processes,
         per_process=5,
     )
