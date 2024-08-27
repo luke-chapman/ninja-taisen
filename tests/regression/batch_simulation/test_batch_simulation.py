@@ -1,6 +1,6 @@
 import itertools
 from pathlib import Path
-from typing import cast
+from typing import get_args
 
 import polars as pl
 import pytest
@@ -11,9 +11,9 @@ from ninja_taisen.dtos import ResultsFormat
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
-@pytest.mark.parametrize("max_processes", (-2, 2))
-@pytest.mark.parametrize("results_format", ("parquet", "csv"))  # Weird GitHubActions hang if "get_args(ResultsFormat)"
-def test_all_strategies(max_processes: int, results_format: str, tmp_path: Path, regen: bool) -> None:
+@pytest.mark.parametrize("max_processes", [-2, 2])
+@pytest.mark.parametrize("results_format", list(get_args(ResultsFormat)))
+def test_all_strategies(max_processes: int, results_format: ResultsFormat, tmp_path: Path, regen: bool) -> None:
     if regen and (max_processes != -2 or results_format != "parquet"):
         # We only regenerate the output for one variant of this test
         return
@@ -27,7 +27,7 @@ def test_all_strategies(max_processes: int, results_format: str, tmp_path: Path,
     simulate(
         instructions=instructions,
         results_dir=tmp_path,
-        results_format=cast(ResultsFormat, results_format),
+        results_format=results_format,
         max_processes=max_processes,
         per_process=5,
     )
