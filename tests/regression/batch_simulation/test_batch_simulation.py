@@ -1,18 +1,16 @@
 import itertools
 from pathlib import Path
-from typing import get_args
 
 import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
 from ninja_taisen import InstructionDto, simulate
-from ninja_taisen.dtos import ResultsFormat
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
 @pytest.mark.parametrize("max_processes", (-2, 2))
-@pytest.mark.parametrize("results_format", get_args(ResultsFormat))
+@pytest.mark.parametrize("results_format", ("parquet", "csv"))
 def test_all_strategies(max_processes: int, results_format: ResultsFormat, regen: bool, tmp_path: Path) -> None:
     if regen and (max_processes != -2 or results_format != "parquet"):
         # We only regenerate the output for one variant of this test
