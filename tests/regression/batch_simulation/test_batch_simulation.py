@@ -1,18 +1,21 @@
 import itertools
 from pathlib import Path
+from typing import get_args
 
 import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
 from ninja_taisen import InstructionDto, simulate
+from ninja_taisen.dtos import ResultsFormat
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
 @pytest.mark.parametrize("max_processes", (-2, 2))
-def test_all_strategies(max_processes: int, regen: bool, tmp_path: Path) -> None:
-    if regen and max_processes != -2:
-        # We only regenerate the output on the all-but-two-thread variant of this test
+@pytest.mark.parametrize("results_format", get_args(ResultsFormat))
+def test_all_strategies(max_processes: int, results_format: ResultsFormat, regen: bool, tmp_path: Path) -> None:
+    if regen and (max_processes != -2 or results_format != "parquet"):
+        # We only regenerate the output for one variant of this test
         return
 
     instructions: list[InstructionDto] = []
@@ -24,11 +27,17 @@ def test_all_strategies(max_processes: int, regen: bool, tmp_path: Path) -> None
     simulate(
         instructions=instructions,
         results_dir=tmp_path,
-        results_format="parquet",
+        results_format=results_format,
         max_processes=max_processes,
         per_process=5,
     )
-    df_actual = pl.scan_parquet(tmp_path / "results.parquet").drop(["start_time", "end_time", "process_name"]).collect()
+
+    df_lazy = (
+        pl.scan_parquet(tmp_path / "results.parquet")
+        if results_format == "parquet"
+        else pl.scan_csv(tmp_path / "results.csv")
+    )
+    df_actual = df_lazy.drop(["start_time", "end_time", "process_name"]).collect()
 
     df_instructions_expected = pl.DataFrame(data=instructions, orient="row")
     df_instructions_actual = df_actual.select("id", "seed", "monkey_strategy", "wolf_strategy")
