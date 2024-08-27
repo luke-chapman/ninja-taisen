@@ -9,10 +9,10 @@ from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
-@pytest.mark.parametrize("max_processes", (-1, 2))
+@pytest.mark.parametrize("max_processes", (-2, 2))
 def test_all_strategies(max_processes: int, regen: bool, tmp_path: Path) -> None:
-    if regen and max_processes != -1:
-        # We only regenerate the output on the all-but-one-thread variant of this test
+    if regen and max_processes != -2:
+        # We only regenerate the output on the all-but-two-thread variant of this test
         return
 
     instructions: list[InstructionDto] = []
