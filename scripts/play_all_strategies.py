@@ -21,8 +21,9 @@ def run() -> None:
 
     simulate(
         instructions=instructions,
+        results_dir=run_dir,
+        results_format="parquet",
         max_processes=-1,
-        parquet_results=run_dir / "results.parquet",
         log_file=run_dir / "log.txt",
     )
 

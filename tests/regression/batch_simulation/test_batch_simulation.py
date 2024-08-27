@@ -1,19 +1,21 @@
 import itertools
 from pathlib import Path
+from typing import get_args
 
 import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
 from ninja_taisen import InstructionDto, simulate
-from ninja_taisen.api import make_data_frame
+from ninja_taisen.dtos import ResultsFormat
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
-@pytest.mark.parametrize("max_processes", (-1, 1))
-def test_all_strategies(max_processes: int, regen: bool) -> None:
-    if regen and max_processes != -1:
-        # We only regenerate the output on the all-but-one-thread variant of this test
+@pytest.mark.parametrize("max_processes", (-2, 2))
+@pytest.mark.parametrize("results_format", get_args(ResultsFormat))
+def test_all_strategies(max_processes: int, results_format: ResultsFormat, regen: bool, tmp_path: Path) -> None:
+    if regen and (max_processes != -2 or results_format != "parquet"):
+        # We only regenerate the output for one variant of this test
         return
 
     instructions: list[InstructionDto] = []
@@ -22,15 +24,25 @@ def test_all_strategies(max_processes: int, regen: bool) -> None:
             InstructionDto(id=index, seed=index, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         )
 
-    results = simulate(instructions=instructions, max_processes=max_processes, per_process=5)
-    assert len(results) == len(instructions)
-    recovered_instructions = [
-        InstructionDto(id=r.id, seed=r.seed, monkey_strategy=r.monkey_strategy, wolf_strategy=r.wolf_strategy)
-        for r in results
-    ]
-    assert instructions == recovered_instructions
+    simulate(
+        instructions=instructions,
+        results_dir=tmp_path,
+        results_format=results_format,
+        max_processes=max_processes,
+        per_process=5,
+    )
 
-    df_actual = make_data_frame(results).drop(["start_time", "end_time", "process_name"])
+    df_lazy = (
+        pl.scan_parquet(tmp_path / "results.parquet")
+        if results_format == "parquet"
+        else pl.scan_csv(tmp_path / "results.csv")
+    )
+    df_actual = df_lazy.drop(["start_time", "end_time", "process_name"]).collect()
+
+    df_instructions_expected = pl.DataFrame(data=instructions, orient="row")
+    df_instructions_actual = df_actual.select("id", "seed", "monkey_strategy", "wolf_strategy")
+    assert_frame_equal(df_instructions_expected, df_instructions_actual)
+
     results_csv = Path(__file__).resolve().parent / "results.csv"
     if regen:
         df_actual.write_csv(results_csv)

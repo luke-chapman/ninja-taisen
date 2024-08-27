@@ -1,5 +1,4 @@
 import datetime
-import itertools
 import logging
 import math
 import multiprocessing
@@ -7,10 +6,11 @@ from logging import getLogger
 from pathlib import Path
 from time import perf_counter
 
+import polars as pl
 from pydantic import BaseModel
 
 from ninja_taisen.algos import board_builder, board_inspector, move_gatherer
-from ninja_taisen.dtos import ChooseRequest, ChooseResponse, DiceRollDto, InstructionDto, ResultDto
+from ninja_taisen.dtos import ChooseRequest, ChooseResponse, DiceRollDto, InstructionDto, ResultDto, ResultsFormat
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import DTO_BY_TEAM, Category, Move, Team
 from ninja_taisen.strategy.strategy import IStrategy
@@ -129,57 +129,92 @@ def simulate_one(instruction: InstructionDto, serialisation_dir: Path | None) ->
 # We have to put all arguments for the multiprocessing subprocess into a class which can be pickled
 class SubprocessArgs(BaseModel):
     instructions: list[InstructionDto]
+    results_dir: Path
+    results_format: ResultsFormat
     verbosity: int
     log_file: Path | None
     serialisation_dir: Path | None
 
 
-def simulate_many_single_thread(args: SubprocessArgs) -> list[ResultDto]:
+def simulate_many_single_thread(args: SubprocessArgs) -> bool:
     setup_logging(verbosity=args.verbosity, log_file=args.log_file)
 
-    suffix = (
-        f"block with ids {args.instructions[0].id}-{args.instructions[-1].id} "
-        f"in process {multiprocessing.current_process().name}"
-    )
-    log.info(f"Starting {suffix}")
+    chunk_name = f"{args.instructions[0].id}-{args.instructions[-1].id}"
+    log_suffix = f"chunk with ids {chunk_name} in process {multiprocessing.current_process().name}"
+    log.info(f"Starting {log_suffix}")
+
     start = perf_counter()
     results = [simulate_one(i, args.serialisation_dir) for i in args.instructions]
+    df = pl.DataFrame(data=results, orient="row")
+
+    if args.results_format == "parquet":
+        df.write_parquet(args.results_dir / f"results_{chunk_name}.parquet")
+    elif args.results_format == "csv":
+        df.write_csv(args.results_dir / f"results_{chunk_name}.csv")
+    else:
+        raise ValueError(f"Unexpected results_format '{args.results_format}'")
+
     stop = perf_counter()
-    log.info(f"Completed {suffix} in {stop - start:0.1f} seconds")
-    return results
+    log.info(f"Completed {log_suffix} in {stop - start:0.1f} seconds")
+    return True
 
 
 def simulate_many_multi_process(
     instructions: list[InstructionDto],
+    results_dir: Path,
+    results_format: ResultsFormat,
     max_processes: int,
     per_process: int,
     verbosity: int,
     log_file: Path | None,
     serialisation_dir: Path | None,
-) -> list[ResultDto]:
-    if max_processes == 1:
-        log.info("Bypassing multiprocessing.Pool because max_processes=1 specified")
-        return simulate_many_single_thread(
-            SubprocessArgs(
-                instructions=instructions, verbosity=log.level, log_file=log_file, serialisation_dir=serialisation_dir
-            )
-        )
-
+) -> None:
     assert max_processes > 0
     assert per_process > 0
-    log.info(
-        f"Will assign {len(instructions)} instructions in blocks of {per_process} between {max_processes} processes"
-    )
+    chunk_results = results_dir / "chunk_results"
+    chunk_results.mkdir(exist_ok=True, parents=True)
 
-    blocks_count = int(math.ceil(len(instructions) / per_process))
-    i_blocks = [instructions[i * per_process : (i + 1) * per_process] for i in range(blocks_count)]
+    log.info(
+        f"Will assign {len(instructions)} instructions in chunks of {per_process} between {max_processes} processes"
+    )
+    log.info(f"Per-chunk results in {chunk_results}")
+
+    chunks_count = int(math.ceil(len(instructions) / per_process))
+    i_blocks = [instructions[i * per_process : (i + 1) * per_process] for i in range(chunks_count)]
     subprocess_args = [
         SubprocessArgs(
-            instructions=i_block, verbosity=verbosity, log_file=log_file, serialisation_dir=serialisation_dir
+            instructions=i_block,
+            results_dir=chunk_results,
+            results_format=results_format,
+            verbosity=verbosity,
+            log_file=log_file,
+            serialisation_dir=serialisation_dir,
         )
         for i_block in i_blocks
     ]
 
     with multiprocessing.Pool(processes=max_processes) as pool:
-        r_blocks = pool.map(simulate_many_single_thread, subprocess_args)
-        return list(itertools.chain(*r_blocks))
+        chunks_succeeded = list(pool.map(simulate_many_single_thread, subprocess_args))
+
+    if not all(chunks_succeeded):
+        failed = sum(0 if c else 1 for c in chunks_succeeded)
+        total = len(chunks_succeeded)
+        raise RuntimeError(f"{failed} out of {total} chunks failed when simulating game")
+
+    log.info(f"All chunks completed; concatenating {results_format} results from {chunk_results}")
+    if results_format == "parquet":
+        chunk_parquets = sorted(chunk_results.glob("results_*.parquet"))
+        results_parquet = results_dir / "results.parquet"
+        chunk_lazy_dfs = [pl.scan_parquet(p) for p in chunk_parquets]
+        pl.concat(chunk_lazy_dfs).sort(by="id").collect().write_parquet(results_parquet)
+        log.info(f"Final results available: {results_parquet}")
+    elif results_format == "csv":
+        chunk_csvs = sorted(chunk_results.glob("results_*.csv"))
+        results_csv = results_dir / "results.csv"
+        chunk_lazy_dfs = [
+            pl.scan_csv(p, schema_overrides={"start_time": pl.Datetime, "end_time": pl.Datetime}) for p in chunk_csvs
+        ]
+        pl.concat(chunk_lazy_dfs).sort(by="id").collect().write_csv(results_csv)
+        log.info(f"Final results available: {results_csv}")
+    else:
+        raise ValueError(f"Unexpected results_format '{results_format}'")
