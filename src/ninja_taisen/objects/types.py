@@ -75,14 +75,26 @@ class Board(NamedTuple):
     @classmethod
     def from_dto(cls, dto: BoardDto) -> "Board":
         return Board(
-            monkey_cards=defaultdict(list, {i: [Card.from_dto(c) for c in cs] for i, cs in dto.monkey.items()}),
-            wolf_cards=defaultdict(list, {i: [Card.from_dto(c) for c in cs] for i, cs in dto.wolf.items()}),
+            monkey_cards=defaultdict(
+                list, {i: [Card.from_dto(c) for c in cs] for i, cs in sorted(dto.monkey.items(), key=lambda t: t[0])}
+            ),
+            wolf_cards=defaultdict(
+                list, {i: [Card.from_dto(c) for c in cs] for i, cs in sorted(dto.wolf.items(), key=lambda t: t[0])}
+            ),
         )
 
     def to_dto(self) -> BoardDto:
         return BoardDto(
-            monkey={i: [c.to_dto() for c in cs] for i, cs in self.monkey_cards.items() if len(cs) > 0},
-            wolf={i: [c.to_dto() for c in cs] for i, cs in self.wolf_cards.items() if len(cs) > 0},
+            monkey={
+                i: [c.to_dto() for c in cs]
+                for i, cs in sorted(self.monkey_cards.items(), key=lambda t: t[0])
+                if len(cs) > 0
+            },
+            wolf={
+                i: [c.to_dto() for c in cs]
+                for i, cs in sorted(self.wolf_cards.items(), key=lambda t: t[0])
+                if len(cs) > 0
+            },
         )
 
     def cards(self, team: Team) -> defaultdict[int, list[Card]]:
