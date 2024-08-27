@@ -52,7 +52,7 @@ def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path
 
     different_files: list[str] = []
     for filename in actual_filenames:
-        actual_contents = (tmp_path / filename).read_text()
+        actual_contents = (serialisation_dir / filename).read_text()
         expected_contents = (expected_dir / filename).read_text()
         if actual_contents != expected_contents:
             different_files.append(filename)

@@ -37,6 +37,10 @@ def simulate(
 ) -> None:
     setup_logging(verbosity, log_file)
 
+    results_dir.mkdir(parents=True, exist_ok=True)
+    if serialisation_dir:
+        serialisation_dir.mkdir(parents=True, exist_ok=True)
+
     if max_processes <= 0:
         cpu_count = multiprocessing.cpu_count()
         if cpu_count is None:

@@ -172,6 +172,7 @@ def simulate_many_multi_process(
     assert max_processes > 0
     assert per_process > 0
     chunk_results = results_dir / "chunk_results"
+    chunk_results.mkdir(exist_ok=True, parents=True)
 
     log.info(
         f"Will assign {len(instructions)} instructions in chunks of {per_process} between {max_processes} processes"

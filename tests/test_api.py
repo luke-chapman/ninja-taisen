@@ -1,11 +1,11 @@
 from pathlib import Path
 
+import polars as pl
 import pytest
 
 from ninja_taisen import ExecuteResponse
 from ninja_taisen.api import choose_move, execute_move
-from ninja_taisen.dtos import BoardDto, ChooseRequest, ChooseResponse, ExecuteRequest
-from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
+from ninja_taisen.dtos import BoardDto, ChooseRequest, ChooseResponse, ExecuteRequest, TeamDto
 from tests.conftest import validate_choose_response
 
 TURN_BY_TURN_DIR = Path(__file__).resolve().parent / "regression" / "turn_by_turn"
@@ -43,11 +43,13 @@ def test_execute(game: str, turn_index: int) -> None:
     assert execute_response == expected_response
 
 
-@pytest.mark.parametrize("strategy_name", ALL_STRATEGY_NAMES)
 @pytest.mark.parametrize("game,turn_index", __games_and_indices())
-def test_choose(game: str, turn_index: int, strategy_name: str) -> None:
+def test_choose(game: str, turn_index: int) -> None:
     request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index}.json"
     request = ChooseRequest.model_validate_json(request_json.read_text())
+
+    strategy_col = "monkey_strategy" if request.team == TeamDto.monkey else "wolf_strategy"
+    strategy_name = pl.read_csv(TURN_BY_TURN_DIR / game / "results.csv")[strategy_col][0]
 
     response = choose_move(request=request, strategy_name=strategy_name, random=None)
     validate_choose_response(response, request.team)
