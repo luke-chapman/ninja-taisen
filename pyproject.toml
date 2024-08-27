@@ -28,6 +28,7 @@ path = "src/ninja_taisen/__about__.py"
 
 [tool.hatch.envs.default.scripts]
 lint = [
+  "pip freeze",
   "ruff check",
   "mypy --install-types --non-interactive ."
 ]
@@ -35,7 +36,10 @@ format = [
   "black **/*.py",
   "ruff check --fix --unsafe-fixes"
 ]
-test = "pytest {args: tests}"
+test = [
+  "pip freeze",
+  "pytest {args: tests}"
+]
 regen = "pytest tests/regression --regen"
 check = [
   "hatch run format",
@@ -50,9 +54,6 @@ yeehaw = [
 ]
 
 [tool.hatch.envs.default]
-post-install-commands = [
-    "pip freeze"
-]
 dependencies = [
   "black>=24.8.0",
   "mypy>=1.0.0",
