@@ -1,4 +1,4 @@
-import itertools
+from itertools import product
 from pathlib import Path
 from typing import get_args
 
@@ -11,15 +11,14 @@ from ninja_taisen.dtos import ResultsFormat
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
-@pytest.mark.parametrize("max_processes", (-2, 2))
-@pytest.mark.parametrize("results_format", get_args(ResultsFormat))
+@pytest.mark.parametrize("max_processes,results_format", tuple(product((-2, 2), get_args(ResultsFormat))))
 def test_all_strategies(max_processes: int, results_format: ResultsFormat, regen: bool, tmp_path: Path) -> None:
     if regen and (max_processes != -2 or results_format != "parquet"):
         # We only regenerate the output for one variant of this test
         return
 
     instructions: list[InstructionDto] = []
-    for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(ALL_STRATEGY_NAMES, ALL_STRATEGY_NAMES)):
+    for index, (monkey_strategy, wolf_strategy) in enumerate(product(ALL_STRATEGY_NAMES, ALL_STRATEGY_NAMES)):
         instructions.append(
             InstructionDto(id=index, seed=index, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         )

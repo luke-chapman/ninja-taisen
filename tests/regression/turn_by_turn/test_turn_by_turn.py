@@ -1,3 +1,4 @@
+from itertools import product
 from pathlib import Path
 from shutil import copytree, rmtree
 
@@ -8,8 +9,7 @@ from ninja_taisen import InstructionDto, ResultDto, simulate
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
-@pytest.mark.parametrize("monkey_strategy", ALL_STRATEGY_NAMES)
-@pytest.mark.parametrize("wolf_strategy", ALL_STRATEGY_NAMES)
+@pytest.mark.parametrize("monkey_strategy,wolf_strategy", tuple(product(ALL_STRATEGY_NAMES, ALL_STRATEGY_NAMES)))
 def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path: Path, regen: bool) -> None:
     results_dir = tmp_path / "results"
     serialisation_dir = tmp_path / "serialisation"
