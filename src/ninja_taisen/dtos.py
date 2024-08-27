@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
@@ -31,6 +32,9 @@ class ResultDto(NinjaTaisenModel):
     start_time: datetime
     end_time: datetime
     process_name: str
+
+
+ResultsFormat = Literal["parquet", "csv"]
 
 
 class CategoryDto(StrEnum):
