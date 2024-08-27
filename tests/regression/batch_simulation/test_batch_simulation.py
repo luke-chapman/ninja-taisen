@@ -12,7 +12,7 @@ from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
 @pytest.mark.parametrize("max_processes", (-2, 2))
-@pytest.mark.parametrize("results_format", ("parquet", "csv"))  # GitHubActions hangs if I put "get_args(ResultsFormat)"
+@pytest.mark.parametrize("results_format", ("parquet", "csv"))  # Weird GitHubActions hang if "get_args(ResultsFormat)"
 def test_all_strategies(max_processes: int, results_format: str, regen: bool, tmp_path: Path) -> None:
     if regen and (max_processes != -2 or results_format != "parquet"):
         # We only regenerate the output for one variant of this test
