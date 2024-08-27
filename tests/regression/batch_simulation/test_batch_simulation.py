@@ -6,6 +6,7 @@ import pytest
 from polars.testing import assert_frame_equal
 
 from ninja_taisen import InstructionDto, simulate
+from ninja_taisen.dtos import ResultsFormat
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
