@@ -28,6 +28,7 @@ path = "src/ninja_taisen/__about__.py"
 
 [tool.hatch.envs.default.scripts]
 lint = [
+  "pip list",
   "ruff check",
   "mypy --install-types --non-interactive ."
 ]
@@ -35,7 +36,10 @@ format = [
   "black **/*.py",
   "ruff check --fix --unsafe-fixes"
 ]
-test = "pytest {args: tests}"
+test = [
+  "pip list",
+  "pytest {args: tests}"
+]
 regen = "pytest tests/regression --regen"
 check = [
   "hatch run format",
