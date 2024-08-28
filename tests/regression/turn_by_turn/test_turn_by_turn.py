@@ -8,8 +8,8 @@ from ninja_taisen import InstructionDto, ResultDto, simulate
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 
 
-@pytest.mark.parametrize("monkey_strategy", ALL_STRATEGY_NAMES)
-@pytest.mark.parametrize("wolf_strategy", ALL_STRATEGY_NAMES)
+@pytest.mark.parametrize("monkey_strategy", tuple(ALL_STRATEGY_NAMES))
+@pytest.mark.parametrize("wolf_strategy", tuple(ALL_STRATEGY_NAMES))
 def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path: Path, regen: bool) -> None:
     results_dir = tmp_path / "results"
     serialisation_dir = tmp_path / "serialisation"
