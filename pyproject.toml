@@ -40,7 +40,7 @@ test = [
   "pip list",
   "pytest {args: tests}"
 ]
-regen = "pytest tests/regression --regen"
+regen = "pytest tests/regression_*/ --regen"
 check = [
   "hatch run format",
   "hatch run lint",
