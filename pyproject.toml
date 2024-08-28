@@ -57,7 +57,7 @@ yeehaw = [
 dependencies = [
   "black>=24.8.0",
   "mypy>=1.0.0",
-  "pytest==8.2.2",  # Using an older version until https://github.com/pytest-dev/pytest/issues/12355 is patched to 8.3
+  "pytest<8",  # Collection of parameterized tests hangs in version 8.x.x
   "requests>=2.32.3",
   "ruff>=0.5.6",
 ]
