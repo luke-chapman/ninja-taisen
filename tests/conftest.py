@@ -1,7 +1,7 @@
 import logging
 
 import pytest
-from _pytest.config import Parser
+from _pytest.config.argparsing import Parser
 from _pytest.fixtures import FixtureRequest
 from _pytest.logging import LogCaptureFixture
 
