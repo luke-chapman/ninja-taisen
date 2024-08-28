@@ -8,7 +8,7 @@ from ninja_taisen.api import choose_move, execute_move
 from ninja_taisen.dtos import BoardDto, ChooseRequest, ChooseResponse, ExecuteRequest, TeamDto
 from tests.conftest import validate_choose_response
 
-TURN_BY_TURN_DIR = Path(__file__).resolve().parent / "regression" / "turn_by_turn"
+TURN_BY_TURN_DIR = Path(__file__).resolve().parent / "regression_turn_by_turn"
 
 
 def __games_and_indices() -> list[tuple[str, int]]:
