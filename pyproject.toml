@@ -28,12 +28,12 @@ path = "src/ninja_taisen/__about__.py"
 
 [tool.hatch.envs.default.scripts]
 lint = [
-  "ruff check",
-  "mypy --install-types --non-interactive ."
+  "ruff check src tests",
+  "mypy src tests --install-types --non-interactive"
 ]
 format = [
-  "black **/*.py",
-  "ruff check --fix --unsafe-fixes"
+  "black src tests",
+  "ruff check src tests --fix --unsafe-fixes"
 ]
 test = "pytest {args: tests}"
 regen = "pytest tests/regression --regen"
