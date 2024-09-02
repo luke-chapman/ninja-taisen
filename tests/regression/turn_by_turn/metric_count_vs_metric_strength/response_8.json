@@ -1,12 +1,12 @@
 {
   "moves": [
     {
-      "diceCategory": "scissors",
-      "card": "MS2"
+      "diceCategory": "rock",
+      "card": "MR2"
     },
     {
-      "diceCategory": "paper",
-      "card": "MJ4"
+      "diceCategory": "scissors",
+      "card": "MS2"
     }
   ]
 }

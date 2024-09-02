@@ -1,0 +1,12 @@
+{
+  "moves": [
+    {
+      "diceCategory": "rock",
+      "card": "MR1"
+    },
+    {
+      "diceCategory": "paper",
+      "card": "MP3"
+    }
+  ]
+}

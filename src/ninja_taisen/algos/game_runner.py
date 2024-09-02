@@ -59,6 +59,8 @@ class GameRunner:
             wolf_strategy=instruction.wolf_strategy,
             winner=DTO_BY_TEAM[victorious_team].value if victorious_team is not None else "none",
             turn_count=turn_count,
+            monkey_cards_left=sum(len(pile) for pile in self.board.monkey_cards.values()),
+            wolf_cards_left=sum(len(pile) for pile in self.board.wolf_cards.values()),
             start_time=start_time,
             end_time=end_time,
             process_name=multiprocessing.current_process().name,

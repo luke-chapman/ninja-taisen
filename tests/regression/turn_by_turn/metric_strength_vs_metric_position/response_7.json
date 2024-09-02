@@ -3,6 +3,10 @@
     {
       "diceCategory": "scissors",
       "card": "WS1"
+    },
+    {
+      "diceCategory": "rock",
+      "card": "WJ4"
     }
   ]
 }

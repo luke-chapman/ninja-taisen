@@ -6,6 +6,10 @@
     },
     {
       "diceCategory": "paper",
+      "card": "MP1"
+    },
+    {
+      "diceCategory": "scissors",
       "card": "MJ4"
     }
   ]

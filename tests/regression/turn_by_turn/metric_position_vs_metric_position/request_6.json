@@ -1,32 +1,35 @@
 {
   "board": {
     "monkey": {
-      "0": [
+      "1": [
+        "MP3",
+        "MR2"
+      ],
+      "4": [
+        "MR1",
         "MJ4"
-      ],
-      "2": [
-        "MS2"
-      ],
-      "7": [
-        "MR2",
-        "MP1",
-        "MP2"
       ]
     },
     "wolf": {
-      "3": [
-        "WP2",
-        "WP3"
+      "6": [
+        "WP1",
+        "WS1",
+        "WR2"
+      ],
+      "8": [
+        "WJ4",
+        "WR3",
+        "WR1"
       ],
       "9": [
-        "WJ4"
+        "WS3"
       ]
     }
   },
   "dice": {
-    "rock": 2,
-    "paper": 1,
-    "scissors": 1
+    "rock": 3,
+    "paper": 2,
+    "scissors": 3
   },
   "team": "monkey"
 }

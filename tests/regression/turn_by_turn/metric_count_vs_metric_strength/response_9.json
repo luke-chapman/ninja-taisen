@@ -7,6 +7,10 @@
     {
       "diceCategory": "scissors",
       "card": "WS3"
+    },
+    {
+      "diceCategory": "rock",
+      "card": "WR3"
     }
   ]
 }
