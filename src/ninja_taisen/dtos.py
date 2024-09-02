@@ -29,6 +29,8 @@ class ResultDto(NinjaTaisenModel):
     wolf_strategy: str
     winner: str
     turn_count: int
+    monkey_cards_left: int
+    wolf_cards_left: int
     start_time: datetime
     end_time: datetime
     process_name: str

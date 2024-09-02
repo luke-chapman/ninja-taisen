@@ -6,32 +6,22 @@
         "MJ4",
         "MS2",
         "MP3"
-      ],
-      "4": [
-        "MS1"
-      ],
-      "6": [
-        "MP2",
-        "MP1",
-        "MR1"
-      ],
-      "7": [
-        "MR3"
       ]
     },
     "wolf": {
-      "8": [
+      "4": [
+        "WJ4"
+      ],
+      "7": [
         "WP2",
-        "WR2",
-        "WJ4",
-        "WR3"
+        "WR2"
       ]
     }
   },
   "dice": {
-    "rock": 1,
-    "paper": 1,
-    "scissors": 2
+    "rock": 2,
+    "paper": 2,
+    "scissors": 1
   },
   "team": "monkey"
 }

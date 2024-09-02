@@ -1,16 +1,8 @@
 {
   "moves": [
     {
-      "diceCategory": "paper",
-      "card": "MP3"
-    },
-    {
       "diceCategory": "rock",
-      "card": "MR2"
-    },
-    {
-      "diceCategory": "scissors",
-      "card": "MS2"
+      "card": "MJ4"
     }
   ]
 }

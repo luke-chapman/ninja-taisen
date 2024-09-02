@@ -1,0 +1,23 @@
+{
+  "board": {
+    "monkey": {
+      "1": [
+        "MR2"
+      ],
+      "9": [
+        "MJ4"
+      ]
+    },
+    "wolf": {
+      "2": [
+        "WR2"
+      ]
+    }
+  },
+  "dice": {
+    "rock": 1,
+    "paper": 2,
+    "scissors": 1
+  },
+  "team": "wolf"
+}
