@@ -29,7 +29,6 @@ jobs:
       run: |
         python -m pip list
         hatch run lint
-        - name: Lint
     - name: Test
       run: |
         python -m pip list
