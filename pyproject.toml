@@ -35,7 +35,7 @@ format = [
   "black src tests",
   "ruff check src tests --fix --unsafe-fixes"
 ]
-test = "pytest {args: tests}"
+test = "PYTEST_DEBUG=1 pytest {args: tests}"
 regen = "pytest tests/regression --regen"
 check = [
   "hatch run format",
