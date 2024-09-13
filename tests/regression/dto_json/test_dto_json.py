@@ -61,10 +61,10 @@ def test_for_dto_json_changes(regen: bool) -> None:
     execute_response_json = json_dir / "execute_response.json"
 
     if regen:
-        choose_request.to_json_file(choose_request_json, indent=None)
-        choose_response.to_json_file(choose_response_json, indent=None)
-        execute_request.to_json_file(execute_request_json, indent=None)
-        execute_response.to_json_file(execute_response_json, indent=None)
+        choose_request.to_json_file(choose_request_json)
+        choose_response.to_json_file(choose_response_json)
+        execute_request.to_json_file(execute_request_json)
+        execute_response.to_json_file(execute_response_json)
     else:
         choose_request_content = choose_request_json.read_text()
         choose_request_2 = ChooseRequest.model_validate_json(choose_request_content)
