@@ -47,5 +47,5 @@ def test_choose(game: str, turn_index: int) -> None:
     request_json = TURN_BY_TURN_DIR / game / f"request_{turn_index}.json"
     request = ChooseRequest.model_validate_json(request_json.read_text())
 
-    response = choose_move(request=request, random=None)
+    response = choose_move(request=request)
     validate_choose_response(response, request.team)
