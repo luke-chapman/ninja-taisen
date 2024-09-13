@@ -13,7 +13,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         python-version: ["3.12"]
     steps:
@@ -26,6 +25,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install hatch>=1.12
-    - name: Lint (NB testing currently disabled due to inexplicable GHA failures)
+    - name: Lint
       run: |
+        python -m pip list
         hatch run lint
+        - name: Lint
+    - name: Test
+      run: |
+        python -m pip list
+        hatch run test
