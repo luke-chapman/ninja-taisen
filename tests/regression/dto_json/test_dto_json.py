@@ -1,6 +1,15 @@
 from pathlib import Path
 
-from ninja_taisen.dtos import BoardDto, CategoryDto, ChooseRequest, ChooseResponse, DiceRollDto, MoveDto, TeamDto
+from ninja_taisen.dtos import (
+    BoardDto,
+    CategoryDto,
+    ChooseRequest,
+    ChooseResponse,
+    DiceRollDto,
+    MoveDto,
+    Strategy,
+    TeamDto,
+)
 from ninja_taisen.objects.cards import WP2, WR3
 from ninja_taisen.objects.types import Board
 
@@ -30,7 +39,10 @@ def test_for_dto_json_changes(regen: bool) -> None:
     assert board_dto_1 == board_dto_2
 
     choose_request_1 = ChooseRequest(
-        board=board_dto_1, dice=DiceRollDto(rock=1, paper=3, scissors=2), team=TeamDto.wolf
+        board=board_dto_1,
+        dice=DiceRollDto(rock=1, paper=3, scissors=2),
+        team=TeamDto.wolf,
+        strategy=Strategy.metric_strength,
     )
     choose_response_1 = ChooseResponse(
         moves=[
@@ -45,9 +57,9 @@ def test_for_dto_json_changes(regen: bool) -> None:
     choose_response_json = json_dir / "choose_response.json"
 
     if regen:
-        board_dto_1.to_json_file(board_json)
-        choose_request_1.to_json_file(choose_request_json)
-        choose_response_1.to_json_file(choose_response_json)
+        board_dto_1.to_json_file(board_json, indent=None)
+        choose_request_1.to_json_file(choose_request_json, indent=None)
+        choose_response_1.to_json_file(choose_response_json, indent=None)
     else:
         board_content = board_json.read_text()
         board_dto_3 = BoardDto.model_validate_json(board_content)

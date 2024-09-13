@@ -21,5 +21,6 @@
     "paper": 1,
     "scissors": 1
   },
-  "team": "wolf"
+  "team": "wolf",
+  "strategy": "metric_strength"
 }

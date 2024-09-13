@@ -16,6 +16,7 @@ from ninja_taisen.dtos import (
     ExecuteRequest,
     ExecuteResponse,
     MoveDto,
+    Strategy,
     TeamDto,
 )
 from ninja_taisen.objects.safe_random import SafeRandom
@@ -35,6 +36,7 @@ def test_choose(tmp_path: Path) -> None:
         board=make_board(random=random, shuffle_cards=True).to_dto(),
         dice=DiceRollDto(rock=random.roll_dice(), paper=random.roll_dice(), scissors=random.roll_dice()),
         team=team,
+        strategy=Strategy.metric_strength,
     )
 
     response = __submit_request(
