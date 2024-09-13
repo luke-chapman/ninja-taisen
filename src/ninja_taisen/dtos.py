@@ -11,7 +11,7 @@ class NinjaTaisenModel(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
     def to_json_file(self, filename: Path, indent: int | None = 2) -> None:
-        content = self.model_dump_json(indent=indent, round_trip=True, by_alias=True)
+        content = self.model_dump_json(indent=indent, round_trip=True, by_alias=True, exclude_none=True)
         filename.write_text(content)
 
 
@@ -74,7 +74,14 @@ class ChooseRequest(NinjaTaisenModel):
     board: BoardDto
     dice: DiceRollDto
     team: TeamDto
-    strategy: str | None = None
+
+    # The name of the strategy to use. Supported values are:
+    # - 'default'
+    # - members of the 'Strategy' class above e.g. 'random', 'metric_strength'
+    strategy: str = "default"
+
+    # If a seed is provided, psuedo-random numbers will be deterministic
+    seed: int | None = None
 
 
 class MoveDto(NinjaTaisenModel):
