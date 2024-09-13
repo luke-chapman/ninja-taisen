@@ -75,7 +75,7 @@ def simulate(
         )
 
 
-def choose_move(request: ChooseRequest, random: SafeRandom | None) -> ChooseResponse:
+def choose_move(request: ChooseRequest) -> ChooseResponse:
     all_permitted_moves = gather_all_permitted_moves(
         starting_board=Board.from_dto(request.board),
         team=TEAM_BY_DTO[request.team],
@@ -88,7 +88,7 @@ def choose_move(request: ChooseRequest, random: SafeRandom | None) -> ChooseResp
     if len(all_permitted_moves) == 0:
         return ChooseResponse(moves=[])
 
-    random = random or SafeRandom()  # Seeded with current time by default
+    random = SafeRandom(request.seed)
     strategy = lookup_strategy(strategy=request.strategy, random=random)
     chosen_moves = strategy.choose_moves(all_permitted_moves)
     return ChooseResponse(moves=[m.to_dto() for m in chosen_moves.moves])

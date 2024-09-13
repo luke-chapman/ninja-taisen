@@ -4,7 +4,6 @@ from flask import Flask, Response, jsonify, request
 
 from ninja_taisen import choose_move, execute_move
 from ninja_taisen.dtos import ChooseRequest, ExecuteRequest
-from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.utils.logging_setup import setup_logging
 from ninja_taisen.utils.run_directory import setup_run_directory
 
@@ -21,8 +20,7 @@ def handle_choose() -> tuple[Response, int]:
     try:
         data = request.get_json()
         request_body = ChooseRequest.model_validate(data)
-        random = SafeRandom(request_body.seed)
-        response_body = choose_move(request=request_body, random=random)
+        response_body = choose_move(request=request_body)
         response = jsonify(response_body.model_dump(round_trip=True, by_alias=True))
         return response, 200
     except Exception as e:
