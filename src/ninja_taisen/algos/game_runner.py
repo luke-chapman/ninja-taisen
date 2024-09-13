@@ -10,7 +10,15 @@ import polars as pl
 from pydantic import BaseModel
 
 from ninja_taisen.algos import board_builder, board_inspector, move_gatherer
-from ninja_taisen.dtos import ChooseRequest, ChooseResponse, DiceRollDto, InstructionDto, ResultDto, ResultsFormat
+from ninja_taisen.dtos import (
+    ChooseRequest,
+    ChooseResponse,
+    DiceRollDto,
+    InstructionDto,
+    ResultDto,
+    ResultsFormat,
+    Strategy,
+)
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import DTO_BY_TEAM, Category, Move, Team
 from ninja_taisen.strategy.strategy import IStrategy
@@ -103,6 +111,7 @@ class GameRunner:
                 scissors=dice_rolls[Category.scissors],
             ),
             team=DTO_BY_TEAM[team],
+            strategy=Strategy.metric_strength,
         )
         request.to_json_file(self.serialisation_dir / f"request_{turn_index}.json")
 

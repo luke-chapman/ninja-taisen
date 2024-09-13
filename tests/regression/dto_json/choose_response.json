@@ -1,12 +1,1 @@
-{
-  "moves": [
-    {
-      "diceCategory": "paper",
-      "card": "WP2"
-    },
-    {
-      "diceCategory": "rock",
-      "card": "WR3"
-    }
-  ]
-}
+{"moves":[{"diceCategory":"paper","card":"WP2"},{"diceCategory":"rock","card":"WR3"}]}

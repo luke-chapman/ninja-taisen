@@ -10,8 +10,8 @@ from pydantic.alias_generators import to_camel
 class NinjaTaisenModel(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
-    def to_json_file(self, filename: Path) -> None:
-        content = self.model_dump_json(indent=2, round_trip=True, by_alias=True)
+    def to_json_file(self, filename: Path, indent: int | None = 2) -> None:
+        content = self.model_dump_json(indent=indent, round_trip=True, by_alias=True)
         filename.write_text(content)
 
 
@@ -74,6 +74,7 @@ class ChooseRequest(NinjaTaisenModel):
     board: BoardDto
     dice: DiceRollDto
     team: TeamDto
+    strategy: str | None = None
 
 
 class MoveDto(NinjaTaisenModel):

@@ -19,5 +19,6 @@
     "paper": 1,
     "scissors": 3
   },
-  "team": "monkey"
+  "team": "monkey",
+  "strategy": "metric_strength"
 }
