@@ -7,9 +7,11 @@ This repo contains back-end code related to the 2-player board game [Ninja Taise
 
 ## Developing a strategy
 
-This is done by running multiple games end-to-end, using the results to iterate. You can use a locally-modified variant of `play_all_strategies.py` and associated Jupyter notebooks to run a batch simulation featuring some new ideas and see how they fair against each other
+This is done by running multiple games end-to-end, using the results to iterate as you go. I recommend running a locally-modified variant of the script `play_all_strategies.py` to generate a batch of results. These can then be analysed with the associated Jupyter notebooks to see how they fair against each other.
 
 When developing a strategy you are implicitly consuming the code in ninja-taisen as a Python library. You'll need to do a `pip install -e ninja-taisen` of the library to use it. Publically available methods are visible in either `api.py` and `dtos.py`. There are also tests and linting.
+
+Developing a strategy is really hard. Just encoding a new idea for a strategy in code is difficult. I've had several experiences of either getting the code wrong, or the idea turning out to not work, or both. Patience and humour is key! As of August 2024 the best strategy `metric_strength` beats a random strategy 95%+ of the time - not bad!
 
 ## Showcasing a strategy
 
