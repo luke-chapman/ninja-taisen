@@ -48,8 +48,8 @@ python -m venv virtual-environment-name --system-site-packages
 ```
 Next, we `activate` our Python virtual environment. Commands vary according to your operating system. Either:
 ```
-source ./virtual-environment-name/bin/activate    # Windows
-.\virtual-environment-name\Scripts\activate       # Mac / Linux
+.\virtual-environment-name\Scripts\activate       # Windows
+source ./virtual-environment-name/bin/activate    # Mac / Linux
 
 deactivate                                        # Useful command to deactivate the environment after activation
 ```
