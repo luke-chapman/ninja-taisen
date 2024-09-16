@@ -1,4 +1,3 @@
-import datetime
 import itertools
 import logging
 import sys
@@ -15,7 +14,7 @@ import polars as pl
 from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 from ninja_taisen.utils.logging_setup import setup_logging
-from ninja_taisen.utils.run_directory import choose_run_directory
+from ninja_taisen.utils.run_directory import choose_run_directory, timestamp
 
 log = getLogger(__name__)
 
@@ -86,8 +85,7 @@ def run() -> None:
     run_dir = args.run_dir.resolve()
     run_dir.mkdir(parents=True, exist_ok=True)
 
-    timestamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
-    setup_logging(logging.INFO, run_dir / f"log_{timestamp}.txt")
+    setup_logging(logging.INFO, run_dir / f"log_{timestamp()}.txt")
     log.info("Command line\n" + list2cmdline(sys.orig_argv))
     log.info(f"Using run_dir={run_dir}")
 
