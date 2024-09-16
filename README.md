@@ -1,25 +1,39 @@
 # ninja-taisen
 
 This repo contains back-end code related to the 2-player board game [Ninja Taisen](https://iellogames.com/jeux/ninja-taisen). The aims of this project are:
-- to develop an excellent strategy for playing Ninja Taisen
-- to allow humans to play against this strategy for fun
+- to develop a winning strategy for playing Ninja Taisen
+- to allow humans to play against this strategy
 - to have some fun along the way and learn new skills
-
-## Developing a strategy
-
-This is done by running multiple games end-to-end, using the results to iterate as you go. I recommend running a locally-modified variant of the script `play_all_strategies.py` to generate a batch of results. These can then be analysed with the associated Jupyter notebooks to see how they fair against each other.
-
-When developing a strategy you are implicitly consuming the code in ninja-taisen as a Python library. You'll need to do a `pip install -e ninja-taisen` of the library to use it. Publically available methods are visible in either `api.py` and `dtos.py`. There are also tests and linting.
-
-Developing a strategy is really hard. Just encoding a new idea for a strategy in code is difficult. I've had several experiences of either getting the code wrong, or the idea turning out to not work, or both. Patience and humour is key! As of August 2024 the best strategy `metric_strength` beats a random strategy 95%+ of the time - not bad!
 
 ## Showcasing a strategy
 
 You can ask the code to:
-- `choose` a sample move, using the `choose_move` method in `api.py`
-- `execute` a sample move, using the `execute_move` method in `api.py`
+- `choose` a move, using the `choose_move` method in `api.py`
+- `execute` a move, using the `execute_move` method in `api.py`
 
-These methods are packaged up behind a json api using [flask](https://flask.palletsprojects.com). This json api allows a front end to communicate with the back end without either needing to know any fine details of how the other operates.
+These methods are packaged up behind a json api using [flask](https://flask.palletsprojects.com). This json api allows the front end (coming soon!) to communicate with the back end without either needing to know any fine details of how the other operates.
+
+## Developing a strategy
+
+This is an open-ended question. As of September 2024, the approach has been:
+- Use human intuition to write a strategy, or improve an existing strategy
+- Run the `batch_simulate.py` script to play this new strategy against existing strategies and see how the results compare
+- Iterate and repeat based on the results
+
+When developing a strategy you are consuming the code in `ninja-taisen` as a Python library. To this end the library code is structured as a Python pacakge:
+- Methods & classes intended for public usage are in either [api.py](https://github.com/luke-chapman/ninja-taisen/blob/master/src/ninja_taisen/api.py) or [dtos.py](https://github.com/luke-chapman/ninja-taisen/blob/master/src/ninja_taisen/dtos.py)
+- There are tests, including regression tests. These have been invaluable in developing a reliable game simulator 
+- The code is linted with `ruff` and `mypy`, including checking for type annotations
+
+While the library is young and changing fast, it's not yet published to a pypi repository. You'll need to `git clone` this repo and `pip install -e ninja-taisen` into a virtual environment for the time being.
+
+So far, developing a strategy has been difficult. Just encoding a new strategy in reliable code is pretty hard. I've had several experiences of either getting the code wrong, or the idea turning out to not work, or both. Rome wasn't built in a day; I recommend a large dose of patience and humour.
+
+As of September 2024 the "metric_strength" strategy beats the "random" strategy [96% of the time](https://github.com/luke-chapman/ninja-taisen/blob/9a8f6de6fd521aaf3df90f1663ad3a114c2ff20c/analysis/ninja-taisen-20240916_104134/metric_strength.csv#L2) - not a bad start. My next goal is to write a strategy which does the following:
+- Almost always beats "random" - let's say 99% of the time
+- Reliably beats "metric_strength" - let's say 70% of the time
+
+If you're happy to develop the library broadly in the style described above, please do get involved / get in touch. I've raised [issues](https://github.com/luke-chapman/ninja-taisen/issues) for my current ideas here - consider them a [starter for ten](https://en.wiktionary.org/wiki/starter_for_ten).
 
 ## Local environment setup
 First clone this repo:
@@ -32,29 +46,18 @@ Now we need to make a Python [virtual environment](https://docs.python.org/3/lib
 ```
 python -m venv virtual-environment-name --system-site-packages
 ```
-Next, we activate our Python virtual environment. Commands slightly vary according to your OS. Either:
+Next, we `activate` our Python virtual environment. Commands vary according to your operating system. Either:
 ```
-# Activation - Mac / Linux
-source ./virtual-environment-name/bin/activate
+source ./virtual-environment-name/bin/activate    # Windows
+.\virtual-environment-name\Scripts\activate       # Mac / Linux
 
-# Activation - Windows
-.\virtual-environment-name\Scripts\activate
-
-# Deactivation - Windows / Mac / Linux
-deactivate
+deactivate                                        # Useful command to deactivate the environment after activation
 ```
-Now we're ready to install extra packages into our environment. We're going to get ninja-taisen itself from local code, but other stuff will be pulled from an internet-based packaged repository:
+Now we're ready to install extra packages into our environment. `cd` to the folder containing this Readme file, and run
 ```
-# Everyone needs this: ninja-taisen and its dependencies
-... 'cd' to the folder containing this ninja-taisen repo ...
-pip install -e ./ninja-taisen
-
-# If you want to run the Jupyter notebooks 
-pip install -I jupyter ipython
-
-# If you want to run testing / linting
-pip install hatch pytest ruff black mypy requests
+pip install -e .
 ```
+Your local environment is now ready with ninja-taisen and all of its dependencies.
 
 ## Querying the json endpoint
 ### Launch server
@@ -80,7 +83,7 @@ http://127.0.0.1:5000/execute
 ```
 
 ### Submit a curl command
-The commands below work on Windows using Command Prompt. They may need some bashing-into-shape to get them to work in other contexts
+The commands below work on Windows using Command Prompt; minor variants should work in other environments.
 
 #### choose
 ```
@@ -111,8 +114,3 @@ You can also commit to a branch using
 hatch run yeehaw -- "Commit message"
 ```
 This will format, lint & test the code before committing to git if all is well.
-
-## Issues
-This project started in August 2024 and is still in its infancy. Writing a bot to play a board game is not an easy task - this will take time!
-
-Open issues can be seen on this page: https://github.com/luke-chapman/ninja-taisen/issues
