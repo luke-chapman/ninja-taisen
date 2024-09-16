@@ -62,6 +62,24 @@ def write_png_csv(strategy: str, df: pl.DataFrame, run_dir: Path) -> None:
     log.info(f"Wrote csv and png for {strategy}")
 
 
+def get_proportion(df_counts: pl.DataFrame, monkey_strategy: str, wolf_strategy: str, winner: str) -> float:
+    rows = df_counts.filter(
+        pl.col("monkey_strategy") == monkey_strategy,
+        pl.col("wolf_strategy") == wolf_strategy,
+        pl.col("winner") == winner,
+    )
+
+    if rows.height == 0:
+        return 0.0
+    elif rows.height == 1:
+        return rows["proportion"][0]
+    else:
+        raise ValueError(
+            f"Found {rows.height} rows matching monkey_strategy={monkey_strategy}, "
+            f"wolf_strategy={wolf_strategy}, winner={winner}; expected either 0 or 1"
+        )
+
+
 def run_analysis(strategies: list[str], results_parquet: Path) -> None:
     log.info("Beginning analysis...")
     df_counts = (
@@ -77,21 +95,12 @@ def run_analysis(strategies: list[str], results_parquet: Path) -> None:
     for strategy_a in strategies:
         data = defaultdict(list)
         for strategy_b in strategies:
-            monkey_row = df_counts.filter(
-                pl.col("monkey_strategy") == strategy_a,
-                pl.col("wolf_strategy") == strategy_b,
-                pl.col("winner") == "monkey",
+            monkey_proportion = get_proportion(
+                df_counts=df_counts, monkey_strategy=strategy_a, wolf_strategy=strategy_b, winner="monkey"
             )
-            assert monkey_row.height == 1
-            monkey_proportion = monkey_row["proportion"][0]
-
-            wolf_row = df_counts.filter(
-                pl.col("wolf_strategy") == strategy_a,
-                pl.col("monkey_strategy") == strategy_b,
-                pl.col("winner") == "wolf",
+            wolf_proportion = get_proportion(
+                df_counts=df_counts, monkey_strategy=strategy_b, wolf_strategy=strategy_a, winner="wolf"
             )
-            assert wolf_row.height == 1
-            wolf_proportion = wolf_row["proportion"][0]
 
             data["vs"].append(strategy_b)
             data["wins_as_monkey"].append(monkey_proportion)
@@ -108,6 +117,7 @@ def run() -> None:
     parser.add_argument(
         "--max-processes",
         default=-1,
+        type=int,
         help="Number of processes to use. Negative values are deducted from available cores on this machine",
     )
     parser.add_argument(
@@ -117,7 +127,9 @@ def run() -> None:
         default=ALL_STRATEGY_NAMES,
         help="Names of strategies to play against each other",
     )
-    parser.add_argument("--multiplier", default=10, help="How many times to play each strategy pair against each other")
+    parser.add_argument(
+        "--multiplier", default=10, type=int, help="How many times to play each strategy pair against each other"
+    )
     parser.add_argument(
         "--run-dir", default=choose_run_directory(), type=Path, help="Directory with results, logs and analysis"
     )
