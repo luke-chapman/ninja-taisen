@@ -1,4 +1,4 @@
-vs,m,w
+vs,wins_as_monkey,wins_as_wolf
 random,0.968,0.954
 random_spot_win,0.922,0.901
 metric_count,0.569,0.552

@@ -19,7 +19,7 @@ from ninja_taisen.utils.run_directory import choose_run_directory, timestamp
 log = getLogger(__name__)
 
 
-def run_simulation(strategies: list[str], multiplier: int, run_dir: Path, max_processes: int) -> None:
+def run_simulation(strategies: list[str], multiplier: int, run_dir: Path, max_processes: int, log_file: Path) -> None:
     start = perf_counter()
 
     instructions: list[InstructionDto] = []
@@ -33,7 +33,7 @@ def run_simulation(strategies: list[str], multiplier: int, run_dir: Path, max_pr
         results_dir=run_dir,
         results_format="parquet",
         max_processes=max_processes,
-        log_file=run_dir / "log.txt",
+        log_file=log_file,
     )
 
     stop = perf_counter()
@@ -43,8 +43,8 @@ def run_simulation(strategies: list[str], multiplier: int, run_dir: Path, max_pr
 def write_png_csv(strategy: str, df: pl.DataFrame, run_dir: Path) -> None:
     df.write_csv(run_dir / f"{strategy}.csv")
 
-    heights = (df["m"] - df["w"]).abs()
-    bottom = df.select(pl.min_horizontal("m", "w")).to_series(0)
+    heights = (df["wins_as_monkey"] - df["wins_as_wolf"]).abs()
+    bottom = df.select(pl.min_horizontal("wins_as_monkey", "wins_as_wolf")).to_series(0)
 
     plt.figure(figsize=(8, 6))
     plt.bar(
@@ -60,6 +60,47 @@ def write_png_csv(strategy: str, df: pl.DataFrame, run_dir: Path) -> None:
     plt.grid(axis="y")
     plt.savefig(run_dir / f"{strategy}.png")
     log.info(f"Wrote csv and png for {strategy}")
+
+
+def run_analysis(strategies: list[str], results_parquet: Path) -> None:
+    log.info("Beginning analysis...")
+    df_counts = (
+        pl.scan_parquet(results_parquet)
+        .group_by("monkey_strategy", "wolf_strategy")
+        .agg(pl.col("winner").value_counts(normalize=True))
+        .explode("winner")
+        .unnest("winner")
+        .with_columns([pl.col("proportion").round(6)])
+        .collect()
+    )
+
+    for strategy_a in strategies:
+        data = defaultdict(list)
+        for strategy_b in strategies:
+            monkey_row = df_counts.filter(
+                pl.col("monkey_strategy") == strategy_a,
+                pl.col("wolf_strategy") == strategy_b,
+                pl.col("winner") == "monkey",
+            )
+            assert monkey_row.height == 1
+            monkey_proportion = monkey_row["proportion"][0]
+
+            wolf_row = df_counts.filter(
+                pl.col("wolf_strategy") == strategy_a,
+                pl.col("monkey_strategy") == strategy_b,
+                pl.col("winner") == "wolf",
+            )
+            assert wolf_row.height == 1
+            wolf_proportion = wolf_row["proportion"][0]
+
+            data["vs"].append(strategy_b)
+            data["wins_as_monkey"].append(monkey_proportion)
+            data["wins_as_wolf"].append(wolf_proportion)
+
+        df = pl.DataFrame(data=data)
+        write_png_csv(strategy=strategy_a, df=df, run_dir=results_parquet.parent)
+
+    log.info("All post analysis complete")
 
 
 def run() -> None:
@@ -84,57 +125,25 @@ def run() -> None:
     args = parser.parse_args()
     run_dir = args.run_dir.resolve()
     run_dir.mkdir(parents=True, exist_ok=True)
+    log_file = run_dir / f"log_{timestamp()}.txt"
 
-    setup_logging(logging.INFO, run_dir / f"log_{timestamp()}.txt")
+    setup_logging(logging.INFO, log_file)
     log.info("Command line\n" + list2cmdline(sys.orig_argv))
     log.info(f"Using run_dir={run_dir}")
 
     results_parquet = run_dir / "results.parquet"
     if results_parquet.exists():
-        log.info(f"Skipping simulation because {results_parquet} already exists")
+        log.info(f"Skipping simulation because '{results_parquet}' already exists")
     else:
         run_simulation(
-            strategies=args.strategies, multiplier=args.multiplier, run_dir=run_dir, max_processes=args.max_processes
+            strategies=args.strategies,
+            multiplier=args.multiplier,
+            run_dir=run_dir,
+            max_processes=args.max_processes,
+            log_file=log_file,
         )
 
-    log.info("Beginning analysis...")
-    df_counts = (
-        pl.scan_parquet(run_dir / "results.parquet")
-        .group_by("monkey_strategy", "wolf_strategy")
-        .agg(pl.col("winner").value_counts(normalize=True))
-        .explode("winner")
-        .unnest("winner")
-        .with_columns([pl.col("proportion").round(6)])
-        .collect()
-    )
-
-    for strategy_a in args.strategies:
-        data = defaultdict(list)
-        for strategy_b in args.strategies:
-            monkey_row = df_counts.filter(
-                pl.col("monkey_strategy") == strategy_a,
-                pl.col("wolf_strategy") == strategy_b,
-                pl.col("winner") == "monkey",
-            )
-            assert monkey_row.height == 1
-            monkey_proportion = monkey_row["proportion"][0]
-
-            wolf_row = df_counts.filter(
-                pl.col("wolf_strategy") == strategy_a,
-                pl.col("monkey_strategy") == strategy_b,
-                pl.col("winner") == "wolf",
-            )
-            assert wolf_row.height == 1
-            wolf_proportion = wolf_row["proportion"][0]
-
-            data["vs"].append(strategy_b)
-            data["m"].append(monkey_proportion)
-            data["w"].append(wolf_proportion)
-
-        df = pl.DataFrame(data=data)
-        write_png_csv(strategy=strategy_a, df=df, run_dir=run_dir)
-
-    log.info("All post analysis complete")
+    run_analysis(strategies=args.strategies, results_parquet=results_parquet)
 
 
 if __name__ == "__main__":
