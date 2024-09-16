@@ -163,3 +163,4 @@ cython_debug/
 
 # Local outputs
 .ninja-taisen*/
+ninja-taisen*/log_*.txt
