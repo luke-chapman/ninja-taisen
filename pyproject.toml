@@ -13,6 +13,7 @@ authors = [
 ]
 dependencies = [
   "flask>=3.0.3",
+  "matplotlib>=3.9.2",
   "more-itertools>=10.4",
   "polars>=1.5.0",
   "pydantic>=2.8.2",
@@ -28,12 +29,12 @@ path = "src/ninja_taisen/__about__.py"
 
 [tool.hatch.envs.default.scripts]
 lint = [
-  "ruff check src tests",
-  "mypy src tests --install-types --non-interactive"
+  "ruff check src tests analysis",
+  "mypy src tests analysis --install-types --non-interactive"
 ]
 format = [
-  "black src tests",
-  "ruff check src tests --fix --unsafe-fixes"
+  "black src tests analysis",
+  "ruff check src tests analysis --fix --unsafe-fixes"
 ]
 test = "pytest {args: tests}"
 regen = "pytest tests/regression --regen"
