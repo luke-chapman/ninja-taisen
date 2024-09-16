@@ -7,6 +7,7 @@ from logging import getLogger
 from pathlib import Path
 from subprocess import list2cmdline
 from time import perf_counter
+from typing import Any
 
 import matplotlib.pyplot as plt
 import polars as pl
@@ -93,7 +94,7 @@ def run_analysis(strategies: list[str], results_parquet: Path) -> None:
     )
 
     for strategy_a in strategies:
-        data = defaultdict(list)
+        data: defaultdict[str, list[Any]] = defaultdict(list)
         for strategy_b in strategies:
             monkey_proportion = get_proportion(
                 df_counts=df_counts, monkey_strategy=strategy_a, wolf_strategy=strategy_b, winner="monkey"
