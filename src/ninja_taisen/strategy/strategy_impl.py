@@ -1,6 +1,7 @@
 import itertools
 import math
 from collections import defaultdict
+from copy import copy
 from logging import getLogger
 
 import numpy as np
@@ -70,31 +71,38 @@ class NextTurnPrototypeStrategy(IStrategy):
         metric_to_moves: dict[float, list[CompletedMoves]] = defaultdict(list)
         for completed_moves in all_permitted_moves:
             metric = self.metric.calculate(completed_moves.board, completed_moves.team)
-            metric_to_moves[metric].append(completed_moves)
+            metric_to_moves[round(metric, 6)].append(completed_moves)
         log.info(f"Grouped {len(all_permitted_moves)} moves into {len(metric_to_moves)} groups by strength")
 
         # Filter our moves down to the 10% most promising
-        # Randomly filter the list down if it's longer than 10% of the original list
+        # Filter the list down if it's longer than 10% of the original list, preferring larger metrics, then randomly
         # This does happen, e.g. if every metric is equal after the first move
         threshold_percentile = 90
         metric_threshold = np.percentile(list(metric_to_moves.keys()), threshold_percentile)
-        log.info(f"Found 90th percentile {metric_threshold:.3f}; will delve deeper into possibilities here")
+        max_length = math.ceil(len(all_permitted_moves) * (1 - threshold_percentile / 100))
+        log.info(f"Found 90th percentile {metric_threshold:.3f}")
         moves_for_analysis: list[tuple[float, CompletedMoves]] = []
-        for metric, moves in metric_to_moves.items():
+        for metric, moves in sorted(metric_to_moves.items(), key=lambda t: t[0], reverse=True):
             if metric < metric_threshold:
                 log.info(f"Ignoring {len(moves)} moves with metric {metric:.3f} which is below threshold")
-            else:
+                continue
+
+            new_length = len(moves_for_analysis) + len(moves)
+            if new_length < max_length:
+                log.info(f"Using all {len(moves)} moves with metric {metric:.3f}")
                 for move in moves:
                     moves_for_analysis.append((metric, move))
-
-        max_length = math.ceil(len(all_permitted_moves) * (1 - threshold_percentile / 100))
-        if len(moves_for_analysis) >= max_length:
-            log.info(f"Have {len(moves_for_analysis)} moves; filtering down to {max_length} randomly")
-            self.random.shuffle(moves_for_analysis)
-            moves_for_analysis = moves_for_analysis[:max_length]
+            else:
+                moves_copy = copy(moves)
+                self.random.shuffle(moves_copy)
+                to_use = max_length - len(moves_for_analysis)
+                log.info(f"Randomly selecting {to_use} of {len(moves_copy)} moves with metric {metric:.3f}")
+                for move in moves_copy[:to_use]:
+                    moves_for_analysis.append((metric, move))
+                break
 
         # Over all possible dice rolls, what is the probability our opponent wins next turn?
-        dice_rolls = [DiceRoll(*t) for t in itertools.product(range(3), range(3), range(3))]
+        dice_rolls = [DiceRoll(*t) for t in itertools.product((1, 2, 3), (1, 2, 3), (1, 2, 3))]
         log.info(
             f"Will factor in chance of losing next turn for {len(moves_for_analysis)} moves out of "
             f"{len(all_permitted_moves)}, using all {len(dice_rolls)} dice rolls"
