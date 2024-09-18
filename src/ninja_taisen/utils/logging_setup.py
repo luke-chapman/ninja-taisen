@@ -2,12 +2,14 @@ import logging
 import time
 from pathlib import Path
 
+from ninja_taisen.objects.constants import DEFAULT_LOGGING
+
 
 class UTCFormatter(logging.Formatter):
     converter = time.gmtime
 
 
-def setup_logging(verbosity: int = logging.INFO, log_file: Path | None = None) -> None:
+def setup_logging(verbosity: int = DEFAULT_LOGGING, log_file: Path | None = None) -> None:
     # Set up the root logger
     logger = logging.getLogger()
     logger.setLevel(verbosity)

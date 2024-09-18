@@ -1,4 +1,3 @@
-import logging
 
 import pytest
 from _pytest.config import Parser
@@ -7,12 +6,13 @@ from _pytest.logging import LogCaptureFixture
 
 from ninja_taisen import ChooseResponse
 from ninja_taisen.dtos import TeamDto
+from ninja_taisen.objects.constants import DEFAULT_LOGGING
 from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Card, Category
 
 
 @pytest.fixture(autouse=True)
 def set_log_level(caplog: LogCaptureFixture) -> None:
-    caplog.set_level(logging.INFO)
+    caplog.set_level(DEFAULT_LOGGING)
 
 
 def pytest_addoption(parser: Parser) -> None:

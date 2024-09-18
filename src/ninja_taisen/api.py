@@ -1,4 +1,3 @@
-import logging
 import multiprocessing
 from cProfile import Profile
 from logging import getLogger
@@ -16,6 +15,7 @@ from ninja_taisen.dtos import (
     InstructionDto,
     ResultsFormat,
 )
+from ninja_taisen.objects.constants import DEFAULT_LOGGING
 from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Board, Card, Category
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
@@ -30,7 +30,7 @@ def simulate(
     results_format: ResultsFormat = "parquet",
     max_processes: int = 1,
     per_process: int = 100,
-    verbosity: int = logging.INFO,
+    verbosity: int = DEFAULT_LOGGING,
     log_file: Path | None = None,
     profile: bool = False,
     serialisation_dir: Path | None = None,
