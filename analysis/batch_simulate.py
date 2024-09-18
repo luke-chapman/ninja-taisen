@@ -1,5 +1,4 @@
 import itertools
-import logging
 import sys
 from argparse import ArgumentParser
 from collections import defaultdict
@@ -13,14 +12,21 @@ import matplotlib.pyplot as plt
 import polars as pl
 
 from ninja_taisen import InstructionDto, simulate
-from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
+from ninja_taisen.dtos import Strategy
+from ninja_taisen.objects.constants import DEFAULT_LOGGING
 from ninja_taisen.utils.logging_setup import setup_logging
 from ninja_taisen.utils.run_directory import choose_run_directory, timestamp
 
 log = getLogger(__name__)
 
 
-def run_simulation(strategies: list[str], multiplier: int, run_dir: Path, max_processes: int, log_file: Path) -> None:
+def run_simulation(
+    strategies: list[str],
+    multiplier: int,
+    run_dir: Path,
+    max_processes: int,
+    log_file: Path,
+) -> None:
     start = perf_counter()
 
     instructions: list[InstructionDto] = []
@@ -124,8 +130,8 @@ def run() -> None:
     parser.add_argument(
         "--strategies",
         nargs="*",
-        choices=ALL_STRATEGY_NAMES,
-        default=ALL_STRATEGY_NAMES,
+        choices=list(Strategy),
+        default=(Strategy.random, Strategy.metric_strength),
         help="Names of strategies to play against each other",
     )
     parser.add_argument(
@@ -140,7 +146,7 @@ def run() -> None:
     run_dir.mkdir(parents=True, exist_ok=True)
     log_file = run_dir / f"log_{timestamp()}.txt"
 
-    setup_logging(logging.INFO, log_file)
+    setup_logging(DEFAULT_LOGGING, log_file)
     log.info("Command line\n" + list2cmdline(sys.orig_argv))
     log.info(f"Using run_dir={run_dir}")
 

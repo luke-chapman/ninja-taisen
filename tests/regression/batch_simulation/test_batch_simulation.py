@@ -7,8 +7,7 @@ import pytest
 from polars.testing import assert_frame_equal
 
 from ninja_taisen import InstructionDto, simulate
-from ninja_taisen.dtos import ResultsFormat
-from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
+from ninja_taisen.dtos import ResultsFormat, Strategy
 
 
 @pytest.mark.parametrize("max_processes", (-2, 2))
@@ -19,7 +18,8 @@ def test_all_strategies(max_processes: int, results_format: ResultsFormat, regen
         return
 
     instructions: list[InstructionDto] = []
-    for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(ALL_STRATEGY_NAMES, ALL_STRATEGY_NAMES)):
+    strategies = (Strategy.random, Strategy.random_spot_win, Strategy.metric_count, Strategy.metric_strength)
+    for index, (monkey_strategy, wolf_strategy) in enumerate(itertools.product(strategies, strategies)):
         instructions.append(
             InstructionDto(id=index, seed=index, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         )

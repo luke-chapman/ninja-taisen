@@ -2,7 +2,7 @@ from collections import defaultdict
 from enum import IntEnum
 from typing import NamedTuple
 
-from ninja_taisen.dtos import BoardDto, CategoryDto, MoveDto, Strategy, TeamDto
+from ninja_taisen.dtos import BoardDto, CategoryDto, MoveDto, TeamDto
 
 
 # We represent Category as an IntEnum internally for speed
@@ -172,9 +172,6 @@ class BattleResult(NamedTuple):
     winner: Card | None
 
 
-ALL_STRATEGY_NAMES = list(Strategy)
-
-
 class Move(NamedTuple):
     dice_category: Category
     dice_roll: int
@@ -191,3 +188,15 @@ class CompletedMoves(NamedTuple):
 
     def used_joker(self) -> bool:
         return any(m.card.category == Category.joker for m in self.moves)
+
+
+DICE_PROBABILITIES = {1: 1 / 2, 2: 1 / 3, 3: 1 / 6}
+
+
+class DiceRoll(NamedTuple):
+    rock: int
+    paper: int
+    scissors: int
+
+    def probability(self) -> float:
+        return DICE_PROBABILITIES[self.rock] * DICE_PROBABILITIES[self.paper] * DICE_PROBABILITIES[self.scissors]
