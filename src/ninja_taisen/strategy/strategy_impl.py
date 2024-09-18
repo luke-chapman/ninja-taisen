@@ -1,4 +1,5 @@
 import itertools
+import math
 from collections import defaultdict
 from logging import getLogger
 
@@ -86,13 +87,18 @@ class NextTurnPrototypeStrategy(IStrategy):
                 for move in moves:
                     moves_for_analysis.append((metric, move))
 
-        max_length = len(all_permitted_moves) * (1 - threshold_percentile / 100)
+        max_length = math.ceil(len(all_permitted_moves) * (1 - threshold_percentile / 100))
         if len(moves_for_analysis) >= max_length:
+            log.info(f"Have {len(moves_for_analysis)} moves; filtering down to {max_length} randomly")
             self.random.shuffle(moves_for_analysis)
             moves_for_analysis = moves_for_analysis[:max_length]
 
         # Over all possible dice rolls, what is the probability our opponent wins next turn?
         dice_rolls = [DiceRoll(*t) for t in itertools.product(range(3), range(3), range(3))]
+        log.info(
+            f"Will factor in chance of losing next turn for {len(moves_for_analysis)} moves out of "
+            f"{len(all_permitted_moves)}, using all {len(dice_rolls)} dice rolls"
+        )
         advanced_metric_to_moves: dict[float, list[CompletedMoves]] = defaultdict(list)
         for metric, this_turn in moves_for_analysis:
             chance_lose_next_turn = 0.0
@@ -119,5 +125,5 @@ class NextTurnPrototypeStrategy(IStrategy):
 
         max_metric = max(advanced_metric_to_moves.keys())
         max_metrics_boards = advanced_metric_to_moves[max_metric]
-        log.info(f"Selecting move from {len(metric_to_moves)} moves with max_metric {max_metric:.3f}")
+        log.info(f"Selecting move from {len(max_metrics_boards)} moves with max_metric {max_metric:.3f}")
         return self.random.choice(max_metrics_boards)
