@@ -191,3 +191,20 @@ class CompletedMoves(NamedTuple):
 
     def used_joker(self) -> bool:
         return any(m.card.category == Category.joker for m in self.moves)
+
+
+DICE_PROBABILITIES = {1: 1 / 2, 2: 1 / 3, 3: 1 / 6}
+
+
+class DiceRoll(NamedTuple):
+    rock: int
+    paper: int
+    scissors: int
+
+    def probability(self) -> float:
+        return DICE_PROBABILITIES[self.rock] * DICE_PROBABILITIES[self.paper] * DICE_PROBABILITIES[self.scissors]
+
+
+class NextTurnForecast(NamedTuple):
+    this_turn: CompletedMoves
+    next_turn: dict[DiceRoll, list[CompletedMoves]]
