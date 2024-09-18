@@ -190,13 +190,11 @@ class CompletedMoves(NamedTuple):
         return any(m.card.category == Category.joker for m in self.moves)
 
 
-DICE_PROBABILITIES = {1: 1 / 2, 2: 1 / 3, 3: 1 / 6}
-
-
 class DiceRoll(NamedTuple):
     rock: int
     paper: int
     scissors: int
 
     def probability(self) -> float:
-        return DICE_PROBABILITIES[self.rock] * DICE_PROBABILITIES[self.paper] * DICE_PROBABILITIES[self.scissors]
+        probabilities = {1: 1 / 2, 2: 1 / 3, 3: 1 / 6}
+        return probabilities[self.rock] * probabilities[self.paper] * probabilities[self.scissors]
