@@ -1,7 +1,7 @@
 from logging import getLogger
 
+from ninja_taisen.dtos import Strategy
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import Strategy
 from ninja_taisen.strategy.metric import CountMetric, PositionMetric, StrengthMetric
 from ninja_taisen.strategy.strategy import IStrategy
 from ninja_taisen.strategy.strategy_impl import (

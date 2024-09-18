@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 import polars as pl
 
 from ninja_taisen import InstructionDto, simulate
+from ninja_taisen.dtos import Strategy
 from ninja_taisen.objects.constants import DEFAULT_LOGGING
-from ninja_taisen.objects.types import ALL_STRATEGY_NAMES
 from ninja_taisen.utils.logging_setup import setup_logging
 from ninja_taisen.utils.run_directory import choose_run_directory, timestamp
 
@@ -21,8 +21,7 @@ log = getLogger(__name__)
 
 
 def run_simulation(
-    monkey_strategies: list[str],
-    wolf_strategies: list[str],
+    strategies: list[str],
     multiplier: int,
     run_dir: Path,
     max_processes: int,
@@ -31,7 +30,7 @@ def run_simulation(
     start = perf_counter()
 
     instructions: list[InstructionDto] = []
-    enumeration = enumerate(itertools.product(monkey_strategies, wolf_strategies, range(multiplier)))
+    enumeration = enumerate(itertools.product(strategies, strategies, range(multiplier)))
     for index, (monkey_strategy, wolf_strategy, seed) in enumeration:
         instruction = InstructionDto(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
         instructions.append(instruction)
@@ -129,18 +128,11 @@ def run() -> None:
         help="Number of processes to use. Negative values are deducted from available cores on this machine",
     )
     parser.add_argument(
-        "--monkey-strategies",
+        "--strategies",
         nargs="*",
-        choices=ALL_STRATEGY_NAMES,
-        default=ALL_STRATEGY_NAMES,
-        help="Names of monkey strategies to use (monkey plays first)",
-    )
-    parser.add_argument(
-        "--wolf-strategies",
-        nargs="*",
-        choices=ALL_STRATEGY_NAMES,
-        default=ALL_STRATEGY_NAMES,
-        help="Names of wolf strategies to use (wolf plays second)",
+        choices=list(Strategy),
+        default=(Strategy.random, Strategy.metric_strength),
+        help="Names of strategies to play against each other",
     )
     parser.add_argument(
         "--multiplier", default=10, type=int, help="How many times to play each strategy pair against each other"
@@ -163,8 +155,7 @@ def run() -> None:
         log.info(f"Skipping simulation because '{results_parquet}' already exists")
     else:
         run_simulation(
-            monkey_strategies=args.monkey_strategies,
-            wolf_strategies=args.wolf_strategies,
+            strategies=args.strategies,
             multiplier=args.multiplier,
             run_dir=run_dir,
             max_processes=args.max_processes,

@@ -1,8 +1,0 @@
-2024-09-18 12:11:13 - INFO - batch_simulate - Command line
-C:\Users\lrrch\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe .\batch_simulate.py --strategies random_spot_win next_turn_prototype --multiplier 1
-2024-09-18 12:11:13 - INFO - batch_simulate - Using run_dir=C:\Users\lrrch\repos\ninja-taisen\analysis\ninja-taisen-20240918_121113
-2024-09-18 12:11:13 - INFO - api - User provided max_processes=-1; found cpu_count=8
-2024-09-18 12:11:13 - INFO - api - Will use max_processes=7
-2024-09-18 12:11:13 - INFO - game_runner - Will assign 4 instructions in chunks of 100 between 7 processes
-2024-09-18 12:11:13 - INFO - game_runner - Per-chunk results in C:\Users\lrrch\repos\ninja-taisen\analysis\ninja-taisen-20240918_121113\chunk_results
-2024-09-18 12:11:22 - INFO - game_runner - Starting chunk with ids 0-3 in process SpawnPoolWorker-3

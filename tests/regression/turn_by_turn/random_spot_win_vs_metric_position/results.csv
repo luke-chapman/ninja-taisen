@@ -1,2 +1,0 @@
-id,seed,monkey_strategy,wolf_strategy,winner,turn_count,monkey_cards_left,wolf_cards_left
-0,0,random_spot_win,metric_position,wolf,6,8,9
