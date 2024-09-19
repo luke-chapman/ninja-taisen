@@ -20,13 +20,7 @@ from ninja_taisen.utils.run_directory import choose_run_directory, timestamp
 log = getLogger(__name__)
 
 
-def run_simulation(
-    strategies: list[str],
-    multiplier: int,
-    run_dir: Path,
-    max_processes: int,
-    log_file: Path,
-) -> None:
+def run_simulation(strategies: list[str], multiplier: int, run_dir: Path, max_processes: int, log_file: Path) -> None:
     start = perf_counter()
 
     instructions: list[InstructionDto] = []
