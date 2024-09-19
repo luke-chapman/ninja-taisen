@@ -100,7 +100,7 @@ class NextTurnPrototypeStrategy(IStrategy):
                     chance_lose_next_turn += roll.probability()
 
             if metric == max_simple_metric and chance_lose_next_turn == 0.0:
-                log.info(f"Found a move with metric={metric} and chance_lost_next_turn={chance_lose_next_turn}")
+                log.info(f"Found a move with best metric={metric} and chance_lost_next_turn={chance_lose_next_turn}")
                 log.info("We cannot do any better; selecting this move and bypassing remaining logic to save time")
                 return this_turn
 
@@ -143,7 +143,8 @@ class NextTurnPrototypeStrategy(IStrategy):
             moves_to_include = moves_copy[:to_use]
 
             log.info(
-                f"Selecting {moves_to_include} of {len(moves_for_analysis)} moves with metric {metric:.3f} for analysis"
+                f"Selecting {len(moves_to_include)} of {len(moves_for_analysis)} moves "
+                f"with metric {metric:.3f} for further analysis"
             )
             for move in moves_to_include:
                 moves_for_analysis.append((metric, move))
