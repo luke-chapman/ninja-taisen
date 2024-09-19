@@ -1,11 +1,10 @@
-import itertools
 import sys
 from argparse import ArgumentParser
 from collections import defaultdict
 from logging import getLogger
 from pathlib import Path
 from subprocess import list2cmdline
-from time import perf_counter
+from time import perf_counter, time
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -21,15 +20,29 @@ log = getLogger(__name__)
 
 
 def run_simulation(
-    strategies: list[str], multiplier: int, run_dir: Path, max_processes: int, per_process: int, log_file: Path
+    strategies: list[str],
+    skip_against_itself: bool,
+    seed_offset: int,
+    multiplier: int,
+    run_dir: Path,
+    max_processes: int,
+    per_process: int,
+    log_file: Path,
 ) -> None:
     start = perf_counter()
 
     instructions: list[InstructionDto] = []
-    enumeration = enumerate(itertools.product(strategies, strategies, range(multiplier)))
-    for index, (monkey_strategy, wolf_strategy, seed) in enumeration:
-        instruction = InstructionDto(id=index, seed=seed, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy)
-        instructions.append(instruction)
+    index = 0
+    for monkey_strategy in strategies:
+        for wolf_strategy in strategies:
+            if skip_against_itself and monkey_strategy == wolf_strategy:
+                continue
+            for _ in range(multiplier):
+                instruction = InstructionDto(
+                    id=index, seed=seed_offset + index, monkey_strategy=monkey_strategy, wolf_strategy=wolf_strategy
+                )
+                instructions.append(instruction)
+                index += 1
 
     simulate(
         instructions=instructions,
@@ -106,6 +119,10 @@ def run_analysis(strategies: list[str], results_parquet: Path) -> None:
                 df_counts=df_counts, monkey_strategy=strategy_b, wolf_strategy=strategy_a, winner="wolf"
             )
 
+            if monkey_proportion == 0.0 and wolf_proportion == 0.0:
+                log.info(f"No data found for monkey={strategy_a}, wolf={strategy_b}")
+                continue
+
             data["vs"].append(strategy_b)
             data["wins_as_monkey"].append(monkey_proportion)
             data["wins_as_wolf"].append(wolf_proportion)
@@ -133,7 +150,13 @@ def run() -> None:
         help="Names of strategies to play against each other",
     )
     parser.add_argument(
+        "--seed-offset", type=int, default=int(time()), help="Optional seed offset for deterministic results"
+    )
+    parser.add_argument(
         "--multiplier", default=10, type=int, help="How many times to play each strategy pair against each other"
+    )
+    parser.add_argument(
+        "--skip-against-itself", action="store_true", help="If set, don't play a strategy against itself"
     )
     parser.add_argument(
         "--run-dir", default=choose_run_directory(), type=Path, help="Directory with results, logs and analysis"
@@ -154,6 +177,8 @@ def run() -> None:
     else:
         run_simulation(
             strategies=args.strategies,
+            seed_offset=args.seed_offset,
+            skip_against_itself=args.skip_against_itself,
             multiplier=args.multiplier,
             run_dir=run_dir,
             max_processes=args.max_processes,
