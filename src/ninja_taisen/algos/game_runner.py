@@ -170,6 +170,33 @@ def simulate_many_subprocess(args: SubprocessArgs) -> bool:
     return True
 
 
+def simulate_all_single_process(
+    instructions: list[InstructionDto], results_dir: Path, results_format: ResultsFormat, serialisation_dir: Path | None
+) -> None:
+    start = perf_counter()
+    results: list[ResultDto] = []
+    for i, instruction in enumerate(instructions):
+        log.info("")
+        log.info(f"Starting simulation {i} of {len(instructions)}")
+        result = simulate_one(instruction, serialisation_dir)
+        log.info(f"Winner of game {i} is {result.winner}")
+        results.append(result)
+    df = pl.DataFrame(data=results, orient="row")
+
+    if results_format == "parquet":
+        df.write_parquet(results_dir / "results.parquet")
+        log.info(f"Results available in {results_dir / 'results.parquet'}")
+    elif results_format == "csv":
+        df.write_csv(results_dir / "results.csv")
+        log.info(f"Results available in {results_dir / 'results.csv'}")
+    else:
+        raise ValueError(f"Unexpected results_format '{results_format}'")
+
+    stop = perf_counter()
+    log.info(f"Completed {len(instructions)} simulations in {stop - start:0.1f} seconds")
+    return
+
+
 def simulate_many_multi_process(
     instructions: list[InstructionDto],
     results_dir: Path,
@@ -181,22 +208,14 @@ def simulate_many_multi_process(
     serialisation_dir: Path | None,
 ) -> None:
     if max_processes == 1:
-        log.info(f"Specified max_processes={max_processes}; bypassing multi-process logic")
-        start = perf_counter()
-        results = [simulate_one(i, serialisation_dir) for i in instructions]
-        df = pl.DataFrame(data=results, orient="row")
-
-        if results_format == "parquet":
-            df.write_parquet(results_dir / "results.parquet")
-            log.info(f"Results available in {results_dir / 'results.parquet'}")
-        elif results_format == "csv":
-            df.write_csv(results_dir / "results.csv")
-            log.info(f"Results available in {results_dir / 'results.csv'}")
-        else:
-            raise ValueError(f"Unexpected results_format '{results_format}'")
-
-        stop = perf_counter()
-        log.info(f"Completed {len(instructions)} simulations in {stop - start:0.1f} seconds")
+        # When running a small number of simulations the overhead of setting up the multi processing isn't worth it
+        log.info(f"Specified max_processes={max_processes}; bypassing all multi process logic")
+        simulate_all_single_process(
+            instructions=instructions,
+            results_dir=results_dir,
+            results_format=results_format,
+            serialisation_dir=serialisation_dir,
+        )
         return
 
     assert max_processes > 0
