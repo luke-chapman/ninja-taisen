@@ -10,7 +10,7 @@ from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.dtos import ResultsFormat, Strategy
 
 
-@pytest.mark.parametrize("max_processes", (-2, 2))
+@pytest.mark.parametrize("max_processes", (1, 2, -2))
 @pytest.mark.parametrize("results_format", get_args(ResultsFormat))
 def test_all_strategies(max_processes: int, results_format: ResultsFormat, regen: bool, tmp_path: Path) -> None:
     if regen and (max_processes != -2 or results_format != "parquet"):
