@@ -1,10 +1,7 @@
 import itertools
-import math
 from collections import defaultdict
 from copy import copy
 from logging import getLogger
-
-import numpy as np
 
 from ninja_taisen.algos import board_inspector, move_gatherer
 from ninja_taisen.objects.safe_random import SafeRandom
@@ -74,32 +71,8 @@ class NextTurnPrototypeStrategy(IStrategy):
             metric_to_moves[round(metric, 6)].append(completed_moves)
         log.info(f"Grouped {len(all_permitted_moves)} moves into {len(metric_to_moves)} groups by strength")
 
-        # Filter our moves down to the 10% most promising
-        # Filter the list down if it's longer than 10% of the original list, preferring larger metrics, then randomly
-        # This does happen, e.g. if every metric is equal after the first move
-        threshold_percentile = 90
-        metric_threshold = np.percentile(list(metric_to_moves.keys()), threshold_percentile)
-        max_length = math.ceil(len(all_permitted_moves) * (1 - threshold_percentile / 100))
-        log.info(f"Found 90th percentile {metric_threshold:.3f}")
-        moves_for_analysis: list[tuple[float, CompletedMoves]] = []
-        for metric, moves in sorted(metric_to_moves.items(), key=lambda t: t[0], reverse=True):
-            if metric < metric_threshold:
-                log.info(f"Ignoring {len(moves)} moves with metric {metric:.3f} which is below threshold")
-                continue
-
-            new_length = len(moves_for_analysis) + len(moves)
-            if new_length < max_length:
-                log.info(f"Using all {len(moves)} moves with metric {metric:.3f}")
-                for move in moves:
-                    moves_for_analysis.append((metric, move))
-            else:
-                moves_copy = copy(moves)
-                self.random.shuffle(moves_copy)
-                to_use = max_length - len(moves_for_analysis)
-                log.info(f"Randomly selecting {to_use} of {len(moves_copy)} moves with metric {metric:.3f}")
-                for move in moves_copy[:to_use]:
-                    moves_for_analysis.append((metric, move))
-                break
+        # Filter our moves down to a subset that look promising - save effort on future analysis
+        moves_for_analysis = self.__select_moves_for_analysis(metric_to_moves=metric_to_moves)
 
         # Over all possible dice rolls, what is the probability our opponent wins next turn?
         dice_rolls = [DiceRoll(*t) for t in itertools.product((1, 2, 3), (1, 2, 3), (1, 2, 3))]
@@ -135,3 +108,36 @@ class NextTurnPrototypeStrategy(IStrategy):
         max_metrics_boards = advanced_metric_to_moves[max_metric]
         log.info(f"Selecting move from {len(max_metrics_boards)} moves with max_metric {max_metric:.3f}")
         return self.random.choice(max_metrics_boards)
+
+    # Select at least 10 moves, no more than 20 moves, and prefer those with higher metrics
+    def __select_moves_for_analysis(
+        self, metric_to_moves: dict[float, list[CompletedMoves]]
+    ) -> list[tuple[float, CompletedMoves]]:
+        total_moves = sum(len(m) for m in metric_to_moves.values())
+        rough_proportion = 0.2
+        min_moves = min(10, total_moves)
+        max_moves = 20
+        moves_to_select = max(min(int(total_moves * rough_proportion), max_moves), min_moves)
+        log.info(
+            f"Selecting {moves_to_select} moves out of {total_moves}; proportion of "
+            f"{int(rough_proportion * 100)}%, bounded between {min_moves} and {max_moves}"
+        )
+
+        moves_for_analysis: list[tuple[float, CompletedMoves]] = []
+        for metric, moves in sorted(metric_to_moves.items(), key=lambda t: t[0], reverse=True):
+            new_length = len(moves_for_analysis) + len(moves)
+            if new_length < moves_to_select:
+                log.info(f"Using all {len(moves)} moves with metric {metric:.3f}")
+                for move in moves:
+                    moves_for_analysis.append((metric, move))
+                continue
+
+            moves_copy = copy(moves)
+            self.random.shuffle(moves_copy)
+            to_use = moves_to_select - len(moves_for_analysis)
+            log.info(f"Randomly selecting {to_use} of {len(moves_copy)} moves with metric {metric:.3f}")
+            for move in moves_copy[:to_use]:
+                moves_for_analysis.append((metric, move))
+            break
+
+        return moves_for_analysis
