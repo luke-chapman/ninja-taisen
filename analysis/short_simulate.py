@@ -30,7 +30,9 @@ def run() -> None:
         default=Strategy.random,
         help="Strategy for the wolf team. Wolf plays first",
     )
-    parser.add_argument("--seed", type=int, help="Optional seed for deterministic results")
+    parser.add_argument(
+        "--seed-offset", type=int, default=int(time()), help="Optional seed offset for deterministic results"
+    )
     parser.add_argument("--multiplier", default=1, type=int, help="How many times to play the game")
     parser.add_argument(
         "--run-dir", default=choose_run_directory(), type=Path, help="Directory with results, logs and analysis"
@@ -45,9 +47,8 @@ def run() -> None:
     log.info("Command line\n" + list2cmdline(sys.orig_argv))
     log.info(f"Using run_dir={run_dir}")
 
-    base_seed = args.seed if args.seed is not None else int(time())
     instructions = [
-        InstructionDto(id=i, seed=base_seed + i, monkey_strategy=args.monkey, wolf_strategy=args.wolf)
+        InstructionDto(id=i, seed=args.seed_offset + i, monkey_strategy=args.monkey, wolf_strategy=args.wolf)
         for i in range(args.multiplier)
     ]
     start = perf_counter()
