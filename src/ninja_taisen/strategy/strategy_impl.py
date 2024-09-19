@@ -82,7 +82,7 @@ class NextTurnPrototypeStrategy(IStrategy):
             f"{len(all_permitted_moves)}, using {len(dice_rolls)} dice rolls"
         )
         advanced_metric_to_moves: dict[float, list[CompletedMoves]] = defaultdict(list)
-        max_simple_metric = moves_for_analysis[0][0]
+        max_advanced_metric = 0.0
         for metric, this_turn in moves_for_analysis:
             chance_lose_next_turn = 0.0
             for roll in dice_rolls:
@@ -98,19 +98,22 @@ class NextTurnPrototypeStrategy(IStrategy):
                 other_team_wins = board_inspector.find_first_winning_move(next_turn_moves)
                 if other_team_wins:
                     chance_lose_next_turn += roll.probability()
-
-            if metric == max_simple_metric and chance_lose_next_turn == 0.0:
-                log.debug(
-                    f"Selecting move with best metric={metric} and best chance_lost_next_turn={chance_lose_next_turn}"
-                )
-                return this_turn
+            chance_lose_next_turn = min(1.0, chance_lose_next_turn)
 
             # If there's zero chance of losing next turn, double the attractiveness of this turn
             # Otherwise use a negative linear gradient to express dislike to chances of losing next turn
             weighting = 2.0 if chance_lose_next_turn == 0.0 else (1.0 - chance_lose_next_turn)
             advanced_metric = round(metric * weighting, 6)
+            max_advanced_metric = max(advanced_metric, max_advanced_metric)
             log.debug(f"chance_lose_next_turn={chance_lose_next_turn:.3f}, advanced_metric={advanced_metric:.3f}")
             advanced_metric_to_moves[advanced_metric].append(this_turn)
+
+            if chance_lose_next_turn == 0.0 and advanced_metric >= max_advanced_metric:
+                log.debug(
+                    f"Selecting move with advanced_metric={advanced_metric:.3f} and "
+                    f"chance_lost_next_turn={chance_lose_next_turn}"
+                )
+                return this_turn
 
         max_metric = max(advanced_metric_to_moves.keys())
         max_metrics_boards = advanced_metric_to_moves[max_metric]
