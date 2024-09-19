@@ -31,6 +31,7 @@ def run() -> None:
         help="Strategy for the wolf team. Wolf plays first",
     )
     parser.add_argument("--seed", type=int, help="Optional seed for deterministic results")
+    parser.add_argument("--multiplier", default=1, type=int, help="How many times to play the game")
     parser.add_argument(
         "--run-dir", default=choose_run_directory(), type=Path, help="Directory with results, logs and analysis"
     )
@@ -44,21 +45,25 @@ def run() -> None:
     log.info("Command line\n" + list2cmdline(sys.orig_argv))
     log.info(f"Using run_dir={run_dir}")
 
-    instruction = InstructionDto(
-        id=0,
-        seed=args.seed if args.seed is not None else int(time()),
-        monkey_strategy=args.monkey,
-        wolf_strategy=args.wolf,
-    )
-
+    base_seed = args.seed if args.seed is not None else int(time())
+    instructions = [
+        InstructionDto(id=i, seed=base_seed + i, monkey_strategy=args.monkey, wolf_strategy=args.wolf)
+        for i in range(args.multiplier)
+    ]
     start = perf_counter()
-    simulate(instructions=[instruction], results_dir=run_dir, results_format="csv", log_file=log_file)
+    simulate(
+        instructions=instructions,
+        results_dir=run_dir,
+        results_format="csv",
+        log_file=log_file,
+        max_processes=1,
+    )
     stop = perf_counter()
     log.info(f"Game simulation took {stop - start:.2f}s")
 
     results_csv = run_dir / "results.csv"
     results = pl.read_csv(results_csv, schema_overrides={"start_time": pl.Datetime, "end_time": pl.Datetime})
-    assert results.shape[0] == 1
+    assert results.shape[0] == args.multiplier
 
     columns = (
         "id",
@@ -71,11 +76,14 @@ def run() -> None:
         "wolf_cards_left",
     )
     max_length = max(len(c) for c in columns)
-    for column in columns:
-        value = results[column][0]
-        log.info(f"{column.ljust(max_length)} - {value}")
+    for r in range(results.shape[0]):
+        log.info("")
+        log.info(f"Result {r} of {results.shape[0]}:")
+        for column in columns:
+            value = results[column][0]
+            log.info(f"{column.ljust(max_length)} - {value}")
 
-    log.info("Single game complete")
+    log.info("game complete")
 
 
 if __name__ == "__main__":

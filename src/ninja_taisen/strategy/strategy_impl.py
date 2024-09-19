@@ -78,7 +78,7 @@ class NextTurnPrototypeStrategy(IStrategy):
         dice_rolls = [DiceRoll(*t) for t in itertools.product((1, 2, 3), (1, 2, 3), (1, 2, 3))]
         log.info(
             f"Will factor in chance of losing next turn for {len(moves_for_analysis)} moves out of "
-            f"{len(all_permitted_moves)}, using all {len(dice_rolls)} dice rolls"
+            f"{len(all_permitted_moves)}, using {len(dice_rolls)} dice rolls"
         )
         advanced_metric_to_moves: dict[float, list[CompletedMoves]] = defaultdict(list)
         for metric, this_turn in moves_for_analysis:
@@ -109,7 +109,8 @@ class NextTurnPrototypeStrategy(IStrategy):
         log.info(f"Selecting move from {len(max_metrics_boards)} moves with max_metric {max_metric:.3f}")
         return self.random.choice(max_metrics_boards)
 
-    # Select at least 10 moves, no more than 20 moves, and prefer those with higher metrics
+    # Select best 20% of moves, at least 10 and no more than 20
+    # Prefer those with higher naive strength metrics
     def __select_moves_for_analysis(
         self, metric_to_moves: dict[float, list[CompletedMoves]]
     ) -> list[tuple[float, CompletedMoves]]:
