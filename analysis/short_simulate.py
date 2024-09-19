@@ -80,7 +80,7 @@ def run() -> None:
         log.info("")
         log.info(f"Result {r} of {results.shape[0]}:")
         for column in columns:
-            value = results[column][0]
+            value = results[column][r]
             log.info(f"{column.ljust(max_length)} - {value}")
 
     log.info("game complete")

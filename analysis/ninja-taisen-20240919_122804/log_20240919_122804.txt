@@ -1,0 +1,627 @@
+2024-09-19 12:28:04 - INFO - short_simulate - Command line
+C:\Users\lrrch\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe .\short_simulate.py --monkey metric_strength --wolf next_turn_prototype --multiplier 10 --seed 2024
+2024-09-19 12:28:04 - INFO - short_simulate - Using run_dir=C:\Users\lrrch\repos\ninja-taisen\analysis\ninja-taisen-20240919_122804
+2024-09-19 12:28:04 - INFO - game_runner - Specified max_processes=1; bypassing all multi process logic
+2024-09-19 12:28:04 - INFO - game_runner - 
+2024-09-19 12:28:04 - INFO - game_runner - Starting simulation 0 of 10
+2024-09-19 12:28:04 - INFO - strategy_impl - Grouped 251 moves into 5 groups by strength
+2024-09-19 12:28:04 - INFO - strategy_impl - Selecting 20 moves out of 251; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:04 - INFO - strategy_impl - Selecting 17 of 17 moves with metric 1.125 for further analysis
+2024-09-19 12:28:04 - INFO - strategy_impl - Selecting 3 of 3 moves with metric 1.050 for further analysis
+2024-09-19 12:28:04 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 251, using 27 dice rolls
+2024-09-19 12:28:05 - INFO - strategy_impl - Selecting move with best metric=1.125 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:05 - INFO - strategy_impl - Grouped 180 moves into 2 groups by strength
+2024-09-19 12:28:05 - INFO - strategy_impl - Selecting 20 moves out of 180; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:05 - INFO - strategy_impl - Selecting 20 of 124 moves with metric 1.050 for further analysis
+2024-09-19 12:28:05 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 180, using 27 dice rolls
+2024-09-19 12:28:06 - INFO - strategy_impl - Selecting move with best metric=1.05 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:06 - INFO - strategy_impl - Grouped 152 moves into 4 groups by strength
+2024-09-19 12:28:06 - INFO - strategy_impl - Selecting 20 moves out of 152; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:06 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.083 for further analysis
+2024-09-19 12:28:06 - INFO - strategy_impl - Selecting 19 of 148 moves with metric 0.975 for further analysis
+2024-09-19 12:28:06 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 152, using 27 dice rolls
+2024-09-19 12:28:06 - INFO - strategy_impl - Selecting move with best metric=1.083333 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:06 - INFO - strategy_impl - Grouped 71 moves into 9 groups by strength
+2024-09-19 12:28:06 - INFO - strategy_impl - Selecting 15 moves out of 71; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:06 - INFO - strategy_impl - Selecting 15 of 43 moves with metric 1.071 for further analysis
+2024-09-19 12:28:06 - INFO - strategy_impl - Will factor in chance of losing next turn for 15 moves out of 71, using 27 dice rolls
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.028, advanced_metric=1.042
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting move with best metric=1.071429 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:07 - INFO - strategy_impl - Grouped 110 moves into 7 groups by strength
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 20 moves out of 110; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 19 of 19 moves with metric 1.250 for further analysis
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 1 of 17 moves with metric 1.200 for further analysis
+2024-09-19 12:28:07 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 110, using 27 dice rolls
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.014, advanced_metric=1.233
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting move with best metric=1.25 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:07 - INFO - strategy_impl - Grouped 34 moves into 5 groups by strength
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 10 moves out of 34; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.095 for further analysis
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 9 of 10 moves with metric 0.958 for further analysis
+2024-09-19 12:28:07 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 34, using 27 dice rolls
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting move with best metric=1.095238 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:07 - INFO - strategy_impl - Grouped 21 moves into 5 groups by strength
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 10 moves out of 21; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 4 of 4 moves with metric 2.111 for further analysis
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 4 of 4 moves with metric 1.583 for further analysis
+2024-09-19 12:28:07 - INFO - strategy_impl - Selecting 2 of 9 moves with metric 1.188 for further analysis
+2024-09-19 12:28:07 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 21, using 27 dice rolls
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=1.222
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=1.222
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=1.222
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=1.222
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=0.916
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=0.916
+2024-09-19 12:28:07 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=0.916
+2024-09-19 12:28:08 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=0.916
+2024-09-19 12:28:08 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=0.687
+2024-09-19 12:28:08 - INFO - strategy_impl - chance_lose_next_turn=0.421, advanced_metric=0.687
+2024-09-19 12:28:08 - INFO - strategy_impl - Selecting move from 4 moves with max_metric 1.222
+2024-09-19 12:28:08 - INFO - game_runner - Winner of game 0 is wolf
+2024-09-19 12:28:08 - INFO - game_runner - 
+2024-09-19 12:28:08 - INFO - game_runner - Starting simulation 1 of 10
+2024-09-19 12:28:08 - INFO - strategy_impl - Grouped 246 moves into 1 groups by strength
+2024-09-19 12:28:08 - INFO - strategy_impl - Selecting 20 moves out of 246; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:08 - INFO - strategy_impl - Selecting 20 of 246 moves with metric 1.000 for further analysis
+2024-09-19 12:28:08 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 246, using 27 dice rolls
+2024-09-19 12:28:09 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:09 - INFO - strategy_impl - Grouped 166 moves into 9 groups by strength
+2024-09-19 12:28:09 - INFO - strategy_impl - Selecting 20 moves out of 166; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:09 - INFO - strategy_impl - Selecting 10 of 10 moves with metric 1.167 for further analysis
+2024-09-19 12:28:09 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.056 for further analysis
+2024-09-19 12:28:09 - INFO - strategy_impl - Selecting 9 of 16 moves with metric 1.050 for further analysis
+2024-09-19 12:28:09 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 166, using 27 dice rolls
+2024-09-19 12:28:10 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.161
+2024-09-19 12:28:11 - INFO - strategy_impl - Selecting move with best metric=1.166667 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:11 - INFO - strategy_impl - Grouped 167 moves into 7 groups by strength
+2024-09-19 12:28:11 - INFO - strategy_impl - Selecting 20 moves out of 167; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:11 - INFO - strategy_impl - Selecting 20 of 67 moves with metric 0.917 for further analysis
+2024-09-19 12:28:11 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 167, using 27 dice rolls
+2024-09-19 12:28:12 - INFO - strategy_impl - chance_lose_next_turn=0.120, advanced_metric=0.806
+2024-09-19 12:28:13 - INFO - strategy_impl - chance_lose_next_turn=0.278, advanced_metric=0.662
+2024-09-19 12:28:14 - INFO - strategy_impl - chance_lose_next_turn=0.148, advanced_metric=0.781
+2024-09-19 12:28:15 - INFO - strategy_impl - chance_lose_next_turn=0.120, advanced_metric=0.806
+2024-09-19 12:28:16 - INFO - strategy_impl - chance_lose_next_turn=0.204, advanced_metric=0.730
+2024-09-19 12:28:17 - INFO - strategy_impl - chance_lose_next_turn=0.148, advanced_metric=0.781
+2024-09-19 12:28:17 - INFO - strategy_impl - chance_lose_next_turn=0.148, advanced_metric=0.781
+2024-09-19 12:28:18 - INFO - strategy_impl - chance_lose_next_turn=0.042, advanced_metric=0.878
+2024-09-19 12:28:19 - INFO - strategy_impl - chance_lose_next_turn=0.028, advanced_metric=0.891
+2024-09-19 12:28:20 - INFO - strategy_impl - chance_lose_next_turn=0.148, advanced_metric=0.781
+2024-09-19 12:28:21 - INFO - strategy_impl - Selecting move with best metric=0.916667 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:21 - INFO - strategy_impl - Grouped 41 moves into 5 groups by strength
+2024-09-19 12:28:21 - INFO - strategy_impl - Selecting 10 moves out of 41; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:21 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.704 for further analysis
+2024-09-19 12:28:21 - INFO - strategy_impl - Selecting 9 of 13 moves with metric 0.643 for further analysis
+2024-09-19 12:28:21 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 41, using 27 dice rolls
+2024-09-19 12:28:21 - INFO - strategy_impl - chance_lose_next_turn=0.014, advanced_metric=0.694
+2024-09-19 12:28:21 - INFO - strategy_impl - chance_lose_next_turn=0.056, advanced_metric=0.607
+2024-09-19 12:28:21 - INFO - strategy_impl - chance_lose_next_turn=0.000, advanced_metric=1.286
+2024-09-19 12:28:22 - INFO - strategy_impl - chance_lose_next_turn=0.000, advanced_metric=1.286
+2024-09-19 12:28:22 - INFO - strategy_impl - chance_lose_next_turn=0.046, advanced_metric=0.613
+2024-09-19 12:28:22 - INFO - strategy_impl - chance_lose_next_turn=0.046, advanced_metric=0.613
+2024-09-19 12:28:23 - INFO - strategy_impl - chance_lose_next_turn=0.056, advanced_metric=0.607
+2024-09-19 12:28:23 - INFO - strategy_impl - chance_lose_next_turn=0.056, advanced_metric=0.607
+2024-09-19 12:28:23 - INFO - strategy_impl - chance_lose_next_turn=0.046, advanced_metric=0.613
+2024-09-19 12:28:23 - INFO - strategy_impl - chance_lose_next_turn=0.056, advanced_metric=0.607
+2024-09-19 12:28:23 - INFO - strategy_impl - Selecting move from 2 moves with max_metric 1.286
+2024-09-19 12:28:23 - INFO - strategy_impl - Grouped 8 moves into 2 groups by strength
+2024-09-19 12:28:23 - INFO - strategy_impl - Selecting 8 moves out of 8; proportion of 20%, bounded between 8 and 20
+2024-09-19 12:28:23 - INFO - strategy_impl - Selecting 7 of 7 moves with metric 0.464 for further analysis
+2024-09-19 12:28:23 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.321 for further analysis
+2024-09-19 12:28:23 - INFO - strategy_impl - Will factor in chance of losing next turn for 8 moves out of 8, using 27 dice rolls
+2024-09-19 12:28:24 - INFO - strategy_impl - chance_lose_next_turn=0.477, advanced_metric=0.243
+2024-09-19 12:28:24 - INFO - strategy_impl - chance_lose_next_turn=0.523, advanced_metric=0.221
+2024-09-19 12:28:24 - INFO - strategy_impl - chance_lose_next_turn=0.477, advanced_metric=0.243
+2024-09-19 12:28:25 - INFO - strategy_impl - chance_lose_next_turn=0.153, advanced_metric=0.393
+2024-09-19 12:28:25 - INFO - strategy_impl - chance_lose_next_turn=0.028, advanced_metric=0.451
+2024-09-19 12:28:25 - INFO - strategy_impl - chance_lose_next_turn=0.231, advanced_metric=0.357
+2024-09-19 12:28:25 - INFO - strategy_impl - chance_lose_next_turn=0.347, advanced_metric=0.303
+2024-09-19 12:28:26 - INFO - strategy_impl - chance_lose_next_turn=0.718, advanced_metric=0.091
+2024-09-19 12:28:26 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.451
+2024-09-19 12:28:26 - INFO - strategy_impl - Grouped 3 moves into 2 groups by strength
+2024-09-19 12:28:26 - INFO - strategy_impl - Selecting 3 moves out of 3; proportion of 20%, bounded between 3 and 20
+2024-09-19 12:28:26 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.429 for further analysis
+2024-09-19 12:28:26 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.321 for further analysis
+2024-09-19 12:28:26 - INFO - strategy_impl - Will factor in chance of losing next turn for 3 moves out of 3, using 27 dice rolls
+2024-09-19 12:28:26 - INFO - strategy_impl - chance_lose_next_turn=0.875, advanced_metric=0.054
+2024-09-19 12:28:26 - INFO - strategy_impl - chance_lose_next_turn=1.000, advanced_metric=0.000
+2024-09-19 12:28:26 - INFO - strategy_impl - chance_lose_next_turn=1.000, advanced_metric=0.000
+2024-09-19 12:28:26 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.054
+2024-09-19 12:28:26 - INFO - game_runner - Winner of game 1 is monkey
+2024-09-19 12:28:26 - INFO - game_runner - 
+2024-09-19 12:28:26 - INFO - game_runner - Starting simulation 2 of 10
+2024-09-19 12:28:26 - INFO - strategy_impl - Grouped 246 moves into 1 groups by strength
+2024-09-19 12:28:26 - INFO - strategy_impl - Selecting 20 moves out of 246; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:26 - INFO - strategy_impl - Selecting 20 of 246 moves with metric 1.000 for further analysis
+2024-09-19 12:28:26 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 246, using 27 dice rolls
+2024-09-19 12:28:27 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:27 - INFO - strategy_impl - Grouped 372 moves into 2 groups by strength
+2024-09-19 12:28:27 - INFO - strategy_impl - Selecting 20 moves out of 372; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:27 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.026 for further analysis
+2024-09-19 12:28:27 - INFO - strategy_impl - Selecting 19 of 371 moves with metric 1.000 for further analysis
+2024-09-19 12:28:27 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 372, using 27 dice rolls
+2024-09-19 12:28:27 - INFO - strategy_impl - Selecting move with best metric=1.025641 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:27 - INFO - strategy_impl - Grouped 34 moves into 4 groups by strength
+2024-09-19 12:28:27 - INFO - strategy_impl - Selecting 10 moves out of 34; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:27 - INFO - strategy_impl - Selecting 9 of 9 moves with metric 0.667 for further analysis
+2024-09-19 12:28:27 - INFO - strategy_impl - Selecting 1 of 17 moves with metric 0.588 for further analysis
+2024-09-19 12:28:27 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 34, using 27 dice rolls
+2024-09-19 12:28:28 - INFO - strategy_impl - chance_lose_next_turn=0.097, advanced_metric=0.602
+2024-09-19 12:28:28 - INFO - strategy_impl - chance_lose_next_turn=0.083, advanced_metric=0.611
+2024-09-19 12:28:28 - INFO - strategy_impl - chance_lose_next_turn=0.097, advanced_metric=0.602
+2024-09-19 12:28:29 - INFO - strategy_impl - chance_lose_next_turn=0.079, advanced_metric=0.614
+2024-09-19 12:28:29 - INFO - strategy_impl - chance_lose_next_turn=0.083, advanced_metric=0.611
+2024-09-19 12:28:29 - INFO - strategy_impl - chance_lose_next_turn=0.111, advanced_metric=0.593
+2024-09-19 12:28:29 - INFO - strategy_impl - chance_lose_next_turn=0.111, advanced_metric=0.593
+2024-09-19 12:28:30 - INFO - strategy_impl - chance_lose_next_turn=0.069, advanced_metric=0.620
+2024-09-19 12:28:31 - INFO - strategy_impl - chance_lose_next_turn=0.111, advanced_metric=0.593
+2024-09-19 12:28:31 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.490
+2024-09-19 12:28:31 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.620
+2024-09-19 12:28:31 - INFO - strategy_impl - Grouped 8 moves into 1 groups by strength
+2024-09-19 12:28:31 - INFO - strategy_impl - Selecting 8 moves out of 8; proportion of 20%, bounded between 8 and 20
+2024-09-19 12:28:31 - INFO - strategy_impl - Selecting 8 of 8 moves with metric 0.500 for further analysis
+2024-09-19 12:28:31 - INFO - strategy_impl - Will factor in chance of losing next turn for 8 moves out of 8, using 27 dice rolls
+2024-09-19 12:28:32 - INFO - strategy_impl - chance_lose_next_turn=0.250, advanced_metric=0.375
+2024-09-19 12:28:32 - INFO - strategy_impl - chance_lose_next_turn=0.208, advanced_metric=0.396
+2024-09-19 12:28:32 - INFO - strategy_impl - chance_lose_next_turn=0.208, advanced_metric=0.396
+2024-09-19 12:28:32 - INFO - strategy_impl - chance_lose_next_turn=0.181, advanced_metric=0.410
+2024-09-19 12:28:32 - INFO - strategy_impl - chance_lose_next_turn=0.069, advanced_metric=0.465
+2024-09-19 12:28:33 - INFO - strategy_impl - chance_lose_next_turn=0.278, advanced_metric=0.361
+2024-09-19 12:28:33 - INFO - strategy_impl - chance_lose_next_turn=0.278, advanced_metric=0.361
+2024-09-19 12:28:33 - INFO - strategy_impl - chance_lose_next_turn=0.250, advanced_metric=0.375
+2024-09-19 12:28:33 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.465
+2024-09-19 12:28:33 - INFO - strategy_impl - Grouped 8 moves into 1 groups by strength
+2024-09-19 12:28:33 - INFO - strategy_impl - Selecting 8 moves out of 8; proportion of 20%, bounded between 8 and 20
+2024-09-19 12:28:33 - INFO - strategy_impl - Selecting 8 of 8 moves with metric 0.500 for further analysis
+2024-09-19 12:28:33 - INFO - strategy_impl - Will factor in chance of losing next turn for 8 moves out of 8, using 27 dice rolls
+2024-09-19 12:28:33 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.417
+2024-09-19 12:28:33 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.417
+2024-09-19 12:28:33 - INFO - strategy_impl - chance_lose_next_turn=0.185, advanced_metric=0.407
+2024-09-19 12:28:34 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.417
+2024-09-19 12:28:34 - INFO - strategy_impl - chance_lose_next_turn=0.185, advanced_metric=0.407
+2024-09-19 12:28:34 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.417
+2024-09-19 12:28:34 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.417
+2024-09-19 12:28:34 - INFO - strategy_impl - chance_lose_next_turn=0.102, advanced_metric=0.449
+2024-09-19 12:28:34 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.449
+2024-09-19 12:28:34 - INFO - strategy_impl - Grouped 3 moves into 2 groups by strength
+2024-09-19 12:28:34 - INFO - strategy_impl - Selecting 3 moves out of 3; proportion of 20%, bounded between 3 and 20
+2024-09-19 12:28:34 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.429 for further analysis
+2024-09-19 12:28:34 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.346 for further analysis
+2024-09-19 12:28:34 - INFO - strategy_impl - Will factor in chance of losing next turn for 3 moves out of 3, using 27 dice rolls
+2024-09-19 12:28:34 - INFO - strategy_impl - chance_lose_next_turn=0.569, advanced_metric=0.185
+2024-09-19 12:28:35 - INFO - strategy_impl - chance_lose_next_turn=1.000, advanced_metric=0.000
+2024-09-19 12:28:35 - INFO - strategy_impl - chance_lose_next_turn=0.708, advanced_metric=0.101
+2024-09-19 12:28:35 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.185
+2024-09-19 12:28:35 - INFO - game_runner - Winner of game 2 is monkey
+2024-09-19 12:28:35 - INFO - game_runner - 
+2024-09-19 12:28:35 - INFO - game_runner - Starting simulation 3 of 10
+2024-09-19 12:28:35 - INFO - strategy_impl - Grouped 159 moves into 6 groups by strength
+2024-09-19 12:28:35 - INFO - strategy_impl - Selecting 20 moves out of 159; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:35 - INFO - strategy_impl - Selecting 20 of 33 moves with metric 1.050 for further analysis
+2024-09-19 12:28:35 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 159, using 27 dice rolls
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting move with best metric=1.05 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:36 - INFO - strategy_impl - Grouped 210 moves into 11 groups by strength
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 20 moves out of 210; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 7 of 7 moves with metric 1.423 for further analysis
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.308 for further analysis
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 1.276 for further analysis
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.182 for further analysis
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.154 for further analysis
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 8 of 53 moves with metric 1.135 for further analysis
+2024-09-19 12:28:36 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 210, using 27 dice rolls
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting move with best metric=1.423077 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:36 - INFO - game_runner - Winner of game 3 is wolf
+2024-09-19 12:28:36 - INFO - game_runner - 
+2024-09-19 12:28:36 - INFO - game_runner - Starting simulation 4 of 10
+2024-09-19 12:28:36 - INFO - strategy_impl - Grouped 234 moves into 1 groups by strength
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 20 moves out of 234; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:36 - INFO - strategy_impl - Selecting 20 of 234 moves with metric 1.000 for further analysis
+2024-09-19 12:28:36 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 234, using 27 dice rolls
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:38 - INFO - strategy_impl - Grouped 185 moves into 25 groups by strength
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting 20 moves out of 185; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 1.273 for further analysis
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 1.167 for further analysis
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting 6 of 6 moves with metric 1.152 for further analysis
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting 10 of 10 moves with metric 1.121 for further analysis
+2024-09-19 12:28:38 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 185, using 27 dice rolls
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting move with best metric=1.272727 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:38 - INFO - strategy_impl - Grouped 287 moves into 24 groups by strength
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting 20 moves out of 287; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting 6 of 6 moves with metric 2.211 for further analysis
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting 14 of 35 moves with metric 1.909 for further analysis
+2024-09-19 12:28:38 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 287, using 27 dice rolls
+2024-09-19 12:28:38 - INFO - strategy_impl - Selecting move with best metric=2.210526 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:39 - INFO - strategy_impl - Grouped 197 moves into 11 groups by strength
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting 20 moves out of 197; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting 19 of 19 moves with metric 2.643 for further analysis
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting 1 of 11 moves with metric 2.400 for further analysis
+2024-09-19 12:28:39 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 197, using 27 dice rolls
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting move with best metric=2.642857 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:39 - INFO - strategy_impl - Grouped 156 moves into 8 groups by strength
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting 20 moves out of 156; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting 20 of 51 moves with metric 3.667 for further analysis
+2024-09-19 12:28:39 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 156, using 27 dice rolls
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting move with best metric=3.666667 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:39 - INFO - game_runner - Winner of game 4 is wolf
+2024-09-19 12:28:39 - INFO - game_runner - 
+2024-09-19 12:28:39 - INFO - game_runner - Starting simulation 5 of 10
+2024-09-19 12:28:39 - INFO - strategy_impl - Grouped 216 moves into 1 groups by strength
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting 20 moves out of 216; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:39 - INFO - strategy_impl - Selecting 20 of 216 moves with metric 1.000 for further analysis
+2024-09-19 12:28:39 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 216, using 27 dice rolls
+2024-09-19 12:28:40 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:40 - INFO - strategy_impl - Grouped 255 moves into 7 groups by strength
+2024-09-19 12:28:40 - INFO - strategy_impl - Selecting 20 moves out of 255; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:40 - INFO - strategy_impl - Selecting 20 of 38 moves with metric 1.000 for further analysis
+2024-09-19 12:28:40 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 255, using 27 dice rolls
+2024-09-19 12:28:42 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:42 - INFO - strategy_impl - Grouped 123 moves into 5 groups by strength
+2024-09-19 12:28:42 - INFO - strategy_impl - Selecting 20 moves out of 123; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:42 - INFO - strategy_impl - Selecting 20 of 24 moves with metric 1.000 for further analysis
+2024-09-19 12:28:42 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 123, using 27 dice rolls
+2024-09-19 12:28:43 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:43 - INFO - strategy_impl - Grouped 38 moves into 5 groups by strength
+2024-09-19 12:28:43 - INFO - strategy_impl - Selecting 10 moves out of 38; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:43 - INFO - strategy_impl - Selecting 7 of 7 moves with metric 0.821 for further analysis
+2024-09-19 12:28:43 - INFO - strategy_impl - Selecting 3 of 7 moves with metric 0.720 for further analysis
+2024-09-19 12:28:43 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 38, using 27 dice rolls
+2024-09-19 12:28:43 - INFO - strategy_impl - chance_lose_next_turn=0.051, advanced_metric=0.780
+2024-09-19 12:28:43 - INFO - strategy_impl - chance_lose_next_turn=0.218, advanced_metric=0.643
+2024-09-19 12:28:44 - INFO - strategy_impl - chance_lose_next_turn=0.486, advanced_metric=0.422
+2024-09-19 12:28:44 - INFO - strategy_impl - chance_lose_next_turn=0.051, advanced_metric=0.780
+2024-09-19 12:28:44 - INFO - strategy_impl - chance_lose_next_turn=0.051, advanced_metric=0.780
+2024-09-19 12:28:44 - INFO - strategy_impl - chance_lose_next_turn=0.218, advanced_metric=0.643
+2024-09-19 12:28:45 - INFO - strategy_impl - chance_lose_next_turn=0.051, advanced_metric=0.780
+2024-09-19 12:28:45 - INFO - strategy_impl - chance_lose_next_turn=0.051, advanced_metric=0.683
+2024-09-19 12:28:45 - INFO - strategy_impl - chance_lose_next_turn=0.051, advanced_metric=0.683
+2024-09-19 12:28:45 - INFO - strategy_impl - chance_lose_next_turn=0.218, advanced_metric=0.563
+2024-09-19 12:28:45 - INFO - strategy_impl - Selecting move from 4 moves with max_metric 0.780
+2024-09-19 12:28:45 - INFO - game_runner - Winner of game 5 is monkey
+2024-09-19 12:28:45 - INFO - game_runner - 
+2024-09-19 12:28:45 - INFO - game_runner - Starting simulation 6 of 10
+2024-09-19 12:28:45 - INFO - strategy_impl - Grouped 231 moves into 4 groups by strength
+2024-09-19 12:28:45 - INFO - strategy_impl - Selecting 20 moves out of 231; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:45 - INFO - strategy_impl - Selecting 3 of 3 moves with metric 1.098 for further analysis
+2024-09-19 12:28:45 - INFO - strategy_impl - Selecting 17 of 213 moves with metric 1.000 for further analysis
+2024-09-19 12:28:45 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 231, using 27 dice rolls
+2024-09-19 12:28:46 - INFO - strategy_impl - Selecting move with best metric=1.097561 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:46 - INFO - strategy_impl - Grouped 191 moves into 8 groups by strength
+2024-09-19 12:28:46 - INFO - strategy_impl - Selecting 20 moves out of 191; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:46 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.212 for further analysis
+2024-09-19 12:28:46 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.200 for further analysis
+2024-09-19 12:28:46 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.143 for further analysis
+2024-09-19 12:28:46 - INFO - strategy_impl - Selecting 17 of 135 moves with metric 1.053 for further analysis
+2024-09-19 12:28:46 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 191, using 27 dice rolls
+2024-09-19 12:28:46 - INFO - strategy_impl - Selecting move with best metric=1.212121 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:47 - INFO - strategy_impl - Grouped 106 moves into 1 groups by strength
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 20 moves out of 106; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 20 of 106 moves with metric 0.970 for further analysis
+2024-09-19 12:28:47 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 106, using 27 dice rolls
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting move with best metric=0.969697 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:47 - INFO - strategy_impl - Grouped 34 moves into 14 groups by strength
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 10 moves out of 34; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.750 for further analysis
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.690 for further analysis
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.600 for further analysis
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 3 of 3 moves with metric 0.586 for further analysis
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.552 for further analysis
+2024-09-19 12:28:47 - INFO - strategy_impl - Selecting 1 of 3 moves with metric 0.517 for further analysis
+2024-09-19 12:28:47 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 34, using 27 dice rolls
+2024-09-19 12:28:47 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.618
+2024-09-19 12:28:47 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.618
+2024-09-19 12:28:47 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.568
+2024-09-19 12:28:48 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.494
+2024-09-19 12:28:48 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.494
+2024-09-19 12:28:48 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.483
+2024-09-19 12:28:48 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.483
+2024-09-19 12:28:49 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.483
+2024-09-19 12:28:49 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.455
+2024-09-19 12:28:49 - INFO - strategy_impl - chance_lose_next_turn=0.176, advanced_metric=0.426
+2024-09-19 12:28:49 - INFO - strategy_impl - Selecting move from 2 moves with max_metric 0.618
+2024-09-19 12:28:49 - INFO - strategy_impl - Grouped 7 moves into 4 groups by strength
+2024-09-19 12:28:49 - INFO - strategy_impl - Selecting 7 moves out of 7; proportion of 20%, bounded between 7 and 20
+2024-09-19 12:28:49 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.750 for further analysis
+2024-09-19 12:28:49 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.600 for further analysis
+2024-09-19 12:28:49 - INFO - strategy_impl - Selecting 3 of 3 moves with metric 0.450 for further analysis
+2024-09-19 12:28:49 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.312 for further analysis
+2024-09-19 12:28:49 - INFO - strategy_impl - Will factor in chance of losing next turn for 7 moves out of 7, using 27 dice rolls
+2024-09-19 12:28:49 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.625
+2024-09-19 12:28:49 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.625
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=0.403, advanced_metric=0.358
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=0.458, advanced_metric=0.244
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=0.458, advanced_metric=0.244
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=0.250, advanced_metric=0.338
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=0.667, advanced_metric=0.104
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting move from 2 moves with max_metric 0.625
+2024-09-19 12:28:50 - INFO - strategy_impl - Grouped 3 moves into 2 groups by strength
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting 3 moves out of 3; proportion of 20%, bounded between 3 and 20
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.308 for further analysis
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.250 for further analysis
+2024-09-19 12:28:50 - INFO - strategy_impl - Will factor in chance of losing next turn for 3 moves out of 3, using 27 dice rolls
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=0.306, advanced_metric=0.214
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=0.306, advanced_metric=0.214
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=0.167, advanced_metric=0.208
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting move from 2 moves with max_metric 0.214
+2024-09-19 12:28:50 - INFO - strategy_impl - Grouped 1 moves into 1 groups by strength
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting 1 moves out of 1; proportion of 20%, bounded between 1 and 20
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.308 for further analysis
+2024-09-19 12:28:50 - INFO - strategy_impl - Will factor in chance of losing next turn for 1 moves out of 1, using 27 dice rolls
+2024-09-19 12:28:50 - INFO - strategy_impl - chance_lose_next_turn=1.000, advanced_metric=0.000
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.000
+2024-09-19 12:28:50 - INFO - game_runner - Winner of game 6 is monkey
+2024-09-19 12:28:50 - INFO - game_runner - 
+2024-09-19 12:28:50 - INFO - game_runner - Starting simulation 7 of 10
+2024-09-19 12:28:50 - INFO - strategy_impl - Grouped 224 moves into 1 groups by strength
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting 20 moves out of 224; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:50 - INFO - strategy_impl - Selecting 20 of 224 moves with metric 1.000 for further analysis
+2024-09-19 12:28:50 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 224, using 27 dice rolls
+2024-09-19 12:28:51 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:51 - INFO - strategy_impl - Grouped 238 moves into 3 groups by strength
+2024-09-19 12:28:51 - INFO - strategy_impl - Selecting 20 moves out of 238; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:51 - INFO - strategy_impl - Selecting 15 of 15 moves with metric 1.025 for further analysis
+2024-09-19 12:28:51 - INFO - strategy_impl - Selecting 5 of 222 moves with metric 1.000 for further analysis
+2024-09-19 12:28:51 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 238, using 27 dice rolls
+2024-09-19 12:28:52 - INFO - strategy_impl - Selecting move with best metric=1.025 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:52 - INFO - strategy_impl - Grouped 51 moves into 5 groups by strength
+2024-09-19 12:28:52 - INFO - strategy_impl - Selecting 11 moves out of 51; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:52 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.892 for further analysis
+2024-09-19 12:28:52 - INFO - strategy_impl - Selecting 10 of 45 moves with metric 0.825 for further analysis
+2024-09-19 12:28:52 - INFO - strategy_impl - Will factor in chance of losing next turn for 11 moves out of 51, using 27 dice rolls
+2024-09-19 12:28:53 - INFO - strategy_impl - Selecting move with best metric=0.891892 and best chance_lost_next_turn=0.0
+2024-09-19 12:28:53 - INFO - strategy_impl - Grouped 82 moves into 1 groups by strength
+2024-09-19 12:28:53 - INFO - strategy_impl - Selecting 17 moves out of 82; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:28:53 - INFO - strategy_impl - Selecting 17 of 82 moves with metric 0.811 for further analysis
+2024-09-19 12:28:53 - INFO - strategy_impl - Will factor in chance of losing next turn for 17 moves out of 82, using 27 dice rolls
+2024-09-19 12:28:53 - INFO - strategy_impl - chance_lose_next_turn=0.139, advanced_metric=0.698
+2024-09-19 12:28:54 - INFO - strategy_impl - chance_lose_next_turn=0.046, advanced_metric=0.773
+2024-09-19 12:28:55 - INFO - strategy_impl - chance_lose_next_turn=0.139, advanced_metric=0.698
+2024-09-19 12:28:55 - INFO - strategy_impl - chance_lose_next_turn=0.111, advanced_metric=0.721
+2024-09-19 12:28:56 - INFO - strategy_impl - chance_lose_next_turn=0.125, advanced_metric=0.709
+2024-09-19 12:28:56 - INFO - strategy_impl - chance_lose_next_turn=0.079, advanced_metric=0.747
+2024-09-19 12:28:57 - INFO - strategy_impl - chance_lose_next_turn=0.139, advanced_metric=0.698
+2024-09-19 12:28:58 - INFO - strategy_impl - chance_lose_next_turn=0.139, advanced_metric=0.698
+2024-09-19 12:28:58 - INFO - strategy_impl - chance_lose_next_turn=0.139, advanced_metric=0.698
+2024-09-19 12:28:59 - INFO - strategy_impl - chance_lose_next_turn=0.111, advanced_metric=0.721
+2024-09-19 12:29:00 - INFO - strategy_impl - chance_lose_next_turn=0.139, advanced_metric=0.698
+2024-09-19 12:29:00 - INFO - strategy_impl - chance_lose_next_turn=0.120, advanced_metric=0.713
+2024-09-19 12:29:01 - INFO - strategy_impl - chance_lose_next_turn=0.139, advanced_metric=0.698
+2024-09-19 12:29:01 - INFO - strategy_impl - chance_lose_next_turn=0.093, advanced_metric=0.736
+2024-09-19 12:29:02 - INFO - strategy_impl - chance_lose_next_turn=0.111, advanced_metric=0.721
+2024-09-19 12:29:03 - INFO - strategy_impl - chance_lose_next_turn=0.111, advanced_metric=0.721
+2024-09-19 12:29:03 - INFO - strategy_impl - chance_lose_next_turn=0.139, advanced_metric=0.698
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.773
+2024-09-19 12:29:03 - INFO - strategy_impl - Grouped 10 moves into 7 groups by strength
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting 10 moves out of 10; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.632 for further analysis
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.607 for further analysis
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.522 for further analysis
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting 2 of 2 moves with metric 0.421 for further analysis
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.348 for further analysis
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.263 for further analysis
+2024-09-19 12:29:03 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.217 for further analysis
+2024-09-19 12:29:03 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 10, using 27 dice rolls
+2024-09-19 12:29:04 - INFO - strategy_impl - chance_lose_next_turn=0.579, advanced_metric=0.266
+2024-09-19 12:29:04 - INFO - strategy_impl - chance_lose_next_turn=0.579, advanced_metric=0.266
+2024-09-19 12:29:04 - INFO - strategy_impl - chance_lose_next_turn=0.583, advanced_metric=0.253
+2024-09-19 12:29:04 - INFO - strategy_impl - chance_lose_next_turn=0.583, advanced_metric=0.253
+2024-09-19 12:29:04 - INFO - strategy_impl - chance_lose_next_turn=0.486, advanced_metric=0.268
+2024-09-19 12:29:05 - INFO - strategy_impl - chance_lose_next_turn=0.718, advanced_metric=0.119
+2024-09-19 12:29:05 - INFO - strategy_impl - chance_lose_next_turn=0.718, advanced_metric=0.119
+2024-09-19 12:29:05 - INFO - strategy_impl - chance_lose_next_turn=0.537, advanced_metric=0.161
+2024-09-19 12:29:05 - INFO - strategy_impl - chance_lose_next_turn=0.833, advanced_metric=0.044
+2024-09-19 12:29:05 - INFO - strategy_impl - chance_lose_next_turn=0.676, advanced_metric=0.070
+2024-09-19 12:29:05 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.268
+2024-09-19 12:29:05 - INFO - strategy_impl - Grouped 1 moves into 1 groups by strength
+2024-09-19 12:29:05 - INFO - strategy_impl - Selecting 1 moves out of 1; proportion of 20%, bounded between 1 and 20
+2024-09-19 12:29:05 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.263 for further analysis
+2024-09-19 12:29:05 - INFO - strategy_impl - Will factor in chance of losing next turn for 1 moves out of 1, using 27 dice rolls
+2024-09-19 12:29:05 - INFO - strategy_impl - chance_lose_next_turn=1.000, advanced_metric=0.000
+2024-09-19 12:29:05 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.000
+2024-09-19 12:29:05 - INFO - game_runner - Winner of game 7 is monkey
+2024-09-19 12:29:05 - INFO - game_runner - 
+2024-09-19 12:29:05 - INFO - game_runner - Starting simulation 8 of 10
+2024-09-19 12:29:05 - INFO - strategy_impl - Grouped 244 moves into 3 groups by strength
+2024-09-19 12:29:05 - INFO - strategy_impl - Selecting 20 moves out of 244; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:05 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.250 for further analysis
+2024-09-19 12:29:05 - INFO - strategy_impl - Selecting 19 of 242 moves with metric 1.000 for further analysis
+2024-09-19 12:29:05 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 244, using 27 dice rolls
+2024-09-19 12:29:06 - INFO - strategy_impl - Selecting move with best metric=1.25 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:06 - INFO - strategy_impl - Grouped 168 moves into 5 groups by strength
+2024-09-19 12:29:06 - INFO - strategy_impl - Selecting 20 moves out of 168; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:06 - INFO - strategy_impl - Selecting 20 of 38 moves with metric 1.500 for further analysis
+2024-09-19 12:29:06 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 168, using 27 dice rolls
+2024-09-19 12:29:06 - INFO - strategy_impl - Selecting move with best metric=1.5 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:06 - INFO - strategy_impl - Grouped 101 moves into 3 groups by strength
+2024-09-19 12:29:06 - INFO - strategy_impl - Selecting 20 moves out of 101; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:06 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.364 for further analysis
+2024-09-19 12:29:06 - INFO - strategy_impl - Selecting 19 of 99 moves with metric 1.308 for further analysis
+2024-09-19 12:29:06 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 101, using 27 dice rolls
+2024-09-19 12:29:07 - INFO - strategy_impl - chance_lose_next_turn=0.060, advanced_metric=1.282
+2024-09-19 12:29:07 - INFO - strategy_impl - chance_lose_next_turn=0.028, advanced_metric=1.271
+2024-09-19 12:29:07 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.302
+2024-09-19 12:29:08 - INFO - strategy_impl - chance_lose_next_turn=0.074, advanced_metric=1.211
+2024-09-19 12:29:08 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.302
+2024-09-19 12:29:09 - INFO - strategy_impl - chance_lose_next_turn=0.074, advanced_metric=1.211
+2024-09-19 12:29:09 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.302
+2024-09-19 12:29:09 - INFO - strategy_impl - chance_lose_next_turn=0.000, advanced_metric=2.615
+2024-09-19 12:29:10 - INFO - strategy_impl - chance_lose_next_turn=0.000, advanced_metric=2.615
+2024-09-19 12:29:10 - INFO - strategy_impl - chance_lose_next_turn=0.000, advanced_metric=2.615
+2024-09-19 12:29:10 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.302
+2024-09-19 12:29:11 - INFO - strategy_impl - chance_lose_next_turn=0.074, advanced_metric=1.211
+2024-09-19 12:29:11 - INFO - strategy_impl - chance_lose_next_turn=0.000, advanced_metric=2.615
+2024-09-19 12:29:11 - INFO - strategy_impl - chance_lose_next_turn=0.102, advanced_metric=1.175
+2024-09-19 12:29:11 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.302
+2024-09-19 12:29:12 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.302
+2024-09-19 12:29:12 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.302
+2024-09-19 12:29:12 - INFO - strategy_impl - chance_lose_next_turn=0.056, advanced_metric=1.235
+2024-09-19 12:29:13 - INFO - strategy_impl - chance_lose_next_turn=0.074, advanced_metric=1.211
+2024-09-19 12:29:13 - INFO - strategy_impl - chance_lose_next_turn=0.005, advanced_metric=1.302
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting move from 4 moves with max_metric 2.615
+2024-09-19 12:29:13 - INFO - strategy_impl - Grouped 103 moves into 14 groups by strength
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 20 moves out of 103; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 3.571 for further analysis
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.529 for further analysis
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 4 of 4 moves with metric 1.471 for further analysis
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.455 for further analysis
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 1.353 for further analysis
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 5 of 5 moves with metric 1.235 for further analysis
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 7 of 49 moves with metric 1.154 for further analysis
+2024-09-19 12:29:13 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 103, using 27 dice rolls
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting move with best metric=3.571429 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:13 - INFO - game_runner - Winner of game 8 is wolf
+2024-09-19 12:29:13 - INFO - game_runner - 
+2024-09-19 12:29:13 - INFO - game_runner - Starting simulation 9 of 10
+2024-09-19 12:29:13 - INFO - strategy_impl - Grouped 244 moves into 2 groups by strength
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 20 moves out of 244; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:13 - INFO - strategy_impl - Selecting 20 of 235 moves with metric 1.000 for further analysis
+2024-09-19 12:29:13 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 244, using 27 dice rolls
+2024-09-19 12:29:14 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:14 - INFO - strategy_impl - Grouped 140 moves into 3 groups by strength
+2024-09-19 12:29:14 - INFO - strategy_impl - Selecting 20 moves out of 140; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:14 - INFO - strategy_impl - Selecting 4 of 4 moves with metric 1.026 for further analysis
+2024-09-19 12:29:14 - INFO - strategy_impl - Selecting 16 of 122 moves with metric 0.929 for further analysis
+2024-09-19 12:29:14 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 140, using 27 dice rolls
+2024-09-19 12:29:14 - INFO - strategy_impl - Selecting move with best metric=1.026316 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:14 - INFO - strategy_impl - Grouped 105 moves into 5 groups by strength
+2024-09-19 12:29:14 - INFO - strategy_impl - Selecting 20 moves out of 105; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:14 - INFO - strategy_impl - Selecting 20 of 80 moves with metric 1.167 for further analysis
+2024-09-19 12:29:14 - INFO - strategy_impl - Will factor in chance of losing next turn for 20 moves out of 105, using 27 dice rolls
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting move with best metric=1.166667 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:15 - INFO - strategy_impl - Grouped 77 moves into 3 groups by strength
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 16 moves out of 77; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 16 of 26 moves with metric 1.238 for further analysis
+2024-09-19 12:29:15 - INFO - strategy_impl - Will factor in chance of losing next turn for 16 moves out of 77, using 27 dice rolls
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting move with best metric=1.238095 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:15 - INFO - strategy_impl - Grouped 41 moves into 1 groups by strength
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 10 moves out of 41; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 10 of 41 moves with metric 1.000 for further analysis
+2024-09-19 12:29:15 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 41, using 27 dice rolls
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:15 - INFO - strategy_impl - Grouped 25 moves into 4 groups by strength
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 10 moves out of 25; proportion of 20%, bounded between 10 and 20
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 7 of 7 moves with metric 1.000 for further analysis
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 3 of 4 moves with metric 0.762 for further analysis
+2024-09-19 12:29:15 - INFO - strategy_impl - Will factor in chance of losing next turn for 10 moves out of 25, using 27 dice rolls
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting move with best metric=1.0 and best chance_lost_next_turn=0.0
+2024-09-19 12:29:15 - INFO - strategy_impl - Grouped 4 moves into 2 groups by strength
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 4 moves out of 4; proportion of 20%, bounded between 4 and 20
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.778 for further analysis
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 3 of 3 moves with metric 0.583 for further analysis
+2024-09-19 12:29:15 - INFO - strategy_impl - Will factor in chance of losing next turn for 4 moves out of 4, using 27 dice rolls
+2024-09-19 12:29:15 - INFO - strategy_impl - chance_lose_next_turn=0.083, advanced_metric=0.713
+2024-09-19 12:29:15 - INFO - strategy_impl - chance_lose_next_turn=0.500, advanced_metric=0.292
+2024-09-19 12:29:15 - INFO - strategy_impl - chance_lose_next_turn=0.000, advanced_metric=1.167
+2024-09-19 12:29:15 - INFO - strategy_impl - chance_lose_next_turn=0.000, advanced_metric=1.167
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting move from 2 moves with max_metric 1.167
+2024-09-19 12:29:15 - INFO - strategy_impl - Grouped 1 moves into 1 groups by strength
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 1 moves out of 1; proportion of 20%, bounded between 1 and 20
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting 1 of 1 moves with metric 0.500 for further analysis
+2024-09-19 12:29:15 - INFO - strategy_impl - Will factor in chance of losing next turn for 1 moves out of 1, using 27 dice rolls
+2024-09-19 12:29:15 - INFO - strategy_impl - chance_lose_next_turn=0.500, advanced_metric=0.250
+2024-09-19 12:29:15 - INFO - strategy_impl - Selecting move from 1 moves with max_metric 0.250
+2024-09-19 12:29:15 - INFO - game_runner - Winner of game 9 is monkey
+2024-09-19 12:29:15 - INFO - game_runner - Results available in C:\Users\lrrch\repos\ninja-taisen\analysis\ninja-taisen-20240919_122804\results.csv
+2024-09-19 12:29:15 - INFO - game_runner - Completed 10 simulations in 70.9 seconds
+2024-09-19 12:29:15 - INFO - short_simulate - Game simulation took 70.92s
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 0 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 0
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2024
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - wolf
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 16
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 1
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 3
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 1 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 1
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2025
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - monkey
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 13
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 4
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 1
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 2 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 2
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2026
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - monkey
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 13
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 4
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 1
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 3 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 3
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2027
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - wolf
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 6
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 4
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 6
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 4 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 4
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2028
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - wolf
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 12
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 1
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 6
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 5 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 5
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2029
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - monkey
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 9
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 6
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 6
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 6 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 6
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2030
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - monkey
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 15
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 3
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 1
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 7 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 7
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2031
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - monkey
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 13
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 5
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 0
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 8 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 8
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2032
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - wolf
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 10
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 0
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 5
+2024-09-19 12:29:15 - INFO - short_simulate - 
+2024-09-19 12:29:15 - INFO - short_simulate - Result 9 of 10:
+2024-09-19 12:29:15 - INFO - short_simulate - id                - 9
+2024-09-19 12:29:15 - INFO - short_simulate - seed              - 2033
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_strategy   - metric_strength
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_strategy     - next_turn_prototype
+2024-09-19 12:29:15 - INFO - short_simulate - winner            - monkey
+2024-09-19 12:29:15 - INFO - short_simulate - turn_count        - 17
+2024-09-19 12:29:15 - INFO - short_simulate - monkey_cards_left - 1
+2024-09-19 12:29:15 - INFO - short_simulate - wolf_cards_left   - 0
+2024-09-19 12:29:15 - INFO - short_simulate - game complete
