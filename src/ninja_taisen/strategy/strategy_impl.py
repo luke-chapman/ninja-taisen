@@ -140,14 +140,9 @@ class NextTurnPrototypeStrategy(IStrategy):
 
             moves_copy = copy(moves)
             self.random.shuffle(moves_copy)
-            to_use = moves_to_select - len(moves_copy)
-            moves_to_include = moves_copy[:to_use]
-
-            log.info(
-                f"Selecting {len(moves_to_include)} of {len(moves_copy)} moves "
-                f"with metric {metric:.3f} for further analysis"
-            )
-            for move in moves_to_include:
-                moves_for_analysis.append((metric, move))
+            to_use = min(len(moves_copy), moves_to_select - len(moves_for_analysis))
+            log.info(f"Selecting {to_use} of {len(moves_copy)} moves with metric {metric:.3f} for further analysis")
+            for i in range(to_use):
+                moves_for_analysis.append((metric, moves_copy[i]))
 
         return moves_for_analysis

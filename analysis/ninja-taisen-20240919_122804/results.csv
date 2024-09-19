@@ -1,0 +1,11 @@
+id,seed,monkey_strategy,wolf_strategy,winner,turn_count,monkey_cards_left,wolf_cards_left,start_time,end_time,process_name
+0,2024,metric_strength,next_turn_prototype,wolf,16,1,3,2024-09-19T12:28:04.565555,2024-09-19T12:28:08.073578,MainProcess
+1,2025,metric_strength,next_turn_prototype,monkey,13,4,1,2024-09-19T12:28:08.073578,2024-09-19T12:28:26.503843,MainProcess
+2,2026,metric_strength,next_turn_prototype,monkey,13,4,1,2024-09-19T12:28:26.503843,2024-09-19T12:28:35.233109,MainProcess
+3,2027,metric_strength,next_turn_prototype,wolf,6,4,6,2024-09-19T12:28:35.233109,2024-09-19T12:28:36.741220,MainProcess
+4,2028,metric_strength,next_turn_prototype,wolf,12,1,6,2024-09-19T12:28:36.741220,2024-09-19T12:28:39.100745,MainProcess
+5,2029,metric_strength,next_turn_prototype,monkey,9,6,6,2024-09-19T12:28:39.100745,2024-09-19T12:28:45.577312,MainProcess
+6,2030,metric_strength,next_turn_prototype,monkey,15,3,1,2024-09-19T12:28:45.577312,2024-09-19T12:28:50.542826,MainProcess
+7,2031,metric_strength,next_turn_prototype,monkey,13,5,0,2024-09-19T12:28:50.542826,2024-09-19T12:29:05.764177,MainProcess
+8,2032,metric_strength,next_turn_prototype,wolf,10,0,5,2024-09-19T12:29:05.764177,2024-09-19T12:29:13.484925,MainProcess
+9,2033,metric_strength,next_turn_prototype,monkey,17,1,0,2024-09-19T12:29:13.484925,2024-09-19T12:29:15.466971,MainProcess
