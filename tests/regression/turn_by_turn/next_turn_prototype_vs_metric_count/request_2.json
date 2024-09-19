@@ -1,0 +1,49 @@
+{
+  "board": {
+    "monkey": {
+      "0": [
+        "MJ4",
+        "MS2",
+        "MP3",
+        "MR2"
+      ],
+      "1": [
+        "MP1",
+        "MP2"
+      ],
+      "2": [
+        "MR1",
+        "MS3",
+        "MR3"
+      ],
+      "3": [
+        "MS1"
+      ]
+    },
+    "wolf": {
+      "4": [
+        "WR2"
+      ],
+      "7": [
+        "WS2",
+        "WS3",
+        "WS1",
+        "WP2",
+        "WP3"
+      ],
+      "10": [
+        "WJ4",
+        "WR3",
+        "WR1",
+        "WP1"
+      ]
+    }
+  },
+  "dice": {
+    "rock": 2,
+    "paper": 3,
+    "scissors": 1
+  },
+  "team": "monkey",
+  "strategy": "metric_strength"
+}
