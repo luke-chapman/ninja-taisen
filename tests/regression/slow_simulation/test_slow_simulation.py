@@ -11,12 +11,7 @@ def test_next_turn_prototype_vs_random(regen: bool, tmp_path: Path) -> None:
     instructions = [
         InstructionDto(id=0, seed=0, monkey_strategy=Strategy.next_turn_prototype, wolf_strategy=Strategy.random)
     ]
-    simulate(
-        instructions=instructions,
-        results_dir=tmp_path,
-        max_processes=1,
-        per_process=5,
-    )
+    simulate(instructions=instructions, results_dir=tmp_path, max_processes=1, per_process=5)
 
     df_lazy = pl.scan_parquet(tmp_path / "results.parquet")
     df_actual = df_lazy.drop(["start_time", "end_time", "process_name"]).collect()
