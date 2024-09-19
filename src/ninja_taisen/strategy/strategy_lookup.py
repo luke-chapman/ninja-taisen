@@ -1,9 +1,15 @@
 from logging import getLogger
 
+from ninja_taisen.dtos import Strategy
 from ninja_taisen.objects.safe_random import SafeRandom
-from ninja_taisen.objects.types import Strategy
 from ninja_taisen.strategy.metric import CountMetric, PositionMetric, StrengthMetric
-from ninja_taisen.strategy.strategy import IStrategy, MetricStrategy, RandomSpotWinStrategy, RandomStrategy
+from ninja_taisen.strategy.strategy import IStrategy
+from ninja_taisen.strategy.strategy_impl import (
+    MetricStrategy,
+    NextTurnPrototypeStrategy,
+    RandomSpotWinStrategy,
+    RandomStrategy,
+)
 
 log = getLogger(__name__)
 
@@ -23,5 +29,7 @@ def lookup_strategy(strategy: str, random: SafeRandom) -> IStrategy:
         return MetricStrategy(PositionMetric(), random)
     if strategy == Strategy.metric_strength:
         return MetricStrategy(StrengthMetric(), random)
+    if strategy == Strategy.next_turn_prototype:
+        return NextTurnPrototypeStrategy(StrengthMetric(), random)
     else:
         raise ValueError(f"Unexpected strategy '{strategy}'")

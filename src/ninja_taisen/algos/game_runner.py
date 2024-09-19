@@ -147,7 +147,7 @@ class SubprocessArgs(BaseModel):
     serialisation_dir: Path | None
 
 
-def simulate_many_single_thread(args: SubprocessArgs) -> bool:
+def simulate_many_subprocess(args: SubprocessArgs) -> bool:
     setup_logging(verbosity=args.verbosity, log_file=args.log_file)
 
     chunk_name = f"{args.instructions[0].id}-{args.instructions[-1].id}"
@@ -180,6 +180,25 @@ def simulate_many_multi_process(
     log_file: Path | None,
     serialisation_dir: Path | None,
 ) -> None:
+    if max_processes == 1:
+        log.info(f"Specified max_processes={max_processes}; bypassing multi-process logic")
+        start = perf_counter()
+        results = [simulate_one(i, serialisation_dir) for i in instructions]
+        df = pl.DataFrame(data=results, orient="row")
+
+        if results_format == "parquet":
+            df.write_parquet(results_dir / "results.parquet")
+            log.info(f"Results available in {results_dir / 'results.parquet'}")
+        elif results_format == "csv":
+            df.write_csv(results_dir / "results.csv")
+            log.info(f"Results available in {results_dir / 'results.csv'}")
+        else:
+            raise ValueError(f"Unexpected results_format '{results_format}'")
+
+        stop = perf_counter()
+        log.info(f"Completed {len(instructions)} simulations in {stop - start:0.1f} seconds")
+        return
+
     assert max_processes > 0
     assert per_process > 0
     chunk_results = results_dir / "chunk_results"
@@ -205,7 +224,7 @@ def simulate_many_multi_process(
     ]
 
     with multiprocessing.Pool(processes=max_processes) as pool:
-        chunks_succeeded = list(pool.map(simulate_many_single_thread, subprocess_args))
+        chunks_succeeded = list(pool.map(simulate_many_subprocess, subprocess_args))
 
     if not all(chunks_succeeded):
         failed = sum(0 if c else 1 for c in chunks_succeeded)
