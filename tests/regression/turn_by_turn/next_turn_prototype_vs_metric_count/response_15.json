@@ -1,0 +1,12 @@
+{
+  "moves": [
+    {
+      "diceCategory": "rock",
+      "card": "WR3"
+    },
+    {
+      "diceCategory": "paper",
+      "card": "WJ4"
+    }
+  ]
+}

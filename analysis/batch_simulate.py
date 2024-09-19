@@ -20,7 +20,9 @@ from ninja_taisen.utils.run_directory import choose_run_directory, timestamp
 log = getLogger(__name__)
 
 
-def run_simulation(strategies: list[str], multiplier: int, run_dir: Path, max_processes: int, log_file: Path) -> None:
+def run_simulation(
+    strategies: list[str], multiplier: int, run_dir: Path, max_processes: int, per_process: int, log_file: Path
+) -> None:
     start = perf_counter()
 
     instructions: list[InstructionDto] = []
@@ -34,6 +36,7 @@ def run_simulation(strategies: list[str], multiplier: int, run_dir: Path, max_pr
         results_dir=run_dir,
         results_format="parquet",
         max_processes=max_processes,
+        per_process=per_process,
         log_file=log_file,
     )
 
@@ -121,6 +124,7 @@ def run() -> None:
         type=int,
         help="Number of processes to use. Negative values are deducted from available cores on this machine",
     )
+    parser.add_argument("--per-process", default=100, type=int, help="How many games to run per subprocess")
     parser.add_argument(
         "--strategies",
         nargs="*",
@@ -153,6 +157,7 @@ def run() -> None:
             multiplier=args.multiplier,
             run_dir=run_dir,
             max_processes=args.max_processes,
+            per_process=args.per_process,
             log_file=log_file,
         )
 

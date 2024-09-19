@@ -15,6 +15,18 @@ from ninja_taisen.dtos import Strategy
     "wolf_strategy", (Strategy.random, Strategy.random_spot_win, Strategy.metric_count, Strategy.metric_strength)
 )
 def test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path: Path, regen: bool) -> None:
+    __run_test_strategy_combination(monkey_strategy, wolf_strategy, tmp_path, regen)
+
+
+@pytest.mark.parametrize(
+    "monkey_strategy, wolf_strategy",
+    ((Strategy.random, Strategy.next_turn_prototype), (Strategy.next_turn_prototype, Strategy.metric_count)),
+)
+def test_slow_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path: Path, regen: bool) -> None:
+    __run_test_strategy_combination(monkey_strategy, wolf_strategy, tmp_path, regen)
+
+
+def __run_test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tmp_path: Path, regen: bool) -> None:
     results_dir = tmp_path / "results"
     serialisation_dir = tmp_path / "serialisation"
 

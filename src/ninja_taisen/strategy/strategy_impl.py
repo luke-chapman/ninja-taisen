@@ -70,19 +70,19 @@ class NextTurnPrototypeStrategy(IStrategy):
         for completed_moves in all_permitted_moves:
             metric = self.metric.calculate(completed_moves.board, completed_moves.team)
             metric_to_moves[round(metric, 6)].append(completed_moves)
-        log.info(f"Grouped {len(all_permitted_moves)} moves into {len(metric_to_moves)} groups by strength")
+        log.debug(f"Grouped {len(all_permitted_moves)} moves into {len(metric_to_moves)} groups by strength")
 
         # Filter our moves down to a subset that look promising - save effort on future analysis
         moves_for_analysis = self.__select_moves_for_analysis(metric_to_moves=metric_to_moves)
 
         # Over all possible dice rolls, what is the probability our opponent wins next turn?
         dice_rolls = [DiceRoll(*t) for t in itertools.product((1, 2, 3), (1, 2, 3), (1, 2, 3))]
-        log.info(
+        log.debug(
             f"Will factor in chance of losing next turn for {len(moves_for_analysis)} moves out of "
             f"{len(all_permitted_moves)}, using {len(dice_rolls)} dice rolls"
         )
         advanced_metric_to_moves: dict[float, list[CompletedMoves]] = defaultdict(list)
-        max_simple_metric = moves_for_analysis[0][0]
+        max_advanced_metric = 0.0
         for metric, this_turn in moves_for_analysis:
             chance_lose_next_turn = 0.0
             for roll in dice_rolls:
@@ -98,23 +98,26 @@ class NextTurnPrototypeStrategy(IStrategy):
                 other_team_wins = board_inspector.find_first_winning_move(next_turn_moves)
                 if other_team_wins:
                     chance_lose_next_turn += roll.probability()
-
-            if metric == max_simple_metric and chance_lose_next_turn == 0.0:
-                log.info(
-                    f"Selecting move with best metric={metric} and best chance_lost_next_turn={chance_lose_next_turn}"
-                )
-                return this_turn
+            chance_lose_next_turn = min(1.0, chance_lose_next_turn)
 
             # If there's zero chance of losing next turn, double the attractiveness of this turn
             # Otherwise use a negative linear gradient to express dislike to chances of losing next turn
             weighting = 2.0 if chance_lose_next_turn == 0.0 else (1.0 - chance_lose_next_turn)
             advanced_metric = round(metric * weighting, 6)
-            log.info(f"chance_lose_next_turn={chance_lose_next_turn:.3f}, advanced_metric={advanced_metric:.3f}")
+            max_advanced_metric = max(advanced_metric, max_advanced_metric)
+            log.debug(f"chance_lose_next_turn={chance_lose_next_turn:.3f}, advanced_metric={advanced_metric:.3f}")
             advanced_metric_to_moves[advanced_metric].append(this_turn)
+
+            if chance_lose_next_turn == 0.0 and advanced_metric >= max_advanced_metric:
+                log.debug(
+                    f"Selecting move with advanced_metric={advanced_metric:.3f} and "
+                    f"chance_lost_next_turn={chance_lose_next_turn}"
+                )
+                return this_turn
 
         max_metric = max(advanced_metric_to_moves.keys())
         max_metrics_boards = advanced_metric_to_moves[max_metric]
-        log.info(f"Selecting move from {len(max_metrics_boards)} moves with max_metric {max_metric:.3f}")
+        log.debug(f"Selecting move from {len(max_metrics_boards)} moves with max_metric {max_metric:.3f}")
         return self.random.choice(max_metrics_boards)
 
     # Select best 20% of moves, at least 10 and no more than 20
@@ -128,7 +131,7 @@ class NextTurnPrototypeStrategy(IStrategy):
         max_moves = 20
         rough_moves = math.ceil(total_moves * rough_proportion)
         moves_to_select = max(min_moves, min(max_moves, rough_moves))
-        log.info(
+        log.debug(
             f"Selecting {moves_to_select} moves out of {total_moves}; proportion of "
             f"{int(rough_proportion * 100)}%, bounded between {min_moves} and {max_moves}"
         )
@@ -141,7 +144,7 @@ class NextTurnPrototypeStrategy(IStrategy):
             moves_copy = copy(moves)
             self.random.shuffle(moves_copy)
             to_use = min(len(moves_copy), moves_to_select - len(moves_for_analysis))
-            log.info(f"Selecting {to_use} of {len(moves_copy)} moves with metric {metric:.3f} for further analysis")
+            log.debug(f"Selecting {to_use} of {len(moves_copy)} moves with metric {metric:.3f} for further analysis")
             for i in range(to_use):
                 moves_for_analysis.append((metric, moves_copy[i]))
 
