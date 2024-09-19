@@ -1,4 +1,5 @@
 import itertools
+import math
 from collections import defaultdict
 from copy import copy
 from logging import getLogger
@@ -81,6 +82,7 @@ class NextTurnPrototypeStrategy(IStrategy):
             f"{len(all_permitted_moves)}, using {len(dice_rolls)} dice rolls"
         )
         advanced_metric_to_moves: dict[float, list[CompletedMoves]] = defaultdict(list)
+        max_simple_metric = moves_for_analysis[0][0]
         for metric, this_turn in moves_for_analysis:
             chance_lose_next_turn = 0.0
             for roll in dice_rolls:
@@ -96,6 +98,11 @@ class NextTurnPrototypeStrategy(IStrategy):
                 other_team_wins = board_inspector.find_first_winning_move(next_turn_moves)
                 if other_team_wins:
                     chance_lose_next_turn += roll.probability()
+
+            if metric == max_simple_metric and chance_lose_next_turn == 0.0:
+                log.info(f"Found a move with metric={metric} and chance_lost_next_turn={chance_lose_next_turn}")
+                log.info("We cannot do any better; selecting this move and bypassing remaining logic to save time")
+                return this_turn
 
             # If there's zero chance of losing next turn, double the attractiveness of this turn
             # Otherwise use a negative linear gradient to express dislike to chances of losing next turn
@@ -118,7 +125,8 @@ class NextTurnPrototypeStrategy(IStrategy):
         rough_proportion = 0.2
         min_moves = min(10, total_moves)
         max_moves = 20
-        moves_to_select = max(min(int(total_moves * rough_proportion), max_moves), min_moves)
+        rough_moves = math.ceil(total_moves * rough_proportion)
+        moves_to_select = max(min_moves, min(max_moves, rough_moves))
         log.info(
             f"Selecting {moves_to_select} moves out of {total_moves}; proportion of "
             f"{int(rough_proportion * 100)}%, bounded between {min_moves} and {max_moves}"
@@ -126,19 +134,18 @@ class NextTurnPrototypeStrategy(IStrategy):
 
         moves_for_analysis: list[tuple[float, CompletedMoves]] = []
         for metric, moves in sorted(metric_to_moves.items(), key=lambda t: t[0], reverse=True):
-            new_length = len(moves_for_analysis) + len(moves)
-            if new_length < moves_to_select:
-                log.info(f"Using all {len(moves)} moves with metric {metric:.3f}")
-                for move in moves:
-                    moves_for_analysis.append((metric, move))
-                continue
+            if len(moves_for_analysis) >= moves_to_select:
+                break
 
             moves_copy = copy(moves)
             self.random.shuffle(moves_copy)
-            to_use = moves_to_select - len(moves_for_analysis)
-            log.info(f"Randomly selecting {to_use} of {len(moves_copy)} moves with metric {metric:.3f}")
-            for move in moves_copy[:to_use]:
+            to_use = moves_to_select - len(moves_copy)
+            moves_to_include = moves_copy[:to_use]
+
+            log.info(
+                f"Selecting {moves_to_include} of {len(moves_for_analysis)} moves with metric {metric:.3f} for analysis"
+            )
+            for move in moves_to_include:
                 moves_for_analysis.append((metric, move))
-            break
 
         return moves_for_analysis
