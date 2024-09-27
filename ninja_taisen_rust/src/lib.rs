@@ -2,24 +2,24 @@ use chrono::{DateTime, Utc};
 use std::path::Path;
 
 pub struct InstructionDto {
-    id: u32,
-    seed: u32,
-    monkey_strategy: String,
-    wolf_strategy: String,
+    pub id: u32,
+    pub seed: u32,
+    pub monkey_strategy: String,
+    pub wolf_strategy: String,
 }
 
 pub struct ResultDto {
-    id: u32,
-    seed: u32,
-    monkey_strategy: String,
-    wolf_strategy: String,
-    winner: String,
-    turn_count: u8,
-    monkey_cards_left: u8,
-    wolf_cards_left: u8,
-    start_time: DateTime<Utc>,
-    end_time: DateTime<Utc>,
-    process_name: String,
+    pub id: u32,
+    pub seed: u32,
+    pub monkey_strategy: String,
+    pub wolf_strategy: String,
+    pub winner: String,
+    pub turn_count: u8,
+    pub monkey_cards_left: u8,
+    pub wolf_cards_left: u8,
+    pub start_time: DateTime<Utc>,
+    pub end_time: DateTime<Utc>,
+    pub process_name: String,
 }
 
 pub fn simulate(
