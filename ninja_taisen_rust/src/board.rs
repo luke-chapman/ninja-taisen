@@ -15,8 +15,31 @@ pub struct Board {
 }
 
 pub struct CardLocation {
-    pile_index: usize,
-    card_index: usize
+    pile_index: u8,
+    card_index: u8
+}
+
+pub struct DiceRoll {
+    category: u8,
+    roll: i8
+}
+
+pub struct Move {
+    dice_category: u8,
+    dice_roll: i8,
+    card: u8
+}
+
+pub struct CompletedMoves {
+    moves: Vec<Move>,
+    is_monkey: bool,
+    board: Board
+}
+
+impl CompletedMoves {
+    pub fn used_joker(&self) -> bool {
+        self.moves.iter().any(|&m| m.card & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER)
+    }
 }
 
 impl Board {
@@ -142,7 +165,89 @@ impl Board {
         }
     }
 
-    pub fn moveable_card_indices(&self, is_monkey: bool, category: u8, used_joker: bool) -> Vec<CardLocation> {
+    pub fn gather_all_moves(&self, is_monkey: bool, dice_rolls: [DiceRoll; 3]) -> Vec<CompletedMoves> {
+        let mut completed_moves = Vec::new();
+        let initial_states = vec![CompletedMoves { moves: Vec::new(), is_monkey, board: self.clone() }];
+
+        for a in 0..dice_rolls.len() {
+            let mut new_moves_a = Self::gather_moves_for_dice_roll(
+                &initial_states,
+                is_monkey,
+                dice_rolls[a].category,
+                dice_rolls[a].roll
+            );
+
+            for b in 0..dice_rolls.len() {
+                if a == b {
+                    continue
+                }
+
+                let mut new_moves_b = Self::gather_moves_for_dice_roll(
+                    &new_moves_a,
+                    is_monkey,
+                    dice_rolls[b].category,
+                    dice_rolls[b].roll
+                );
+
+                for c in 0..dice_rolls.len() {
+                    if a == c || b == c {
+                        continue
+                    }
+
+                    let mut new_moves_c = Self::gather_moves_for_dice_roll(
+                        &new_moves_b,
+                        is_monkey,
+                        dice_rolls[c].category,
+                        dice_rolls[c].roll
+                    );
+                    completed_moves.append(&mut new_moves_c);
+                }
+                completed_moves.append(&mut new_moves_b);
+            }
+            completed_moves.append(&mut new_moves_a);
+        }
+
+        completed_moves
+    }
+
+    fn gather_moves_for_dice_roll(
+        initial_states: &Vec<CompletedMoves>,
+        is_monkey: bool,
+        dice_category: u8,
+        dice_roll: i8
+    ) -> Vec<CompletedMoves> {
+        let mut options = Vec::new();
+
+        for initial_state in initial_states {
+            if initial_state.board.victorious_team() != 0 {
+                continue
+            }
+
+            let movable_card_locations = initial_state.board.moveable_card_indices(
+                is_monkey, dice_category, initial_state.used_joker()
+            );
+            for card_location in movable_card_locations {
+                let mut board = initial_state.board.clone();
+                let card = board.get_card(is_monkey, card_location.pile_index, card_location.card_index);
+                board.move_card_and_resolve_battles(
+                    is_monkey,
+                    dice_roll,
+                    card_location.pile_index,
+                    card_location.card_index
+                );
+
+                let mut moves = initial_state.moves.clone();
+                moves.push(Move{dice_category, dice_roll, card });
+
+                let new_state = CompletedMoves { moves, is_monkey, board };
+                options.push(new_state);
+            }
+        }
+
+        options
+    }
+
+    fn moveable_card_indices(&self, is_monkey: bool, category: u8, used_joker: bool) -> Vec<CardLocation> {
         let mut card_locations = Vec::new();
         let heights = if is_monkey { self.monkey_heights } else { self.wolf_heights };
         let cards = if is_monkey { self.monkey_cards } else { self.wolf_cards };
@@ -156,7 +261,10 @@ impl Board {
                 let card = cards[pile_index * 10 + card_index];
                 let card_category = card & CHECK_CATEGORY;
                 if card_category == category || (card_category == CATEGORY_JOKER && !used_joker) {
-                    card_locations.push(CardLocation{ pile_index, card_index })
+                    card_locations.push(CardLocation{
+                        pile_index: pile_index as u8,
+                        card_index: card_index as u8
+                    })
                 }
             }
         }

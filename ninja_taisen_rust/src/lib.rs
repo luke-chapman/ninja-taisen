@@ -29,6 +29,19 @@ pub struct ResultDto {
 
 fn simulate_one(instruction: &InstructionDto, rng: &mut rand::rngs::StdRng) -> ResultDto {
     let mut board = Board::new(rng);
+    let mut is_monkey = true;
+    let mut turn_count: u8 = 0;
+    let start_time = Utc::now();
+
+    loop {
+        if board.victorious_team() != 0 {
+
+        }
+    }
+
+
+
+    let end_time = Utc::now();
 
     ResultDto {
         id: instruction.id,
@@ -36,11 +49,11 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut rand::rngs::StdRng) -> R
         monkey_strategy: instruction.monkey_strategy.clone(),
         wolf_strategy: instruction.wolf_strategy.clone(),
         winner: String::from("monkey"),
-        turn_count: 8,
+        turn_count,
         monkey_cards_left: 4,
         wolf_cards_left: 2,
-        start_time: Utc::now(),
-        end_time: Utc::now(),
+        start_time,
+        end_time,
         process_name: String::from("main_process"),
     }
 }
