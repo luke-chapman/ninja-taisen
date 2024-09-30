@@ -21,10 +21,6 @@ pub mod cards {
     pub const MS2: u8 = 0b1_0_10_0010;
     pub const MS3: u8 = 0b1_0_10_0011;
 
-    pub const MJ0: u8 = 0b1_0_11_0000;
-    pub const MJ1: u8 = 0b1_0_11_0001;
-    pub const MJ2: u8 = 0b1_0_11_0010;
-    pub const MJ3: u8 = 0b1_0_11_0011;
     pub const MJ4: u8 = 0b1_0_11_0100;
 
     pub const WR1: u8 = 0b1_1_00_0001;
@@ -39,10 +35,6 @@ pub mod cards {
     pub const WS2: u8 = 0b1_1_10_0010;
     pub const WS3: u8 = 0b1_1_10_0011;
 
-    pub const WJ0: u8 = 0b1_1_11_0000;
-    pub const WJ1: u8 = 0b1_1_11_0001;
-    pub const WJ2: u8 = 0b1_1_11_0010;
-    pub const WJ3: u8 = 0b1_1_11_0011;
     pub const WJ4: u8 = 0b1_1_11_0100;
 
     pub const CHECK_CATEGORY: u8 = 0b0_0_11_0000;
