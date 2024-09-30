@@ -106,6 +106,36 @@ impl Board {
         remaining_battles.push(new_pile_index)
     }
 
+    pub fn victorious_team(&self) -> u8 {
+        if self.monkey_heights[10] > 0 {
+            assert_eq!(self.wolf_heights[0], 0);
+            return cards::TEAM_MONKEY
+        }
+        if self.wolf_heights[0] > 0 {
+            return cards::TEAM_WOLF
+        }
+
+        let monkey_alive = self.monkey_heights.iter().any(|&x| x > 0);
+        let wolf_alive = self.monkey_heights.iter().any(|&x| x > 0);
+
+        if monkey_alive {
+            if wolf_alive {
+                cards::NULL
+            }
+            else {
+                cards::TEAM_MONKEY
+            }
+        }
+        else {
+            if wolf_alive {
+                cards::TEAM_WOLF
+            }
+            else {
+                cards::NULL
+            }
+        }
+    }
+
     fn new_pile_index(is_monkey: bool, dice_roll: i8, pile_index: u8) -> u8 {
         let mut unsnapped_index: Option<u8> = None;
         if is_monkey {
