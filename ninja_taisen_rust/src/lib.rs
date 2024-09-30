@@ -1,9 +1,10 @@
-mod simulator;
+mod board;
 
 use chrono::{DateTime, Utc};
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::Path;
+use crate::board::Board;
 
 pub struct InstructionDto {
     pub id: u32,
@@ -26,7 +27,9 @@ pub struct ResultDto {
     pub process_name: String,
 }
 
-fn simulate_one(instruction: &InstructionDto, rng: &rand::rngs::StdRng) -> ResultDto {
+fn simulate_one(instruction: &InstructionDto, rng: &mut rand::rngs::StdRng) -> ResultDto {
+    let mut board = Board::new(rng);
+
     ResultDto {
         id: instruction.id,
         seed: instruction.seed,
