@@ -24,6 +24,7 @@ pub struct DiceRoll {
     roll: i8
 }
 
+#[derive(Clone)]
 pub struct Move {
     dice_category: u8,
     dice_roll: i8,
@@ -38,7 +39,7 @@ pub struct CompletedMoves {
 
 impl CompletedMoves {
     pub fn used_joker(&self) -> bool {
-        self.moves.iter().any(|&m| m.card & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER)
+        self.moves.iter().any(|m| m.card & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER)
     }
 }
 
