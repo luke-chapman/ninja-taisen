@@ -1,7 +1,7 @@
 mod simulator;
 
 use chrono::{DateTime, Utc};
-use rand::{Rng, SeedableRng};
+use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::Path;
 
@@ -26,7 +26,7 @@ pub struct ResultDto {
     pub process_name: String,
 }
 
-fn simulate_one(instruction: &InstructionDto, mut rng: &rand::rngs::StdRng) -> ResultDto {
+fn simulate_one(instruction: &InstructionDto, rng: &rand::rngs::StdRng) -> ResultDto {
     ResultDto {
         id: instruction.id,
         seed: instruction.seed,

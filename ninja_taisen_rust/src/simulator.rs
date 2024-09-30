@@ -1,5 +1,5 @@
 use rand::prelude::SliceRandom;
-use rand::{thread_rng, Rng};
+use rand::Rng;
 
 // We represent each card as a byte, i.e. in the range 0-255
 // The encoding for each of the bits is as follows:
@@ -203,44 +203,6 @@ struct Board {
 }
 
 impl Board {
-    fn get_height(&self, is_monkey: bool, pile_index: u8) -> u8 {
-        if is_monkey {
-            self.monkey_heights[pile_index as usize]
-        }
-        else {
-            self.wolf_heights[pile_index as usize]
-        }
-    }
-
-    fn set_height(&mut self, is_monkey: bool, pile_index: u8, height: u8) {
-        if is_monkey {
-            self.monkey_heights[pile_index as usize] = height
-        }
-        else {
-            self.wolf_heights[pile_index as usize] = height
-        }
-    }
-
-    fn get_card(&self, is_monkey: bool, pile_index: u8, card_index: u8) -> u8 {
-        let index = pile_index * 10 + card_index;
-        if is_monkey {
-            self.monkey_cards[index as usize]
-        }
-        else {
-            self.wolf_cards[index as usize]
-        }
-    }
-
-    fn set_card(&mut self, is_monkey: bool, pile_index: u8, card_index: u8, card: u8) {
-        let index = pile_index * 10 + card_index;
-        if is_monkey {
-            self.monkey_cards[index as usize] = card
-        }
-        else {
-            self.wolf_cards[index as usize] = card
-        }
-    }
-
     pub fn new(rng: &mut rand::rngs::ThreadRng) -> Self {
         let mut monkey = vec![
             cards::MR1, cards::MR2, cards::MR3,
@@ -288,55 +250,87 @@ impl Board {
     }
 
     fn clone(&self) -> Self {
-        Board {
+        Self {
             monkey_cards: self.monkey_cards.clone(),
             monkey_heights: self.monkey_heights.clone(),
             wolf_cards: self.wolf_cards.clone(),
             wolf_heights: self.wolf_heights.clone()
         }
     }
-}
 
-struct CardMover {
-    board: Board,
-    remaining_battles: Vec<u8>
-}
+    fn get_height(&self, is_monkey: bool, pile_index: u8) -> u8 {
+        if is_monkey {
+            self.monkey_heights[pile_index as usize]
+        }
+        else {
+            self.wolf_heights[pile_index as usize]
+        }
+    }
 
-impl CardMover {
+    fn set_height(&mut self, is_monkey: bool, pile_index: u8, height: u8) {
+        if is_monkey {
+            self.monkey_heights[pile_index as usize] = height
+        }
+        else {
+            self.wolf_heights[pile_index as usize] = height
+        }
+    }
+
+    fn get_card(&self, is_monkey: bool, pile_index: u8, card_index: u8) -> u8 {
+        let index = pile_index * 10 + card_index;
+        if is_monkey {
+            self.monkey_cards[index as usize]
+        }
+        else {
+            self.wolf_cards[index as usize]
+        }
+    }
+
+    fn set_card(&mut self, is_monkey: bool, pile_index: u8, card_index: u8, card: u8) {
+        let index = pile_index * 10 + card_index;
+        if is_monkey {
+            self.monkey_cards[index as usize] = card
+        }
+        else {
+            self.wolf_cards[index as usize] = card
+        }
+    }
+
     pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {
-        self.move_card(is_monkey, dice_roll, pile_index, card_index);
+        let mut remaining_battles: Vec<u8> = Vec::new();
+        self.move_card(is_monkey, dice_roll, pile_index, card_index, &mut remaining_battles);
 
         loop {
-            let remaining_battle = self.remaining_battles.pop();
+            let remaining_battle = remaining_battles.pop();
             if remaining_battle.is_none() {
                 break;
             }
 
-            self.resolve_battle(is_monkey, remaining_battle.unwrap())
+            self.resolve_battle(is_monkey, remaining_battle.unwrap(), &mut remaining_battles)
         }
 
         // Restore jokers
         self.restore_joker_strengths();
     }
 
-    fn move_card(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {
+    fn move_card(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8, remaining_battles: &mut Vec<u8>) {
         let new_pile_index = Self::new_pile_index(is_monkey, dice_roll, pile_index);
-        let old_pile_height = self.board.get_height(is_monkey, pile_index);
-        let new_pile_starting_height = self.board.get_height(is_monkey, new_pile_index);
+        let old_pile_height = self.get_height(is_monkey, pile_index);
+        let new_pile_starting_height = self.get_height(is_monkey, new_pile_index);
 
         for old_index in card_index..old_pile_height {
-            let card = self.board.get_card(is_monkey, pile_index, old_index);
+            let card = self.get_card(is_monkey, pile_index, old_index);
             let new_card_index = new_pile_starting_height + old_index - card_index;
 
-            self.board.set_card(is_monkey, new_pile_index, new_card_index, card);
-            self.board.set_card(is_monkey, pile_index, old_index, cards::NULL);
+            self.set_card(is_monkey, new_pile_index, new_card_index, card);
+            self.set_card(is_monkey, pile_index, old_index, cards::NULL);
         }
 
-        self.board.set_height(is_monkey, pile_index, card_index);
-        self.board.set_height(is_monkey, new_pile_index, new_pile_starting_height + old_pile_height - card_index);
+        self.set_height(is_monkey, pile_index, card_index);
+        self.set_height(is_monkey, new_pile_index, new_pile_starting_height + old_pile_height - card_index);
 
         // Add the new_pile_index to the list of battles to be resolved
-        self.remaining_battles.push(new_pile_index)
+        remaining_battles.push(new_pile_index)
     }
 
     fn new_pile_index(is_monkey: bool, dice_roll: i8, pile_index: u8) -> u8 {
@@ -361,10 +355,10 @@ impl CardMover {
         std::cmp::min(10, std::cmp::max(0, unsnapped_index.unwrap()))
     }
 
-    fn resolve_battle(&mut self, is_monkey: bool, battle_index: u8) {
+    fn resolve_battle(&mut self, is_monkey: bool, battle_index: u8, remaining_battles: &mut Vec<u8>) {
         loop {
-            let monkey_height = self.board.get_height(true, battle_index);
-            let wolf_height = self.board.get_height(false, battle_index);
+            let monkey_height = self.get_height(true, battle_index);
+            let wolf_height = self.get_height(false, battle_index);
 
             if monkey_height == 0 || wolf_height == 0 {
                 break
@@ -373,62 +367,69 @@ impl CardMover {
             let monkey_pile = monkey_height - 1;
             let wolf_pile = wolf_height - 1;
 
-            let monkey_card = self.board.get_card(true, battle_index, monkey_pile);
-            let wolf_card = self.board.get_card(false, battle_index, wolf_pile);
+            let monkey_card = self.get_card(true, battle_index, monkey_pile);
+            let wolf_card = self.get_card(false, battle_index, wolf_pile);
 
             let battle_result = battle_winner(monkey_card, wolf_card);
-            self.board.set_card(true, battle_index, monkey_pile, monkey_card);
-            self.board.set_card(false, battle_index, wolf_pile, wolf_card);
+            self.set_card(true, battle_index, monkey_pile, monkey_card);
+            self.set_card(false, battle_index, wolf_pile, wolf_card);
 
             match battle_result.winning_team {
                 cards::NULL => {
-                    self.resolve_draw(is_monkey, battle_index, monkey_pile, wolf_pile)
+                    self.resolve_draw(is_monkey, battle_index, monkey_pile, wolf_pile, remaining_battles)
                 }
                 cards::TEAM_MONKEY => {
-                    self.board.set_height(false, battle_index, wolf_height - 1);
+                    self.set_height(false, battle_index, wolf_height - 1);
                 }
                 cards::TEAM_WOLF => {
-                    self.board.set_height(true, battle_index, monkey_height - 1);
+                    self.set_height(true, battle_index, monkey_height - 1);
                 }
                 _ => panic!("Unexpected winning_team")
             }
         }
     }
 
-    fn resolve_draw(&mut self, is_monkey: bool, battle_index: u8, monkey_card_index: u8, wolf_card_index: u8) {
+    fn resolve_draw(
+        &mut self,
+        is_monkey: bool,
+        battle_index: u8,
+        monkey_card_index: u8,
+        wolf_card_index: u8,
+        remaining_battles: &mut Vec<u8>
+    ) {
         if is_monkey {
             if battle_index == 10 {
-                self.board.set_card(false, battle_index, wolf_card_index, cards::NULL);
-                self.board.set_height(false, battle_index, wolf_card_index);
+                self.set_card(false, battle_index, wolf_card_index, cards::NULL);
+                self.set_height(false, battle_index, wolf_card_index);
             }
             else {
-                self.move_card(false, -1, battle_index, wolf_card_index);
-                self.move_card(true, -1, battle_index, monkey_card_index);
+                self.move_card(false, -1, battle_index, wolf_card_index, remaining_battles);
+                self.move_card(true, -1, battle_index, monkey_card_index, remaining_battles);
             }
         }
         else {
             if battle_index == 0 {
-                self.board.set_card(true, battle_index, monkey_card_index, cards::NULL);
-                self.board.set_height(true, battle_index, monkey_card_index);
+                self.set_card(true, battle_index, monkey_card_index, cards::NULL);
+                self.set_height(true, battle_index, monkey_card_index);
             }
             else {
-                self.move_card(true, -1, battle_index, monkey_card_index);
-                self.move_card(false, -1, battle_index, wolf_card_index);
+                self.move_card(true, -1, battle_index, monkey_card_index, remaining_battles);
+                self.move_card(false, -1, battle_index, wolf_card_index, remaining_battles);
             }
         }
     }
 
     fn restore_joker_strengths(&mut self) {
-        for i in 0..self.board.monkey_cards.len() {
-            if self.board.monkey_cards[i] & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER
+        for i in 0..self.monkey_cards.len() {
+            if self.monkey_cards[i] & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER
             {
-                self.board.monkey_cards[i] = cards::MJ4
+                self.monkey_cards[i] = cards::MJ4
             }
         }
-        for i in 0..self.board.wolf_cards.len() {
-            if self.board.wolf_cards[i] & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER
+        for i in 0..self.wolf_cards.len() {
+            if self.wolf_cards[i] & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER
             {
-                self.board.wolf_cards[i] = cards::WJ4
+                self.wolf_cards[i] = cards::WJ4
             }
         }
     }
