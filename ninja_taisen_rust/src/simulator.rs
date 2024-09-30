@@ -228,24 +228,24 @@ impl Board {
     fn get_card(&self, is_monkey: bool, pile_index: u8, card_index: u8) -> u8 {
         let index = pile_index * 10 + card_index;
         if is_monkey {
-            self.monkey_cards[index]
+            self.monkey_cards[index as usize]
         }
         else {
-            self.wolf_cards[index]
+            self.wolf_cards[index as usize]
         }
     }
 
     fn set_card(&mut self, is_monkey: bool, pile_index: u8, card_index: u8, card: u8) {
         let index = pile_index * 10 + card_index;
         if is_monkey {
-            self.monkey_cards[index] = card
+            self.monkey_cards[index as usize] = card
         }
         else {
-            self.wolf_cards[index] = card
+            self.wolf_cards[index as usize] = card
         }
     }
 
-    fn new(mut rng: &rand::rngs::StdRng) -> Self {
+    pub fn new(mut rng: &rand::rngs::ThreadRng) -> Self {
         let mut monkey = vec![
             cards::MR1, cards::MR2, cards::MR3,
             cards::MP1, cards::MP2, cards::MP3,
@@ -283,7 +283,7 @@ impl Board {
         wolf_cards[102] = wolf[7];
         wolf_cards[103] = wolf[8];
 
-        Board {
+        Self {
             monkey_cards,
             monkey_heights: [4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0],
             wolf_cards,
