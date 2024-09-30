@@ -1,29 +1,33 @@
 mod board;
 
-use chrono::{DateTime, Utc};
+use std::fs::File;
+use std::io::Write;
+use chrono::Utc;
 use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use std::path::Path;
+use serde::Serialize;
 use crate::board::{roll_dice_three_times, Board};
 
 pub struct InstructionDto {
-    pub id: u32,
-    pub seed: u32,
+    pub id: u64,
+    pub seed: u64,
     pub monkey_strategy: String,
     pub wolf_strategy: String,
 }
 
+#[derive(Serialize)]
 pub struct ResultDto {
-    pub id: u32,
-    pub seed: u32,
+    pub id: u64,
+    pub seed: u64,
     pub monkey_strategy: String,
     pub wolf_strategy: String,
     pub winner: String,
     pub turn_count: u8,
     pub monkey_cards_left: u8,
     pub wolf_cards_left: u8,
-    pub start_time: DateTime<Utc>,
-    pub end_time: DateTime<Utc>,
+    pub start_time: String,
+    pub end_time: String,
     pub process_name: String,
 }
 
@@ -67,8 +71,8 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut rand::rngs::StdRng) -> R
         turn_count,
         monkey_cards_left: board.monkey_heights.iter().sum(),
         wolf_cards_left: board.wolf_heights.iter().sum(),
-        start_time,
-        end_time: Utc::now(),
+        start_time: start_time.to_rfc3339(),
+        end_time: Utc::now().to_rfc3339(),
         process_name: String::from("main_process"),
     }
 }
@@ -76,15 +80,18 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut rand::rngs::StdRng) -> R
 pub fn simulate(
     instructions: &Vec<InstructionDto>,
     results_dir: &Path,
-    max_processes: u8,
-    per_process: u8,
 ) -> Vec<ResultDto> {
     let mut results = Vec::new();
 
     for instruction in instructions.iter() {
-        let mut rng = StdRng::seed_from_u64(42);
+        let mut rng = StdRng::seed_from_u64(instruction.seed);
         results.push(simulate_one(instruction, &mut rng))
     }
+
+    let json = serde_json::to_string_pretty(&results).unwrap();
+    let filename = results_dir.join("results.json");
+    let mut file = File::create(filename).expect("Unable to create results.json");
+    file.write(json.as_bytes()).expect("Unable to write data");
 
     results
 }

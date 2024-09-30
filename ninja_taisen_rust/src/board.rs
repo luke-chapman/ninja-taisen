@@ -46,7 +46,6 @@ pub struct Move {
 
 pub struct CompletedMoves {
     moves: Vec<Move>,
-    is_monkey: bool,
     pub board: Board
 }
 
@@ -181,7 +180,7 @@ impl Board {
 
     pub fn gather_all_moves(&self, is_monkey: bool, dice_rolls: &[DiceRoll; 3]) -> Vec<CompletedMoves> {
         let mut completed_moves = Vec::new();
-        let initial_states = vec![CompletedMoves { moves: Vec::new(), is_monkey, board: self.clone() }];
+        let initial_states = vec![CompletedMoves { moves: Vec::new(), board: self.clone() }];
 
         for a in 0..dice_rolls.len() {
             let mut new_moves_a = Self::gather_moves_for_dice_roll(
@@ -253,7 +252,7 @@ impl Board {
                 let mut moves = initial_state.moves.clone();
                 moves.push(Move{dice_category, dice_roll, card });
 
-                let new_state = CompletedMoves { moves, is_monkey, board };
+                let new_state = CompletedMoves { moves, board };
                 options.push(new_state);
             }
         }
@@ -287,7 +286,7 @@ impl Board {
     }
 
     fn new_pile_index(is_monkey: bool, dice_roll: i8, pile_index: u8) -> u8 {
-        let mut unsnapped_index: Option<u8> = None;
+        let unsnapped_index: Option<u8>;
         if is_monkey {
             if dice_roll >= 0 {
                 unsnapped_index = Some(pile_index + (dice_roll as u8));
@@ -324,8 +323,8 @@ impl Board {
             let wolf_card = self.get_card(false, battle_index, wolf_pile);
 
             let battle_result = card::battle_winner(monkey_card, wolf_card);
-            self.set_card(true, battle_index, monkey_pile, monkey_card);
-            self.set_card(false, battle_index, wolf_pile, wolf_card);
+            self.set_card(true, battle_index, monkey_pile, battle_result.card_a_residual);
+            self.set_card(false, battle_index, wolf_pile, battle_result.card_b_residual);
 
             match battle_result.winning_team {
                 cards::NULL => {
