@@ -1,5 +1,4 @@
-use rand::Rng;
-use rand::seq::SliceRandom;
+use rand::prelude::SliceRandom;
 
 // We represent each card as a byte, i.e. in the range 0-255
 // The encoding for each of the bits is as follows:
@@ -50,7 +49,9 @@ mod cards {
 
     pub const CHECK_CATEGORY: u8 = 0b0_0_11_0000;
     pub const CHECK_STRENGTH: u8 = 0b0_0_00_1111;
-    pub const CHECK_TEAM: u8 = 0b0_1_00_0000;
+    pub const NON_NULL_CHECK_TEAM: u8 = 0b1_1_00_0000;
+    pub const TEAM_MONKEY: u8 = 0b1_0_00_0000;
+    pub const TEAM_WOLF: u8 = 0b1_1_00_0000;
 
     pub const NON_NULL: u8 = 0b1_0_00_0000;
 
@@ -75,8 +76,8 @@ fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
     let card_a_strength = card_a & cards::CHECK_STRENGTH;
     let card_b_strength = card_b & cards::CHECK_STRENGTH;
 
-    let card_a_team = card_a & cards::CHECK_TEAM;
-    let card_b_team = card_b & cards::CHECK_TEAM;
+    let card_a_team = card_a & cards::NON_NULL_CHECK_TEAM;
+    let card_b_team = card_b & cards::NON_NULL_CHECK_TEAM;
 
     if card_a_category == cards::CATEGORY_JOKER {
         // joker vs joker
@@ -187,12 +188,12 @@ fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
     }
 }
 
-static DICE_FACES: [u8; 6] = [1, 1, 1, 2, 2, 3];
+static DICE_FACES: [i8; 6] = [1, 1, 1, 2, 2, 3];
 
-fn roll_dice(mut rng: &rand::rngs::StdRng) -> u8 {
+fn roll_dice(mut rng: &rand::rngs::StdRng) -> i8 {
     let roll = DICE_FACES.choose(&mut rng);
     if roll.is_some() {
-        *roll
+        return *roll.unwrap()
     }
     else {
         panic!("Dice roll was null - this should not happen")
@@ -209,19 +210,19 @@ struct Board {
 impl Board {
     fn get_height(&self, is_monkey: bool, pile_index: u8) -> u8 {
         if is_monkey {
-            self.monkey_heights[pile_index]
+            self.monkey_heights[pile_index as usize]
         }
         else {
-            self.wolf_heights[pile_index]
+            self.wolf_heights[pile_index as usize]
         }
     }
 
     fn set_height(&mut self, is_monkey: bool, pile_index: u8, height: u8) {
         if is_monkey {
-            self.monkey_heights[pile_index] = height
+            self.monkey_heights[pile_index as usize] = height
         }
         else {
-            self.wolf_heights[pile_index] = height
+            self.wolf_heights[pile_index as usize] = height
         }
     }
 
@@ -307,17 +308,23 @@ struct CardMover {
 }
 
 impl CardMover {
-    pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: u8, pile_index: u8, card_index: u8) {
+    pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {
         self.move_card(is_monkey, dice_roll, pile_index, card_index);
 
-        while !self.remaining_battles.is_empty() {
-            // Resolve battle!
+        loop {
+            let remaining_battle = self.remaining_battles.pop();
+            if remaining_battle.is_none() {
+                break;
+            }
+
+            self.resolve_battle(is_monkey, remaining_battle.unwrap())
         }
 
         // Restore jokers
+        self.restore_joker_strengths();
     }
 
-    fn move_card(&mut self, is_monkey: bool, dice_roll: u8, pile_index: u8, card_index: u8) {
+    fn move_card(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {
         let new_pile_index = Self::new_pile_index(is_monkey, dice_roll, pile_index);
         let old_pile_height = self.board.get_height(is_monkey, pile_index);
         let new_pile_starting_height = self.board.get_height(is_monkey, new_pile_index);
@@ -333,12 +340,101 @@ impl CardMover {
         self.board.set_height(is_monkey, pile_index, card_index);
         self.board.set_height(is_monkey, new_pile_index, new_pile_starting_height + old_pile_height - card_index);
 
-        // Schedule this one battle to start with
+        // Add the new_pile_index to the list of battles to be resolved
         self.remaining_battles.push(new_pile_index)
     }
 
-    fn new_pile_index(is_monkey: bool, dice_roll: u8, pile_index: u8) -> u8 {
-        let new_pile_index = if is_monkey { pile_index + dice_roll } else { pile_index - dice_roll };
-        std::cmp::min(10, std::cmp::max(0, new_pile_index))
+    fn new_pile_index(is_monkey: bool, dice_roll: i8, pile_index: u8) -> u8 {
+        let mut unsnapped_index: Option<u8> = None;
+        if is_monkey {
+            if dice_roll >= 0 {
+                unsnapped_index = Some(pile_index + (dice_roll as u8));
+            }
+            else {
+                unsnapped_index = Some(pile_index - ((-dice_roll) as u8));
+            }
+        }
+        else {
+            if dice_roll >= 0 {
+                unsnapped_index = Some(pile_index - (dice_roll as u8));
+            }
+            else {
+                unsnapped_index = Some(pile_index + (-dice_roll as u8));
+            }
+        }
+
+        std::cmp::min(10, std::cmp::max(0, unsnapped_index.unwrap()))
+    }
+
+    fn resolve_battle(&mut self, is_monkey: bool, battle_index: u8) {
+        loop {
+            let monkey_height = self.board.get_height(true, battle_index);
+            let wolf_height = self.board.get_height(false, battle_index);
+
+            if monkey_height == 0 || wolf_height == 0 {
+                break
+            }
+
+            let monkey_pile = monkey_height - 1;
+            let wolf_pile = wolf_height - 1;
+
+            let monkey_card = self.board.get_card(true, battle_index, monkey_pile);
+            let wolf_card = self.board.get_card(false, battle_index, wolf_pile);
+
+            let battle_result = battle_winner(monkey_card, wolf_card);
+            self.board.set_card(true, battle_index, monkey_pile, monkey_card);
+            self.board.set_card(false, battle_index, wolf_pile, wolf_card);
+
+            match battle_result.winning_team {
+                cards::NULL => {
+                    self.resolve_draw(is_monkey, battle_index, monkey_pile, wolf_pile)
+                }
+                cards::TEAM_MONKEY => {
+                    self.board.set_height(false, battle_index, wolf_height - 1);
+                }
+                cards::TEAM_WOLF => {
+                    self.board.set_height(true, battle_index, monkey_height - 1);
+                }
+                _ => panic!("Unexpected winning_team")
+            }
+        }
+    }
+
+    fn resolve_draw(&mut self, is_monkey: bool, battle_index: u8, monkey_card_index: u8, wolf_card_index: u8) {
+        if is_monkey {
+            if battle_index == 10 {
+                self.board.set_card(false, battle_index, wolf_card_index, cards::NULL);
+                self.board.set_height(false, battle_index, wolf_card_index);
+            }
+            else {
+                self.move_card(false, -1, battle_index, wolf_card_index);
+                self.move_card(true, -1, battle_index, monkey_card_index);
+            }
+        }
+        else {
+            if battle_index == 0 {
+                self.board.set_card(true, battle_index, monkey_card_index, cards::NULL);
+                self.board.set_height(true, battle_index, monkey_card_index);
+            }
+            else {
+                self.move_card(true, -1, battle_index, monkey_card_index);
+                self.move_card(false, -1, battle_index, wolf_card_index);
+            }
+        }
+    }
+
+    fn restore_joker_strengths(&mut self) {
+        for i in 0..self.board.monkey_cards.len() {
+            if self.board.monkey_cards[i] & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER
+            {
+                self.board.monkey_cards[i] = cards::MJ4
+            }
+        }
+        for i in 0..self.board.wolf_cards.len() {
+            if self.board.wolf_cards[i] & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER
+            {
+                self.board.wolf_cards[i] = cards::WJ4
+            }
+        }
     }
 }
