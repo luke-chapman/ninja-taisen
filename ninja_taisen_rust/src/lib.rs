@@ -2,7 +2,7 @@ mod board;
 
 use std::fs::File;
 use std::io::Write;
-use chrono::{DateTime, Utc};
+use chrono::Utc;
 use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use std::path::Path;
