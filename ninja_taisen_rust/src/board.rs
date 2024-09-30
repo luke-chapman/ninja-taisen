@@ -1,5 +1,4 @@
 mod card;
-mod dice;
 
 use rand::prelude::SliceRandom;
 use rand::Rng;
@@ -10,8 +9,8 @@ use crate::board::card::cards::{CATEGORY_JOKER, CHECK_CATEGORY};
 pub struct Board {
     monkey_cards: [u8; 110],
     wolf_cards: [u8; 110],
-    monkey_heights: [u8; 11],
-    wolf_heights: [u8; 11]
+    pub monkey_heights: [u8; 11],
+    pub wolf_heights: [u8; 11]
 }
 
 pub struct CardLocation {
@@ -24,6 +23,20 @@ pub struct DiceRoll {
     roll: i8
 }
 
+static DICE_FACES: [i8; 6] = [1, 1, 1, 2, 2, 3];
+
+fn roll_dice(rng: &mut rand::rngs::StdRng) -> i8 {
+    DICE_FACES[rng.gen_range(0..6)]
+}
+
+pub fn roll_dice_three_times(rng: &mut rand::rngs::StdRng) -> [DiceRoll; 3] {
+    [
+        DiceRoll{category: cards::CATEGORY_ROCK, roll: roll_dice(rng)},
+        DiceRoll{category: cards::CATEGORY_PAPER, roll: roll_dice(rng)},
+        DiceRoll{category: cards::CATEGORY_SCISSORS, roll: roll_dice(rng)},
+    ]
+}
+
 #[derive(Clone)]
 pub struct Move {
     dice_category: u8,
@@ -34,7 +47,7 @@ pub struct Move {
 pub struct CompletedMoves {
     moves: Vec<Move>,
     is_monkey: bool,
-    board: Board
+    pub board: Board
 }
 
 impl CompletedMoves {
@@ -166,7 +179,7 @@ impl Board {
         }
     }
 
-    pub fn gather_all_moves(&self, is_monkey: bool, dice_rolls: [DiceRoll; 3]) -> Vec<CompletedMoves> {
+    pub fn gather_all_moves(&self, is_monkey: bool, dice_rolls: &[DiceRoll; 3]) -> Vec<CompletedMoves> {
         let mut completed_moves = Vec::new();
         let initial_states = vec![CompletedMoves { moves: Vec::new(), is_monkey, board: self.clone() }];
 
