@@ -1,5 +1,3 @@
-use crate::simulator::cards::ZERO_STRENGTH;
-
 // We represent each card as a byte, i.e. in the range 0-255
 // The encoding for each of the bits is as follows:
 // 0:        0=null, 1=non-null
@@ -117,7 +115,7 @@ fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
             } else {
                 return BattleResult {
                     winning_team: cards::NULL,
-                    card_a_residual: card_a & ZERO_STRENGTH,
+                    card_a_residual: card_a & cards::ZERO_STRENGTH,
                     card_b_residual: card_b
                 }
             }
@@ -146,7 +144,7 @@ fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
         }
     }
     else if card_a_category != card_b_category {
-        // rock-paper-scissors battle
+        // rock-paper-scissors battle. rock=0, paper=1, scissors=2
         let card_a_wins = ((card_a_category - card_b_category) % 3) == 1;
         if card_a_wins {
             return BattleResult {
@@ -187,5 +185,6 @@ fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
 }
 
 struct Board {
-    cards: [Card; 220]
+    cards: [u8; 220],
+    pile_heights: [u8; 22]
 }

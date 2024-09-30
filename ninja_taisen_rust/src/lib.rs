@@ -1,7 +1,10 @@
 mod simulator;
 
 use chrono::{DateTime, Utc};
+use rand::{Rng, SeedableRng};
+use rand::rngs::StdRng;
 use std::path::Path;
+use rand::seq::SliceRandom;
 
 pub struct InstructionDto {
     pub id: u32,
@@ -24,6 +27,25 @@ pub struct ResultDto {
     pub process_name: String,
 }
 
+fn simulate_one(instruction: &InstructionDto, mut rng: &rand::rngs::StdRng) -> ResultDto {
+    let item = vec![1, 2, 3, 4];
+    let result = item.choose(&mut rng);
+
+    ResultDto{
+        id: instruction.id,
+        seed: instruction.seed,
+        monkey_strategy: instruction.monkey_strategy.clone(),
+        wolf_strategy: instruction.wolf_strategy.clone(),
+        winner: String::from("monkey"),
+        turn_count: 8,
+        monkey_cards_left: 4,
+        wolf_cards_left: 2,
+        start_time: Utc::now(),
+        end_time: Utc::now(),
+        process_name: String::from("main_process"),
+    }
+}
+
 pub fn simulate(
     instructions: &Vec<InstructionDto>,
     results_dir: &Path,
@@ -33,19 +55,8 @@ pub fn simulate(
     let mut results = Vec::new();
 
     for instruction in instructions.iter() {
-        results.push(ResultDto{
-            id: instruction.id,
-            seed: instruction.seed,
-            monkey_strategy: instruction.monkey_strategy.clone(),
-            wolf_strategy: instruction.wolf_strategy.clone(),
-            winner: String::from("monkey"),
-            turn_count: 8,
-            monkey_cards_left: 4,
-            wolf_cards_left: 2,
-            start_time: Utc::now(),
-            end_time: Utc::now(),
-            process_name: String::from("main_process"),
-        })
+        let mut rng = StdRng::seed_from_u64(42);
+        results.push(simulate_one(instruction, &mut rng))
     }
 
     results
