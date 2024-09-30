@@ -5,12 +5,18 @@ use rand::prelude::SliceRandom;
 use rand::Rng;
 
 use crate::board::card::cards;
+use crate::board::card::cards::{CATEGORY_JOKER, CHECK_CATEGORY};
 
 pub struct Board {
     monkey_cards: [u8; 110],
     wolf_cards: [u8; 110],
     monkey_heights: [u8; 11],
     wolf_heights: [u8; 11]
+}
+
+pub struct CardLocation {
+    pile_index: usize,
+    card_index: usize
 }
 
 impl Board {
@@ -134,6 +140,28 @@ impl Board {
                 cards::NULL
             }
         }
+    }
+
+    pub fn moveable_card_indices(&self, is_monkey: bool, category: u8, used_joker: bool) -> Vec<CardLocation> {
+        let mut card_locations = Vec::new();
+        let heights = if is_monkey { self.monkey_heights } else { self.wolf_heights };
+        let cards = if is_monkey { self.monkey_cards } else { self.wolf_cards };
+
+        for pile_index in 0..heights.len() {
+            let pile_height = heights[pile_index] as i8;
+            let accessible_start = std::cmp::max(0, pile_height - 3);
+
+            for card_index_i32 in accessible_start..pile_height {
+                let card_index = card_index_i32 as usize;
+                let card = cards[pile_index * 10 + card_index];
+                let card_category = card & CHECK_CATEGORY;
+                if card_category == category || (card_category == CATEGORY_JOKER && !used_joker) {
+                    card_locations.push(CardLocation{ pile_index, card_index })
+                }
+            }
+        }
+
+        card_locations
     }
 
     fn new_pile_index(is_monkey: bool, dice_roll: i8, pile_index: u8) -> u8 {
