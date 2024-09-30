@@ -1,3 +1,6 @@
+use rand::Rng;
+use rand::seq::SliceRandom;
+
 // We represent each card as a byte, i.e. in the range 0-255
 // The encoding for each of the bits is as follows:
 // 0:        0=null, 1=non-null
@@ -184,7 +187,71 @@ fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
     }
 }
 
+static DICE_FACES: [u8; 6] = [1, 1, 1, 2, 2, 3];
+
+fn roll_dice(mut rng: &rand::rngs::StdRng) -> u8 {
+    let roll = DICE_FACES.choose(&mut rng);
+    if roll.is_some() {
+        *roll
+    }
+    else {
+        panic!("Dice roll was null - this should not happen")
+    }
+}
+
 struct Board {
     cards: [u8; 220],
     pile_heights: [u8; 22]
+}
+
+impl Board {
+    fn new(mut rng: &rand::rngs::StdRng) -> Self {
+        let mut monkey = vec![
+            cards::MR1, cards::MR2, cards::MR3,
+            cards::MP1, cards::MP2, cards::MP3,
+            cards::MS1, cards::MS2, cards::MS3
+        ];
+        let mut wolf = vec![
+            cards::WR1, cards::WR2, cards::WR3,
+            cards::WP1, cards::WP2, cards::WP3,
+            cards::WS1, cards::WS2, cards::WS3
+        ];
+        monkey.shuffle(&mut rng);
+        wolf.shuffle(&mut rng);
+
+        let mut grid = [cards::NULL; 220];
+        grid[0] = cards::MJ4;
+        grid[1] = monkey[0];
+        grid[2] = monkey[1];
+        grid[3] = monkey[2];
+        grid[10] = monkey[3];
+        grid[11] = monkey[4];
+        grid[12] = monkey[5];
+        grid[20] = monkey[6];
+        grid[21] = monkey[7];
+        grid[30] = monkey[8];
+
+        grid[180] = wolf[0];
+        grid[190] = wolf[1];
+        grid[191] = wolf[2];
+        grid[200] = wolf[3];
+        grid[201] = wolf[4];
+        grid[202] = wolf[5];
+        grid[210] = cards::WJ4;
+        grid[211] = wolf[6];
+        grid[212] = wolf[7];
+        grid[213] = wolf[8];
+
+        Board {
+            cards: grid,
+            pile_heights: [4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4]
+        }
+    }
+
+    fn clone(&self) -> Self {
+        Board {
+            cards: self.cards.clone(),
+            pile_heights: self.pile_heights.clone()
+        }
+    }
 }

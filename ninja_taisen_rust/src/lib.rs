@@ -4,7 +4,6 @@ use chrono::{DateTime, Utc};
 use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use std::path::Path;
-use rand::seq::SliceRandom;
 
 pub struct InstructionDto {
     pub id: u32,
@@ -28,10 +27,7 @@ pub struct ResultDto {
 }
 
 fn simulate_one(instruction: &InstructionDto, mut rng: &rand::rngs::StdRng) -> ResultDto {
-    let item = vec![1, 2, 3, 4];
-    let result = item.choose(&mut rng);
-
-    ResultDto{
+    ResultDto {
         id: instruction.id,
         seed: instruction.seed,
         monkey_strategy: instruction.monkey_strategy.clone(),
