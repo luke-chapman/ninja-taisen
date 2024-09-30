@@ -287,7 +287,7 @@ impl Board {
     }
 
     fn new_pile_index(is_monkey: bool, dice_roll: i8, pile_index: u8) -> u8 {
-        let mut unsnapped_index: Option<u8> = None;
+        let mut unsnapped_index: Option<u8>;
         if is_monkey {
             if dice_roll >= 0 {
                 unsnapped_index = Some(pile_index + (dice_roll as u8));

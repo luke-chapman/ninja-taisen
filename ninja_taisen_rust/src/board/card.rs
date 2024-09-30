@@ -147,7 +147,7 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
     }
     else if card_a_category != card_b_category {
         // rock-paper-scissors battle. rock=0, paper=1, scissors=2
-        let card_a_wins = ((card_a_category - card_b_category) % 3) == 1;
+        let card_a_wins = (((card_a_category as i8) - (card_b_category as i8)) % 3) == 1;
         if card_a_wins {
             return BattleResult {
                 winning_team: card_a_team,
