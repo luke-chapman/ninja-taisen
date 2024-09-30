@@ -200,11 +200,51 @@ fn roll_dice(mut rng: &rand::rngs::StdRng) -> u8 {
 }
 
 struct Board {
-    cards: [u8; 220],
-    pile_heights: [u8; 22]
+    monkey_cards: [u8; 110],
+    wolf_cards: [u8; 110],
+    monkey_heights: [u8; 11],
+    wolf_heights: [u8; 11]
 }
 
 impl Board {
+    fn get_height(&self, is_monkey: bool, pile_index: u8) -> u8 {
+        if is_monkey {
+            self.monkey_heights[pile_index]
+        }
+        else {
+            self.wolf_heights[pile_index]
+        }
+    }
+
+    fn set_height(&mut self, is_monkey: bool, pile_index: u8, height: u8) {
+        if is_monkey {
+            self.monkey_heights[pile_index] = height
+        }
+        else {
+            self.wolf_heights[pile_index] = height
+        }
+    }
+
+    fn get_card(&self, is_monkey: bool, pile_index: u8, card_index: u8) -> u8 {
+        let index = pile_index * 10 + card_index;
+        if is_monkey {
+            self.monkey_cards[index]
+        }
+        else {
+            self.wolf_cards[index]
+        }
+    }
+
+    fn set_card(&mut self, is_monkey: bool, pile_index: u8, card_index: u8, card: u8) {
+        let index = pile_index * 10 + card_index;
+        if is_monkey {
+            self.monkey_cards[index] = card
+        }
+        else {
+            self.wolf_cards[index] = card
+        }
+    }
+
     fn new(mut rng: &rand::rngs::StdRng) -> Self {
         let mut monkey = vec![
             cards::MR1, cards::MR2, cards::MR3,
@@ -219,39 +259,86 @@ impl Board {
         monkey.shuffle(&mut rng);
         wolf.shuffle(&mut rng);
 
-        let mut grid = [cards::NULL; 220];
-        grid[0] = cards::MJ4;
-        grid[1] = monkey[0];
-        grid[2] = monkey[1];
-        grid[3] = monkey[2];
-        grid[10] = monkey[3];
-        grid[11] = monkey[4];
-        grid[12] = monkey[5];
-        grid[20] = monkey[6];
-        grid[21] = monkey[7];
-        grid[30] = monkey[8];
+        let mut monkey_cards = [cards::NULL; 110];
+        monkey_cards[0] = cards::MJ4;
+        monkey_cards[1] = monkey[0];
+        monkey_cards[2] = monkey[1];
+        monkey_cards[3] = monkey[2];
+        monkey_cards[10] = monkey[3];
+        monkey_cards[11] = monkey[4];
+        monkey_cards[12] = monkey[5];
+        monkey_cards[20] = monkey[6];
+        monkey_cards[21] = monkey[7];
+        monkey_cards[30] = monkey[8];
 
-        grid[180] = wolf[0];
-        grid[190] = wolf[1];
-        grid[191] = wolf[2];
-        grid[200] = wolf[3];
-        grid[201] = wolf[4];
-        grid[202] = wolf[5];
-        grid[210] = cards::WJ4;
-        grid[211] = wolf[6];
-        grid[212] = wolf[7];
-        grid[213] = wolf[8];
+        let mut wolf_cards = [cards::NULL; 110];
+        wolf_cards[70] = wolf[0];
+        wolf_cards[80] = wolf[1];
+        wolf_cards[81] = wolf[2];
+        wolf_cards[90] = wolf[3];
+        wolf_cards[91] = wolf[4];
+        wolf_cards[92] = wolf[5];
+        wolf_cards[100] = cards::WJ4;
+        wolf_cards[101] = wolf[6];
+        wolf_cards[102] = wolf[7];
+        wolf_cards[103] = wolf[8];
 
         Board {
-            cards: grid,
-            pile_heights: [4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4]
+            monkey_cards,
+            monkey_heights: [4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+            wolf_cards,
+            wolf_heights: [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4]
         }
     }
 
     fn clone(&self) -> Self {
         Board {
-            cards: self.cards.clone(),
-            pile_heights: self.pile_heights.clone()
+            monkey_cards: self.monkey_cards.clone(),
+            monkey_heights: self.monkey_heights.clone(),
+            wolf_cards: self.wolf_cards.clone(),
+            wolf_heights: self.wolf_heights.clone()
         }
+    }
+}
+
+struct CardMover {
+    board: Board,
+    remaining_battles: Vec<u8>
+}
+
+impl CardMover {
+    pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: u8, pile_index: u8, card_index: u8) {
+        self.move_card(is_monkey, dice_roll, pile_index, card_index);
+
+        while !self.remaining_battles.is_empty() {
+            // Resolve battle!
+        }
+
+        // Restore jokers
+    }
+
+    fn move_card(&mut self, is_monkey: bool, dice_roll: u8, pile_index: u8, card_index: u8) {
+        let new_pile_index = Self::new_pile_index(is_monkey, dice_roll, pile_index);
+        let old_pile_height = self.board.get_height(is_monkey, pile_index);
+        let new_pile_starting_height = self.board.get_height(is_monkey, new_pile_index);
+
+        for old_index in card_index..old_pile_height {
+            let card = self.board.get_card(is_monkey, pile_index, old_index);
+            let new_card_index = new_pile_starting_height + old_index - card_index;
+
+            self.board.set_card(is_monkey, new_pile_index, new_card_index, card);
+            self.board.set_card(is_monkey, pile_index, old_index, cards::NULL);
+        }
+
+        self.board.set_height(is_monkey, pile_index, card_index);
+        self.board.set_height(is_monkey, new_pile_index, new_pile_starting_height + old_pile_height - card_index);
+
+        // Schedule this one battle to start with
+        self.remaining_battles.push(new_pile_index)
+    }
+
+    fn new_pile_index(is_monkey: bool, dice_roll: u8, pile_index: u8) -> u8 {
+        let new_pile_index = if is_monkey { pile_index + dice_roll } else { pile_index - dice_roll };
+        std::cmp::min(10, std::cmp::max(0, new_pile_index))
     }
 }
