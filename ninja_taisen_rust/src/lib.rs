@@ -1,4 +1,8 @@
+mod simulator;
+
 use chrono::{DateTime, Utc};
+use rand::SeedableRng;
+use rand::rngs::StdRng;
 use std::path::Path;
 
 pub struct InstructionDto {
@@ -22,6 +26,22 @@ pub struct ResultDto {
     pub process_name: String,
 }
 
+fn simulate_one(instruction: &InstructionDto, rng: &rand::rngs::StdRng) -> ResultDto {
+    ResultDto {
+        id: instruction.id,
+        seed: instruction.seed,
+        monkey_strategy: instruction.monkey_strategy.clone(),
+        wolf_strategy: instruction.wolf_strategy.clone(),
+        winner: String::from("monkey"),
+        turn_count: 8,
+        monkey_cards_left: 4,
+        wolf_cards_left: 2,
+        start_time: Utc::now(),
+        end_time: Utc::now(),
+        process_name: String::from("main_process"),
+    }
+}
+
 pub fn simulate(
     instructions: &Vec<InstructionDto>,
     results_dir: &Path,
@@ -31,19 +51,8 @@ pub fn simulate(
     let mut results = Vec::new();
 
     for instruction in instructions.iter() {
-        results.push(ResultDto{
-            id: instruction.id,
-            seed: instruction.seed,
-            monkey_strategy: instruction.monkey_strategy.clone(),
-            wolf_strategy: instruction.wolf_strategy.clone(),
-            winner: String::from("monkey"),
-            turn_count: 8,
-            monkey_cards_left: 4,
-            wolf_cards_left: 2,
-            start_time: Utc::now(),
-            end_time: Utc::now(),
-            process_name: String::from("main_process"),
-        })
+        let mut rng = StdRng::seed_from_u64(42);
+        results.push(simulate_one(instruction, &mut rng))
     }
 
     results
