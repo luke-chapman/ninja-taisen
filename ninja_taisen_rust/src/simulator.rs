@@ -1,4 +1,5 @@
 use rand::prelude::SliceRandom;
+use rand::{thread_rng, Rng};
 
 // We represent each card as a byte, i.e. in the range 0-255
 // The encoding for each of the bits is as follows:
@@ -190,14 +191,8 @@ fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
 
 static DICE_FACES: [i8; 6] = [1, 1, 1, 2, 2, 3];
 
-fn roll_dice(mut rng: &rand::rngs::StdRng) -> i8 {
-    let roll = DICE_FACES.choose(&mut rng);
-    if roll.is_some() {
-        return *roll.unwrap()
-    }
-    else {
-        panic!("Dice roll was null - this should not happen")
-    }
+fn roll_dice(rng: &mut rand::rngs::ThreadRng) -> i8 {
+    DICE_FACES[rng.gen_range(0..6)]
 }
 
 struct Board {
@@ -246,7 +241,7 @@ impl Board {
         }
     }
 
-    pub fn new(mut rng: &rand::rngs::ThreadRng) -> Self {
+    pub fn new(rng: &mut rand::rngs::ThreadRng) -> Self {
         let mut monkey = vec![
             cards::MR1, cards::MR2, cards::MR3,
             cards::MP1, cards::MP2, cards::MP3,
@@ -257,8 +252,8 @@ impl Board {
             cards::WP1, cards::WP2, cards::WP3,
             cards::WS1, cards::WS2, cards::WS3
         ];
-        monkey.shuffle(&mut rng);
-        wolf.shuffle(&mut rng);
+        monkey.shuffle(rng);
+        wolf.shuffle(rng);
 
         let mut monkey_cards = [cards::NULL; 110];
         monkey_cards[0] = cards::MJ4;
