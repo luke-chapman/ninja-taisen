@@ -325,17 +325,17 @@ impl Board {
             self.set_card(true, battle_index, monkey_card_index, battle_result.card_a_residual);
             self.set_card(false, battle_index, wolf_card_index, battle_result.card_b_residual);
 
-            match battle_result.winner {
-                cards::NULL => {
-                    self.resolve_draw(is_monkey, battle_index, monkey_card_index, wolf_card_index, remaining_battles)
-                }
-                _monkey_card => {
-                    self.set_height(false, battle_index, wolf_height - 1)
-                }
-                _wolf_card => {
-                    self.set_height(true, battle_index, monkey_height - 1)
-                }
-                _ => panic!("Unexpected battle_result winner")
+            if battle_result.winner == cards::NULL {
+                self.resolve_draw(is_monkey, battle_index, monkey_card_index, wolf_card_index, remaining_battles)
+            }
+            else if battle_result.winner == monkey_card {
+                self.set_height(false, battle_index, wolf_card_index)
+            }
+            else if battle_result.winner == wolf_card {
+                self.set_height(true, battle_index, monkey_card_index)
+            }
+            else {
+                panic!("Unexpected battle_result winner")
             }
         }
     }
