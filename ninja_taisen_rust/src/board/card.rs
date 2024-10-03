@@ -139,7 +139,7 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
             }
         } else if card_a_strength < card_b_strength {
             return BattleResult {
-                winner: card_b_team,
+                winner: card_b,
                 card_a_residual: cards::NULL,
                 card_b_residual: cards::BIT_NON_NULL | card_b_team | card_b_category | (card_b_strength - card_a_strength)
             }
@@ -203,9 +203,9 @@ mod tests {
         let card_b = cards::WS2;
         let result = battle_winner(card_a, card_b);
 
-        assert_eq!(cards::MP1, result.winner);
-        assert_eq!(cards::MP1, result.card_a_residual);
-        assert_eq!(cards::NULL, result.card_b_residual);
+        assert_eq!(cards::WS2, result.winner);
+        assert_eq!(cards::NULL, result.card_a_residual);
+        assert_eq!(cards::WS2, result.card_b_residual);
     }
 
     #[test]
@@ -242,7 +242,7 @@ mod tests {
     }
 
     #[test]
-    fn test_joker_non_joker() {
+    fn test_joker_non_joker_1() {
         let card_a = cards::MJ4;
         let result_1 = battle_winner(card_a, cards::WS3);
 
@@ -265,5 +265,19 @@ mod tests {
         assert_eq!(cards::WJ4, result_3.winner);
         assert_eq!(cards::NULL, result_3.card_a_residual);
         assert_eq!(cards::WJ4, result_3.card_b_residual);
+    }
+
+    #[test]
+    fn test_joker_non_joker_2() {
+        let result = battle_winner(cards::MJ4, cards::WJ4);
+        assert_eq!(cards::NULL, result.winner);
+        assert_eq!(
+            cards::BIT_NON_NULL | cards::BIT_TEAM_MONKEY | cards::BITS_CATEGORY_JOKER | cards::BITS_STRENGTH_0,
+            result.card_a_residual
+        );
+        assert_eq!(
+            cards::BIT_NON_NULL | cards::BIT_TEAM_WOLF | cards::BITS_CATEGORY_JOKER | cards::BITS_STRENGTH_0,
+            result.card_b_residual
+        );
     }
 }
