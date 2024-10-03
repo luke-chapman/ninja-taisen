@@ -1,3 +1,5 @@
+use crate::board::card::cards::BIT_NON_NULL;
+
 // We represent each card as a byte, i.e. in the range 0-255
 // The encoding for each of the bits is as follows:
 // 0:        0=null, 1=non-null
@@ -7,108 +9,122 @@
 //
 // Of the 255 available values, the 29 we expect to use are detailed in the below enum
 pub mod cards {
+    // NULL, used to indicate an empty space on the board
     pub const NULL: u8 = 0b0_0_00_0000;
 
-    pub const MR1: u8 = 0b1_0_00_0001;
-    pub const MR2: u8 = 0b1_0_00_0010;
-    pub const MR3: u8 = 0b1_0_00_0011;
+    // BITs used to construct cards: NON_NULL, TEAM, CATEGORY, STRENGTH
+    pub const BIT_NON_NULL: u8 = 0b1_0_00_0000;
+    pub const BIT_TEAM_MONKEY: u8 = 0b0_0_00_0000;
+    pub const BIT_TEAM_WOLF: u8 = 0b0_1_00_0000;
 
-    pub const MP1: u8 = 0b1_0_01_0001;
-    pub const MP2: u8 = 0b1_0_01_0010;
-    pub const MP3: u8 = 0b1_0_01_0011;
+    pub const BITS_CATEGORY_ROCK: u8 = 0b0_0_00_0000;
+    pub const BITS_CATEGORY_PAPER: u8 = 0b0_0_01_0000;
+    pub const BITS_CATEGORY_SCISSORS: u8 = 0b0_0_10_0000;
+    pub const BITS_CATEGORY_JOKER: u8 = 0b0_0_11_0000;
 
-    pub const MS1: u8 = 0b1_0_10_0001;
-    pub const MS2: u8 = 0b1_0_10_0010;
-    pub const MS3: u8 = 0b1_0_10_0011;
+    pub const BITS_STRENGTH_0: u8 = 0b0_0_00_0000;
+    pub const BITS_STRENGTH_1: u8 = 0b0_0_00_0001;
+    pub const BITS_STRENGTH_2: u8 = 0b0_0_00_0010;
+    pub const BITS_STRENGTH_3: u8 = 0b0_0_00_0011;
+    pub const BITS_STRENGTH_4: u8 = 0b0_0_00_0100;
 
-    pub const MJ4: u8 = 0b1_0_11_0100;
+    // Monkey cards
+    pub const MR1: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_ROCK & BITS_STRENGTH_1;
+    pub const MR2: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_ROCK & BITS_STRENGTH_2;
+    pub const MR3: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_ROCK & BITS_STRENGTH_3;
+    pub const MP1: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_PAPER & BITS_STRENGTH_1;
+    pub const MP2: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_PAPER & BITS_STRENGTH_2;
+    pub const MP3: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_PAPER & BITS_STRENGTH_3;
+    pub const MS1: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_1;
+    pub const MS2: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_2;
+    pub const MS3: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_3;
+    pub const MJ3: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_JOKER & BITS_STRENGTH_4;
 
-    pub const WR1: u8 = 0b1_1_00_0001;
-    pub const WR2: u8 = 0b1_1_00_0010;
-    pub const WR3: u8 = 0b1_1_00_0011;
+    // Wolf cards
+    pub const WR1: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_ROCK & BITS_STRENGTH_1;
+    pub const WR2: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_ROCK & BITS_STRENGTH_2;
+    pub const WR3: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_ROCK & BITS_STRENGTH_3;
+    pub const WP1: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_PAPER & BITS_STRENGTH_1;
+    pub const WP2: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_PAPER & BITS_STRENGTH_2;
+    pub const WP3: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_PAPER & BITS_STRENGTH_3;
+    pub const WS1: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_1;
+    pub const WS2: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_2;
+    pub const WS3: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_3;
+    pub const WJ4: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_JOKER & BITS_STRENGTH_4;
 
-    pub const WP1: u8 = 0b1_1_01_0001;
-    pub const WP2: u8 = 0b1_1_01_0010;
-    pub const WP3: u8 = 0b1_1_01_0011;
-
-    pub const WS1: u8 = 0b1_1_10_0001;
-    pub const WS2: u8 = 0b1_1_10_0010;
-    pub const WS3: u8 = 0b1_1_10_0011;
-
-    pub const WJ4: u8 = 0b1_1_11_0100;
-
+    // Bits to use to extra certain fields
+    pub const CHECK_TEAM: u8 = 0b0_1_00_0000;
     pub const CHECK_CATEGORY: u8 = 0b0_0_11_0000;
     pub const CHECK_STRENGTH: u8 = 0b0_0_00_1111;
-    pub const NON_NULL_CHECK_TEAM: u8 = 0b1_1_00_0000;
-    pub const TEAM_MONKEY: u8 = 0b1_0_00_0000;
-    pub const TEAM_WOLF: u8 = 0b1_1_00_0000;
-
-    pub const NON_NULL: u8 = 0b1_0_00_0000;
-
-    pub const CATEGORY_ROCK: u8 = 0b0_0_00_0000;
-    pub const CATEGORY_PAPER: u8 = 0b0_0_01_0000;
-    pub const CATEGORY_SCISSORS: u8 = 0b0_0_10_0000;
-    pub const CATEGORY_JOKER: u8 = 0b0_0_11_0000;
-
-    pub const ZERO_STRENGTH: u8 = 0b1_1_11_0000;
 }
 
 pub struct BattleResult {
-    pub winning_team: u8,
+    // The winner of the battle. Either NULL, or one of the original two cards
+    pub winner: u8,
+
+    // The residual value of card_a. Either
+    // - NULL (dead)
+    // - card_a (won and card_a not a joker)
+    // - card_a with a lower strength (won but lost joker strength)
     pub card_a_residual: u8,
+
+    // The residual value of card_b. Either
+    // - NULL (dead)
+    // - card_b (won and card_a not a joker)
+    // - card_b with a lower strength (won but lost joker strength)
     pub card_b_residual: u8
 }
 
 pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
+    let card_a_team = card_a & cards::CHECK_TEAM;
+    let card_b_team = card_b & cards::CHECK_TEAM;
+
     let card_a_category = card_a & cards::CHECK_CATEGORY;
     let card_b_category = card_b & cards::CHECK_CATEGORY;
 
     let card_a_strength = card_a & cards::CHECK_STRENGTH;
     let card_b_strength = card_b & cards::CHECK_STRENGTH;
 
-    let card_a_team = card_a & cards::NON_NULL_CHECK_TEAM;
-    let card_b_team = card_b & cards::NON_NULL_CHECK_TEAM;
-
-    if card_a_category == cards::CATEGORY_JOKER {
+    if card_a_category == cards::BITS_CATEGORY_JOKER {
         // joker vs joker
-        if card_b_category == cards::CATEGORY_JOKER {
+        if card_b_category == cards::BITS_CATEGORY_JOKER {
             if card_a_strength > card_b_strength {
                 return BattleResult {
-                    winning_team: card_a_team,
-                    card_a_residual: cards::NON_NULL | card_a_team | card_a_category | (card_a_strength - card_b_strength),
+                    winner: card_a_team,
+                    card_a_residual: cards::BIT_NON_NULL | card_a_team | card_a_category | (card_a_strength - card_b_strength),
                     card_b_residual: cards::NULL
                 }
             } else if card_a_strength < card_b_strength {
                 return BattleResult {
-                    winning_team: card_b_team,
+                    winner: card_b_team,
                     card_a_residual: cards::NULL,
-                    card_b_residual: cards::NON_NULL | card_b_team | card_b_category | (card_b_strength - card_a_strength)
+                    card_b_residual: cards::BIT_NON_NULL | card_b_team | card_b_category | (card_b_strength - card_a_strength)
                 }
             } else {
                 return BattleResult {
-                    winning_team: cards::NULL,
-                    card_a_residual: card_a & cards::ZERO_STRENGTH,
-                    card_b_residual: card_b & cards::ZERO_STRENGTH
+                    winner: cards::NULL,
+                    card_a_residual: card_a & cards::BITS_STRENGTH_0,
+                    card_b_residual: card_b & cards::BITS_STRENGTH_0
                 }
             }
         }
-        // joker vs joker non-joker
+        // joker vs non-joker
         else {
             if card_a_strength > card_b_strength {
                 return BattleResult {
-                    winning_team: card_a_team,
-                    card_a_residual: cards::NON_NULL | card_a_team | card_a_category | (card_a_strength - card_b_strength),
+                    winner: card_a_team,
+                    card_a_residual: cards::BIT_NON_NULL | card_a_team | card_a_category | (card_a_strength - card_b_strength),
                     card_b_residual: cards::NULL
                 }
             } else if card_a_strength < card_b_strength {
                 return BattleResult {
-                    winning_team: card_b_team,
+                    winner: card_b_team,
                     card_a_residual: cards::NULL,
                     card_b_residual: card_b
                 }
             } else {
                 return BattleResult {
-                    winning_team: cards::NULL,
+                    winner: cards::NULL,
                     card_a_residual: card_a & cards::ZERO_STRENGTH,
                     card_b_residual: card_b
                 }
@@ -119,19 +135,19 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
         // non-joker vs joker
         if card_a_strength > card_b_strength {
             return BattleResult {
-                winning_team: card_a_team,
+                winner: card_a_team,
                 card_a_residual: card_a,
                 card_b_residual: cards::NULL
             }
         } else if card_a_strength < card_b_strength {
             return BattleResult {
-                winning_team: card_b_team,
+                winner: card_b_team,
                 card_a_residual: cards::NULL,
                 card_b_residual: cards::NON_NULL | card_b_team | card_b_category | (card_b_strength - card_a_strength)
             }
         } else {
             return BattleResult {
-                winning_team: cards::NULL,
+                winner: cards::NULL,
                 card_a_residual: card_a,
                 card_b_residual: card_b & cards::ZERO_STRENGTH
             }
@@ -142,13 +158,13 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
         let card_a_wins = (((card_a_category as i8) - (card_b_category as i8)) % 3) == 1;
         if card_a_wins {
             return BattleResult {
-                winning_team: card_a_team,
+                winner: card_a_team,
                 card_a_residual: card_a,
                 card_b_residual: cards::NULL
             }
         } else {
             return BattleResult {
-                winning_team: card_b_team,
+                winner: card_b_team,
                 card_a_residual: cards::NULL,
                 card_b_residual: card_b
             }
@@ -158,22 +174,38 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
         // same category; strength battle
         if card_a_strength > card_b_strength {
             return BattleResult {
-                winning_team: card_a_team,
+                winner: card_a_team,
                 card_a_residual: card_a,
                 card_b_residual: cards::NULL,
             }
         } else if card_a_strength < card_b_strength {
             return BattleResult {
-                winning_team: card_b_team,
+                winner: card_b_team,
                 card_a_residual: cards::NULL,
                 card_b_residual: card_b,
             }
         } else {
             return BattleResult {
-                winning_team: cards::NULL,
+                winner: cards::NULL,
                 card_a_residual: card_a,
                 card_b_residual: card_b,
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::board::card::{battle_winner, cards};
+
+    #[test]
+    fn test_rock_paper_scissors() {
+        let card_a = cards::MP1;
+        let card_b = cards::WS2;
+        let result = battle_winner(card_a, card_b);
+
+        assert_eq!(cards::TEAM_MONKEY, result.winner);
+        assert_eq!(cards::MP1, result.card_a_residual);
+        assert_eq!(cards::NULL, result.card_b_residual);
     }
 }

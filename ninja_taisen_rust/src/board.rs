@@ -326,14 +326,14 @@ impl Board {
             self.set_card(true, battle_index, monkey_pile, battle_result.card_a_residual);
             self.set_card(false, battle_index, wolf_pile, battle_result.card_b_residual);
 
-            match battle_result.winning_team {
+            match battle_result.winner {
                 cards::NULL => {
                     self.resolve_draw(is_monkey, battle_index, monkey_pile, wolf_pile, remaining_battles)
                 }
-                cards::TEAM_MONKEY => {
+                _monkey_card => {
                     self.set_height(false, battle_index, wolf_height - 1);
                 }
-                cards::TEAM_WOLF => {
+                _wolf_card => {
                     self.set_height(true, battle_index, monkey_height - 1);
                 }
                 _ => panic!("Unexpected winning_team")
