@@ -1,5 +1,3 @@
-use crate::board::card::cards::BIT_NON_NULL;
-
 // We represent each card as a byte, i.e. in the range 0-255
 // The encoding for each of the bits is as follows:
 // 0:        0=null, 1=non-null
@@ -29,28 +27,28 @@ pub mod cards {
     pub const BITS_STRENGTH_4: u8 = 0b0_0_00_0100;
 
     // Monkey cards
-    pub const MR1: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_ROCK & BITS_STRENGTH_1;
-    pub const MR2: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_ROCK & BITS_STRENGTH_2;
-    pub const MR3: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_ROCK & BITS_STRENGTH_3;
-    pub const MP1: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_PAPER & BITS_STRENGTH_1;
-    pub const MP2: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_PAPER & BITS_STRENGTH_2;
-    pub const MP3: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_PAPER & BITS_STRENGTH_3;
-    pub const MS1: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_1;
-    pub const MS2: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_2;
-    pub const MS3: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_3;
-    pub const MJ4: u8 = BIT_NON_NULL & BIT_TEAM_MONKEY & BITS_CATEGORY_JOKER & BITS_STRENGTH_4;
+    pub const MR1: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_ROCK | BITS_STRENGTH_1;
+    pub const MR2: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_ROCK | BITS_STRENGTH_2;
+    pub const MR3: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_ROCK | BITS_STRENGTH_3;
+    pub const MP1: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_PAPER | BITS_STRENGTH_1;
+    pub const MP2: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_PAPER | BITS_STRENGTH_2;
+    pub const MP3: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_PAPER | BITS_STRENGTH_3;
+    pub const MS1: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_SCISSORS | BITS_STRENGTH_1;
+    pub const MS2: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_SCISSORS | BITS_STRENGTH_2;
+    pub const MS3: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_SCISSORS | BITS_STRENGTH_3;
+    pub const MJ4: u8 = BIT_NON_NULL | BIT_TEAM_MONKEY | BITS_CATEGORY_JOKER | BITS_STRENGTH_4;
 
     // Wolf cards
-    pub const WR1: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_ROCK & BITS_STRENGTH_1;
-    pub const WR2: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_ROCK & BITS_STRENGTH_2;
-    pub const WR3: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_ROCK & BITS_STRENGTH_3;
-    pub const WP1: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_PAPER & BITS_STRENGTH_1;
-    pub const WP2: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_PAPER & BITS_STRENGTH_2;
-    pub const WP3: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_PAPER & BITS_STRENGTH_3;
-    pub const WS1: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_1;
-    pub const WS2: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_2;
-    pub const WS3: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_SCISSORS & BITS_STRENGTH_3;
-    pub const WJ4: u8 = BIT_NON_NULL & BIT_TEAM_WOLF & BITS_CATEGORY_JOKER & BITS_STRENGTH_4;
+    pub const WR1: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_ROCK | BITS_STRENGTH_1;
+    pub const WR2: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_ROCK | BITS_STRENGTH_2;
+    pub const WR3: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_ROCK | BITS_STRENGTH_3;
+    pub const WP1: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_PAPER | BITS_STRENGTH_1;
+    pub const WP2: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_PAPER | BITS_STRENGTH_2;
+    pub const WP3: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_PAPER | BITS_STRENGTH_3;
+    pub const WS1: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_SCISSORS | BITS_STRENGTH_1;
+    pub const WS2: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_SCISSORS | BITS_STRENGTH_2;
+    pub const WS3: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_SCISSORS | BITS_STRENGTH_3;
+    pub const WJ4: u8 = BIT_NON_NULL | BIT_TEAM_WOLF | BITS_CATEGORY_JOKER | BITS_STRENGTH_4;
 
     // Bits to use to extra certain fields
     pub const CHECK_TEAM: u8 = 0b0_1_00_0000;
@@ -103,8 +101,8 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
             } else {
                 return BattleResult {
                     winner: cards::NULL,
-                    card_a_residual: card_a & cards::BITS_STRENGTH_0,
-                    card_b_residual: card_b & cards::BITS_STRENGTH_0
+                    card_a_residual: cards::BIT_NON_NULL | card_a_team | card_a_category | cards::BITS_STRENGTH_0,
+                    card_b_residual: cards::BIT_NON_NULL | card_b_team | card_b_category | cards::BITS_STRENGTH_0
                 }
             }
         }
@@ -125,7 +123,7 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
             } else {
                 return BattleResult {
                     winner: cards::NULL,
-                    card_a_residual: card_a & cards::BITS_STRENGTH_0,
+                    card_a_residual: cards::BIT_NON_NULL | card_a_team | card_a_category | cards::BITS_STRENGTH_0,
                     card_b_residual: card_b
                 }
             }
@@ -149,7 +147,7 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
             return BattleResult {
                 winner: cards::NULL,
                 card_a_residual: card_a,
-                card_b_residual: card_b & cards::BITS_STRENGTH_0
+                card_b_residual: cards::BIT_NON_NULL | card_b_team | card_b_category | cards::BITS_STRENGTH_0
             }
         }
     }
@@ -200,7 +198,7 @@ mod tests {
     use crate::board::card::{battle_winner, cards};
 
     #[test]
-    fn test_rock_paper_scissors() {
+    fn test_rock_paper_scissors_1() {
         let card_a = cards::MP1;
         let card_b = cards::WS2;
         let result = battle_winner(card_a, card_b);
@@ -208,5 +206,64 @@ mod tests {
         assert_eq!(cards::MP1, result.winner);
         assert_eq!(cards::MP1, result.card_a_residual);
         assert_eq!(cards::NULL, result.card_b_residual);
+    }
+
+    #[test]
+    fn test_rock_paper_scissors_2() {
+        let card_a = cards::MR2;
+        let card_b = cards::WP3;
+        let result = battle_winner(card_a, card_b);
+
+        assert_eq!(card_b, result.winner);
+        assert_eq!(cards::NULL, result.card_a_residual);
+        assert_eq!(card_b, result.card_b_residual);
+    }
+
+    #[test]
+    fn test_strength_draw() {
+        let card_a = cards::MR2;
+        let card_b = cards::WR2;
+        let result = battle_winner(card_a, card_b);
+
+        assert_eq!(cards::NULL, result.winner);
+        assert_eq!(card_a, result.card_a_residual);
+        assert_eq!(card_b, result.card_b_residual);
+    }
+
+    #[test]
+    fn test_strength_win() {
+        let card_a = cards::MP3;
+        let card_b = cards::WP1;
+        let result = battle_winner(card_a, card_b);
+
+        assert_eq!(card_a, result.winner);
+        assert_eq!(card_a, result.card_a_residual);
+        assert_eq!(cards::NULL, result.card_b_residual);
+    }
+
+    #[test]
+    fn test_joker_non_joker() {
+        let card_a = cards::MJ4;
+        let result_1 = battle_winner(card_a, cards::WS3);
+
+        assert_eq!(card_a, result_1.winner);
+        assert_eq!(
+            cards::BIT_NON_NULL | cards::BIT_TEAM_MONKEY | cards::BITS_CATEGORY_JOKER | cards::BITS_STRENGTH_1,
+            result_1.card_a_residual
+        );
+        assert_eq!(cards::NULL, result_1.card_b_residual);
+
+        let result_2 = battle_winner(result_1.card_a_residual, cards::WP1);
+        assert_eq!(cards::NULL, result_2.winner);
+        assert_eq!(
+            cards::BIT_NON_NULL | cards::BIT_TEAM_MONKEY | cards::BITS_CATEGORY_JOKER | cards::BITS_STRENGTH_0,
+            result_2.card_a_residual
+        );
+        assert_eq!(cards::WP1, result_2.card_b_residual);
+
+        let result_3 = battle_winner(result_2.card_a_residual, cards::WJ4);
+        assert_eq!(cards::WJ4, result_3.winner);
+        assert_eq!(cards::NULL, result_3.card_a_residual);
+        assert_eq!(cards::WJ4, result_3.card_b_residual);
     }
 }
