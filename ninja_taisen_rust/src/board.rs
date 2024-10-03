@@ -4,7 +4,6 @@ use rand::prelude::SliceRandom;
 use rand::Rng;
 
 use crate::board::card::cards;
-use crate::board::card::cards::{BITS_CATEGORY_JOKER, CHECK_CATEGORY};
 
 pub struct Board {
     monkey_cards: [u8; 110],
@@ -51,7 +50,7 @@ pub struct CompletedMoves {
 
 impl CompletedMoves {
     pub fn used_joker(&self) -> bool {
-        self.moves.iter().any(|m| (m.card & CHECK_CATEGORY) == cards::BITS_CATEGORY_JOKER)
+        self.moves.iter().any(|m| (m.card & cards::CHECK_CATEGORY) == cards::BITS_CATEGORY_JOKER)
     }
 }
 
@@ -271,8 +270,8 @@ impl Board {
             for card_index_i32 in accessible_start..pile_height {
                 let card_index = card_index_i32 as usize;
                 let card = cards[pile_index * 10 + card_index];
-                let card_category = card & CHECK_CATEGORY;
-                if card_category == category || (card_category == BITS_CATEGORY_JOKER && !used_joker) {
+                let card_category = card & cards::CHECK_CATEGORY;
+                if card_category == category || (card_category == cards::BITS_CATEGORY_JOKER && !used_joker) {
                     card_locations.push(CardLocation{
                         pile_index: pile_index as u8,
                         card_index: card_index as u8
@@ -372,13 +371,13 @@ impl Board {
 
     fn restore_joker_strengths(&mut self) {
         for i in 0..self.monkey_cards.len() {
-            if (self.monkey_cards[i] & CHECK_CATEGORY) == BITS_CATEGORY_JOKER
+            if (self.monkey_cards[i] & cards::CHECK_CATEGORY) == cards::BITS_CATEGORY_JOKER
             {
                 self.monkey_cards[i] = cards::MJ4
             }
         }
         for i in 0..self.wolf_cards.len() {
-            if (self.wolf_cards[i] & CHECK_CATEGORY) == BITS_CATEGORY_JOKER
+            if (self.wolf_cards[i] & cards::CHECK_CATEGORY) == cards::BITS_CATEGORY_JOKER
             {
                 self.wolf_cards[i] = cards::WJ4
             }
