@@ -4,7 +4,7 @@ use rand::prelude::SliceRandom;
 use rand::Rng;
 
 use crate::board::card::cards;
-use crate::board::card::cards::{CATEGORY_JOKER, CHECK_CATEGORY};
+use crate::board::card::cards::{BITS_CATEGORY_JOKER, CHECK_CATEGORY};
 
 pub struct Board {
     monkey_cards: [u8; 110],
@@ -31,9 +31,9 @@ fn roll_dice(rng: &mut rand::rngs::StdRng) -> i8 {
 
 pub fn roll_dice_three_times(rng: &mut rand::rngs::StdRng) -> [DiceRoll; 3] {
     [
-        DiceRoll{category: cards::CATEGORY_ROCK, roll: roll_dice(rng)},
-        DiceRoll{category: cards::CATEGORY_PAPER, roll: roll_dice(rng)},
-        DiceRoll{category: cards::CATEGORY_SCISSORS, roll: roll_dice(rng)},
+        DiceRoll{category: cards::BITS_CATEGORY_ROCK, roll: roll_dice(rng)},
+        DiceRoll{category: cards::BITS_CATEGORY_PAPER, roll: roll_dice(rng)},
+        DiceRoll{category: cards::BITS_CATEGORY_SCISSORS, roll: roll_dice(rng)},
     ]
 }
 
@@ -51,7 +51,7 @@ pub struct CompletedMoves {
 
 impl CompletedMoves {
     pub fn used_joker(&self) -> bool {
-        self.moves.iter().any(|m| m.card & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER)
+        self.moves.iter().any(|m| (m.card & CHECK_CATEGORY) == cards::BITS_CATEGORY_JOKER)
     }
 }
 
@@ -120,7 +120,6 @@ impl Board {
             if remaining_battle.is_none() {
                 break;
             }
-
             self.resolve_battle(is_monkey, remaining_battle.unwrap(), &mut remaining_battles)
         }
 
@@ -151,10 +150,10 @@ impl Board {
     pub fn victorious_team(&self) -> u8 {
         if self.monkey_heights[10] > 0 {
             assert_eq!(self.wolf_heights[0], 0);
-            return cards::TEAM_MONKEY
+            return cards::BIT_NON_NULL | cards::BIT_TEAM_MONKEY
         }
         if self.wolf_heights[0] > 0 {
-            return cards::TEAM_WOLF
+            return cards::BIT_NON_NULL | cards::BIT_TEAM_WOLF
         }
 
         let monkey_alive = self.monkey_heights.iter().any(|&x| x > 0);
@@ -165,12 +164,12 @@ impl Board {
                 cards::NULL
             }
             else {
-                cards::TEAM_MONKEY
+                cards::BIT_NON_NULL | cards::BIT_TEAM_MONKEY
             }
         }
         else {
             if wolf_alive {
-                cards::TEAM_WOLF
+                cards::BIT_NON_NULL | cards::BIT_TEAM_WOLF
             }
             else {
                 cards::NULL
@@ -232,7 +231,7 @@ impl Board {
         let mut options = Vec::new();
 
         for initial_state in initial_states {
-            if initial_state.board.victorious_team() != 0 {
+            if initial_state.board.victorious_team() != cards::NULL {
                 continue
             }
 
@@ -273,7 +272,7 @@ impl Board {
                 let card_index = card_index_i32 as usize;
                 let card = cards[pile_index * 10 + card_index];
                 let card_category = card & CHECK_CATEGORY;
-                if card_category == category || (card_category == CATEGORY_JOKER && !used_joker) {
+                if card_category == category || (card_category == BITS_CATEGORY_JOKER && !used_joker) {
                     card_locations.push(CardLocation{
                         pile_index: pile_index as u8,
                         card_index: card_index as u8
@@ -316,27 +315,27 @@ impl Board {
                 break
             }
 
-            let monkey_pile = monkey_height - 1;
-            let wolf_pile = wolf_height - 1;
+            let monkey_card_index = monkey_height - 1;
+            let wolf_card_index = wolf_height - 1;
 
-            let monkey_card = self.get_card(true, battle_index, monkey_pile);
-            let wolf_card = self.get_card(false, battle_index, wolf_pile);
+            let monkey_card = self.get_card(true, battle_index, monkey_card_index);
+            let wolf_card = self.get_card(false, battle_index, wolf_card_index);
 
             let battle_result = card::battle_winner(monkey_card, wolf_card);
-            self.set_card(true, battle_index, monkey_pile, battle_result.card_a_residual);
-            self.set_card(false, battle_index, wolf_pile, battle_result.card_b_residual);
+            self.set_card(true, battle_index, monkey_card_index, battle_result.card_a_residual);
+            self.set_card(false, battle_index, wolf_card_index, battle_result.card_b_residual);
 
             match battle_result.winner {
                 cards::NULL => {
-                    self.resolve_draw(is_monkey, battle_index, monkey_pile, wolf_pile, remaining_battles)
+                    self.resolve_draw(is_monkey, battle_index, monkey_card_index, wolf_card_index, remaining_battles)
                 }
                 _monkey_card => {
-                    self.set_height(false, battle_index, wolf_height - 1);
+                    self.set_height(false, battle_index, wolf_height - 1)
                 }
                 _wolf_card => {
-                    self.set_height(true, battle_index, monkey_height - 1);
+                    self.set_height(true, battle_index, monkey_height - 1)
                 }
-                _ => panic!("Unexpected winning_team")
+                _ => panic!("Unexpected battle_result winner")
             }
         }
     }
@@ -373,13 +372,13 @@ impl Board {
 
     fn restore_joker_strengths(&mut self) {
         for i in 0..self.monkey_cards.len() {
-            if self.monkey_cards[i] & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER
+            if (self.monkey_cards[i] & CHECK_CATEGORY) == BITS_CATEGORY_JOKER
             {
                 self.monkey_cards[i] = cards::MJ4
             }
         }
         for i in 0..self.wolf_cards.len() {
-            if self.wolf_cards[i] & cards::CHECK_CATEGORY == cards::CATEGORY_JOKER
+            if (self.wolf_cards[i] & CHECK_CATEGORY) == BITS_CATEGORY_JOKER
             {
                 self.wolf_cards[i] = cards::WJ4
             }
