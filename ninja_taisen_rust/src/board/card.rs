@@ -90,13 +90,13 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
         if card_b_category == cards::BITS_CATEGORY_JOKER {
             if card_a_strength > card_b_strength {
                 return BattleResult {
-                    winner: card_a_team,
+                    winner: card_a,
                     card_a_residual: cards::BIT_NON_NULL | card_a_team | card_a_category | (card_a_strength - card_b_strength),
                     card_b_residual: cards::NULL
                 }
             } else if card_a_strength < card_b_strength {
                 return BattleResult {
-                    winner: card_b_team,
+                    winner: card_b,
                     card_a_residual: cards::NULL,
                     card_b_residual: cards::BIT_NON_NULL | card_b_team | card_b_category | (card_b_strength - card_a_strength)
                 }
@@ -112,30 +112,30 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
         else {
             if card_a_strength > card_b_strength {
                 return BattleResult {
-                    winner: card_a_team,
+                    winner: card_a,
                     card_a_residual: cards::BIT_NON_NULL | card_a_team | card_a_category | (card_a_strength - card_b_strength),
                     card_b_residual: cards::NULL
                 }
             } else if card_a_strength < card_b_strength {
                 return BattleResult {
-                    winner: card_b_team,
+                    winner: card_b,
                     card_a_residual: cards::NULL,
                     card_b_residual: card_b
                 }
             } else {
                 return BattleResult {
                     winner: cards::NULL,
-                    card_a_residual: card_a & cards::ZERO_STRENGTH,
+                    card_a_residual: card_a & cards::BITS_STRENGTH_0,
                     card_b_residual: card_b
                 }
             }
         }
     }
-    else if card_b_category == cards::CATEGORY_JOKER {
+    else if card_b_category == cards::BITS_CATEGORY_JOKER {
         // non-joker vs joker
         if card_a_strength > card_b_strength {
             return BattleResult {
-                winner: card_a_team,
+                winner: card_a,
                 card_a_residual: card_a,
                 card_b_residual: cards::NULL
             }
@@ -143,44 +143,45 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
             return BattleResult {
                 winner: card_b_team,
                 card_a_residual: cards::NULL,
-                card_b_residual: cards::NON_NULL | card_b_team | card_b_category | (card_b_strength - card_a_strength)
+                card_b_residual: cards::BIT_NON_NULL | card_b_team | card_b_category | (card_b_strength - card_a_strength)
             }
         } else {
             return BattleResult {
                 winner: cards::NULL,
                 card_a_residual: card_a,
-                card_b_residual: card_b & cards::ZERO_STRENGTH
+                card_b_residual: card_b & cards::BITS_STRENGTH_0
             }
         }
     }
     else if card_a_category != card_b_category {
-        // rock-paper-scissors battle. rock=0, paper=1, scissors=2
-        let card_a_wins = (((card_a_category as i8) - (card_b_category as i8)) % 3) == 1;
+        // rock-paper-scissors battle. Shift bits to the right, then we have rock=0, paper=1, scissors=2
+        let category_difference = ((card_a_category >> 4) as i8) - ((card_b_category >> 4) as i8);
+        let card_a_wins = (category_difference % 3) == 1;
         if card_a_wins {
             return BattleResult {
-                winner: card_a_team,
+                winner: card_a,
                 card_a_residual: card_a,
                 card_b_residual: cards::NULL
             }
         } else {
             return BattleResult {
-                winner: card_b_team,
+                winner: card_b,
                 card_a_residual: cards::NULL,
                 card_b_residual: card_b
             }
         }
     }
     else {
-        // same category; strength battle
+        // same category => strength battle
         if card_a_strength > card_b_strength {
             return BattleResult {
-                winner: card_a_team,
+                winner: card_a,
                 card_a_residual: card_a,
                 card_b_residual: cards::NULL,
             }
         } else if card_a_strength < card_b_strength {
             return BattleResult {
-                winner: card_b_team,
+                winner: card_b,
                 card_a_residual: cards::NULL,
                 card_b_residual: card_b,
             }
@@ -204,7 +205,7 @@ mod tests {
         let card_b = cards::WS2;
         let result = battle_winner(card_a, card_b);
 
-        assert_eq!(cards::TEAM_MONKEY, result.winner);
+        assert_eq!(cards::MP1, result.winner);
         assert_eq!(cards::MP1, result.card_a_residual);
         assert_eq!(cards::NULL, result.card_b_residual);
     }
