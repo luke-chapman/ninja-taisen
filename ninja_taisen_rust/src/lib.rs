@@ -1,5 +1,6 @@
 mod board;
 
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::Write;
 use chrono::Utc;
@@ -94,4 +95,40 @@ pub fn simulate(
     file.write(json.as_bytes()).expect("Unable to write data");
 
     results
+}
+
+#[derive(Serialize)]
+pub struct BoardDto {
+    monkey: BTreeMap<u8, Vec<String>>,
+    wolf: BTreeMap<u8, Vec<String>>
+}
+
+#[derive(Serialize)]
+pub struct DiceRollDto {
+    rock: i8,
+    paper: i8,
+    scissors: i8
+}
+
+#[derive(Serialize)]
+pub struct MoveDto {
+    dice_category: String,
+    card: String
+}
+
+#[derive(Serialize)]
+pub struct ExecuteRequest {
+    board: BoardDto,
+    dice: DiceRollDto,
+    team: String,
+    moves: Vec<MoveDto>
+}
+
+#[derive(Serialize)]
+pub struct ExecuteResponse {
+
+}
+
+pub fn execute_move(request: ExecuteRequest) -> ExecuteResponse {
+
 }
