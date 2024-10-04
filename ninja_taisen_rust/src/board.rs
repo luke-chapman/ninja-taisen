@@ -426,7 +426,7 @@ impl Board {
         }
     }
 
-    pub fn get_height(&self, is_monkey: bool, pile_index: u8) -> u8 {
+    fn get_height(&self, is_monkey: bool, pile_index: u8) -> u8 {
         if is_monkey {
             self.monkey_heights[pile_index as usize]
         }
@@ -435,7 +435,7 @@ impl Board {
         }
     }
 
-    pub fn set_height(&mut self, is_monkey: bool, pile_index: u8, height: u8) {
+    fn set_height(&mut self, is_monkey: bool, pile_index: u8, height: u8) {
         if is_monkey {
             self.monkey_heights[pile_index as usize] = height
         }
@@ -444,7 +444,7 @@ impl Board {
         }
     }
 
-    pub fn get_card(&self, is_monkey: bool, pile_index: u8, card_index: u8) -> u8 {
+    fn get_card(&self, is_monkey: bool, pile_index: u8, card_index: u8) -> u8 {
         let index = pile_index * 10 + card_index;
         if is_monkey {
             self.monkey_cards[index as usize]
@@ -454,7 +454,7 @@ impl Board {
         }
     }
 
-    pub fn set_card(&mut self, is_monkey: bool, pile_index: u8, card_index: u8, card: u8) {
+    fn set_card(&mut self, is_monkey: bool, pile_index: u8, card_index: u8, card: u8) {
         let index = pile_index * 10 + card_index;
         if is_monkey {
             self.monkey_cards[index as usize] = card
@@ -462,6 +462,18 @@ impl Board {
         else {
             self.wolf_cards[index as usize] = card
         }
+    }
+
+    pub fn locate_card(&self, is_monkey: bool, card: u8) -> CardLocation {
+        for pile_index in 0u8..11 {
+            for card_index in self.get_height(is_monkey, pile_index) {
+                if self.get_card(is_monkey, pile_index, card_index) == card {
+                    return CardLocation{pile_index, card_index}
+                }
+            }
+        }
+
+        panic!("Failed to find card {}", card);
     }
 }
 
