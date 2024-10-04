@@ -231,6 +231,17 @@ mod tests {
     }
 
     #[test]
+    fn test_rock_paper_scissors_4() {
+        let card_a = cards::MR2;
+        let card_b = cards::WS1;
+        let result = battle_winner(card_a, card_b);
+
+        assert_eq!(card_a, result.winner);
+        assert_eq!(card_a, result.card_a_residual);
+        assert_eq!(cards::NULL, result.card_b_residual);
+    }
+
+    #[test]
     fn test_strength_draw() {
         let card_a = cards::MR2;
         let card_b = cards::WR2;
@@ -242,7 +253,7 @@ mod tests {
     }
 
     #[test]
-    fn test_strength_win() {
+    fn test_strength_win_1() {
         let card_a = cards::MP3;
         let card_b = cards::WP1;
         let result = battle_winner(card_a, card_b);
