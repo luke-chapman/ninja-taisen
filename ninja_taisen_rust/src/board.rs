@@ -111,15 +111,18 @@ impl Board {
     }
 
     pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {
-        let mut remaining_battles: Vec<u8> = Vec::new();
+        let mut remaining_battles = Vec::new();
         self.move_card(is_monkey, dice_roll, pile_index, card_index, &mut remaining_battles);
 
         loop {
-            let remaining_battle = remaining_battles.pop();
-            if remaining_battle.is_none() {
+            let maybe_next_battle = remaining_battles.last();
+            if maybe_next_battle.is_none() {
                 break;
             }
-            self.resolve_battle(is_monkey, remaining_battle.unwrap(), &mut remaining_battles)
+
+            let next_battle = *maybe_next_battle.unwrap();
+            self.resolve_battle(is_monkey, next_battle, &mut remaining_battles);
+            remaining_battles.retain(|&x| x != next_battle);
         }
 
         // Restore jokers
@@ -420,5 +423,116 @@ impl Board {
         else {
             self.wolf_cards[index as usize] = card
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashSet;
+    use rand::prelude::StdRng;
+    use rand::SeedableRng;
+    use crate::board::Board;
+    use crate::board::card::cards;
+
+    #[test]
+    fn test_new_board() {
+        for seed in 42..45 {
+            let mut rnd = StdRng::seed_from_u64(seed);
+            let original = Board::new(&mut rnd);
+            let cloned = original.clone();
+
+            for board in [original, cloned] {
+                assert_eq!(board.monkey_heights, [4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0]);
+                assert_eq!(board.wolf_heights, [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
+                assert_eq!(board.monkey_cards[0], cards::MJ4);
+                assert_eq!(board.wolf_cards[100], cards::WJ4);
+                assert_eq!(board.monkey_cards.len(), 110);
+                assert_eq!(board.wolf_cards.len(), 110);
+
+                {
+                    let monkey_indices: [usize; 10] = [0, 1, 2, 3, 10, 11, 12, 20, 21, 30];
+                    let monkey_cards = [
+                        cards::MJ4,
+                        cards::MR1, cards::MR2, cards::MR3,
+                        cards::MP1, cards::MP2, cards::MP3,
+                        cards::MS1, cards::MS2, cards::MS3
+                    ];
+                    let mut seen_monkey_cards = HashSet::new();
+                    for i in 0..board.monkey_cards.len() {
+                        let card = board.monkey_cards[i];
+                        if monkey_indices.contains(&i) {
+                            assert_ne!(cards::NULL, card);
+                            assert!(monkey_cards.contains(&card));
+                            assert!(!seen_monkey_cards.contains(&card));
+                            seen_monkey_cards.insert(card);
+                        }
+                        else {
+                            assert_eq!(cards::NULL, board.monkey_cards[i]);
+                        }
+                    }
+                }
+
+                {
+                    let wolf_indices: [usize; 10] = [100, 101, 102, 103, 90, 91, 92, 80, 81, 70];
+                    let wolf_cards = [
+                        cards::WJ4,
+                        cards::WR1, cards::WR2, cards::WR3,
+                        cards::WP1, cards::WP2, cards::WP3,
+                        cards::WS1, cards::WS2, cards::WS3
+                    ];
+                    let mut seen_wolf_cards = HashSet::new();
+                    for i in 0..board.wolf_cards.len() {
+                        let card = board.wolf_cards[i];
+                        if wolf_indices.contains(&i) {
+                            assert_ne!(cards::NULL, card);
+                            assert!(wolf_cards.contains(&card));
+                            assert!(!seen_wolf_cards.contains(&card));
+                            seen_wolf_cards.insert(card);
+                        }
+                        else {
+                            assert_eq!(cards::NULL, board.wolf_cards[i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_complex_battle() {
+        let mut board = Board{
+            monkey_cards: [cards::NULL; 110],
+            wolf_cards: [cards::NULL; 110],
+            monkey_heights: [0, 1, 0, 0, 2, 3, 0, 0, 0, 0, 0],
+            wolf_heights: [0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 0],
+        };
+
+        board.set_card(true, 1, 0, cards::MS2);
+        board.set_card(true, 4, 0, cards::MP2);
+        board.set_card(true, 4, 1, cards::MJ4);
+        board.set_card(true, 5, 0, cards::MR2);
+        board.set_card(true, 5, 1, cards::MS1);
+        board.set_card(true, 5, 2, cards::MS3);
+
+        board.set_card(false, 6, 0, cards::WS1);
+        board.set_card(false, 6, 1, cards::WP1);
+        board.set_card(false, 7, 0, cards::WJ4);
+        board.set_card(false, 8, 0, cards::WR3);
+        board.set_card(false, 9, 0, cards::WP3);
+
+        board.move_card_and_resolve_battles(true, 2, 5, 0);
+
+        assert_eq!(board.monkey_heights, [0, 1, 0, 0, 2, 1, 0, 1, 0, 0, 0]);
+        assert_eq!(board.wolf_heights,   [0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0]);
+
+        assert_eq!(cards::MS2, board.get_card(true, 1, 0));
+        assert_eq!(cards::MP2, board.get_card(true, 4, 0));
+        assert_eq!(cards::MJ4, board.get_card(true, 4, 1));
+        assert_eq!(cards::MS1, board.get_card(true, 5, 0));
+        assert_eq!(cards::MR2, board.get_card(true, 7, 0));
+
+        assert_eq!(cards::WR3, board.get_card(false, 8, 0));
+        assert_eq!(cards::WJ4, board.get_card(false, 8, 1));
+        assert_eq!(cards::WP3, board.get_card(false, 9, 0));
     }
 }
