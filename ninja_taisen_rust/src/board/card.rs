@@ -220,6 +220,17 @@ mod tests {
     }
 
     #[test]
+    fn test_rock_paper_scissors_3() {
+        let card_a = cards::MS1;
+        let card_b = cards::WR1;
+        let result = battle_winner(card_a, card_b);
+
+        assert_eq!(card_b, result.winner);
+        assert_eq!(cards::NULL, result.card_a_residual);
+        assert_eq!(card_b, result.card_b_residual);
+    }
+
+    #[test]
     fn test_strength_draw() {
         let card_a = cards::MR2;
         let card_b = cards::WR2;
@@ -242,7 +253,7 @@ mod tests {
     }
 
     #[test]
-    fn test_joker_non_joker_1() {
+    fn test_joker_battles_1() {
         let card_a = cards::MJ4;
         let result_1 = battle_winner(card_a, cards::WS3);
 
@@ -268,16 +279,21 @@ mod tests {
     }
 
     #[test]
-    fn test_joker_non_joker_2() {
-        let result = battle_winner(cards::MJ4, cards::WJ4);
-        assert_eq!(cards::NULL, result.winner);
+    fn test_joker_battles_2() {
+        let result_a = battle_winner(cards::MJ4, cards::WJ4);
+        assert_eq!(cards::NULL, result_a.winner);
         assert_eq!(
             cards::BIT_NON_NULL | cards::BIT_TEAM_MONKEY | cards::BITS_CATEGORY_JOKER | cards::BITS_STRENGTH_0,
-            result.card_a_residual
+            result_a.card_a_residual
         );
         assert_eq!(
             cards::BIT_NON_NULL | cards::BIT_TEAM_WOLF | cards::BITS_CATEGORY_JOKER | cards::BITS_STRENGTH_0,
-            result.card_b_residual
+            result_a.card_b_residual
         );
+
+        let result_b = battle_winner(cards::MP1, result_a.card_b_residual);
+        assert_eq!(cards::MP1, result_b.winner);
+        assert_eq!(cards::MP1, result_b.card_a_residual);
+        assert_eq!(cards::NULL, result_b.card_b_residual);
     }
 }
