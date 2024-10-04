@@ -494,4 +494,42 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_complex_battle() {
+        let mut board = Board{
+            monkey_cards: [cards::NULL; 110],
+            wolf_cards: [cards::NULL; 110],
+            monkey_heights: [0, 1, 0, 0, 2, 3, 0, 0, 0, 0, 0],
+            wolf_heights: [0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 0],
+        };
+
+        board.set_card(true, 1, 0, cards::MS2);
+        board.set_card(true, 4, 0, cards::MP2);
+        board.set_card(true, 4, 1, cards::MJ4);
+        board.set_card(true, 5, 0, cards::MR2);
+        board.set_card(true, 5, 1, cards::MS1);
+        board.set_card(true, 5, 2, cards::MS3);
+
+        board.set_card(false, 6, 0, cards::WS1);
+        board.set_card(false, 6, 1, cards::WP1);
+        board.set_card(false, 7, 0, cards::WJ4);
+        board.set_card(false, 8, 0, cards::WR3);
+        board.set_card(false, 9, 0, cards::WP3);
+
+        board.move_card_and_resolve_battles(true, 2, 5, 0);
+
+        assert_eq!(board.monkey_heights, [0, 1, 0, 0, 2, 1, 0, 1, 0, 0, 0]);
+        assert_eq!(board.wolf_heights,   [0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0]);
+
+        assert_eq!(cards::MS2, board.get_card(true, 1, 0));
+        assert_eq!(cards::MP2, board.get_card(true, 4, 0));
+        assert_eq!(cards::MJ4, board.get_card(true, 4, 1));
+        assert_eq!(cards::MS1, board.get_card(true, 5, 0));
+        assert_eq!(cards::MR2, board.get_card(true, 7, 0));
+
+        assert_eq!(cards::WR3, board.get_card(false, 8, 0));
+        assert_eq!(cards::WJ4, board.get_card(false, 8, 1));
+        assert_eq!(cards::WP3, board.get_card(false, 9, 0));
+    }
 }
