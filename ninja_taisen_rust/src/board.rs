@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 use rand::prelude::SliceRandom;
 use rand::Rng;
 
-pub use crate::board::card::cards;
+pub use crate::board::card::*;
 pub use crate::board::dto::{ExecuteRequest, ExecuteResponse};
 use crate::board::dto::BoardDto;
 
@@ -17,8 +17,8 @@ pub struct Board {
 }
 
 pub struct CardLocation {
-    pile_index: u8,
-    card_index: u8
+    pub pile_index: u8,
+    pub card_index: u8
 }
 
 pub struct DiceRoll {

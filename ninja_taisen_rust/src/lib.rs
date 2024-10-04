@@ -104,9 +104,14 @@ pub fn execute_move(request: ExecuteRequest) -> ExecuteResponse {
 
     let mut board = Board::from_dto(&request.board);
     for a_move in request.moves {
-        let card = cards::from_string(a_move.card);
+        let card = board::cards::from_string(&a_move.card);
         let card_location = board.locate_card(is_monkey, card);
-        board.move_card_and_resolve_battles(is_monkey) // CONTINUE HERE
+        board.move_card_and_resolve_battles(
+            is_monkey,
+            0,
+            card_location.pile_index,
+            card_location.card_index
+        );
     }
     ExecuteResponse { board: board.to_dto() }
 }
