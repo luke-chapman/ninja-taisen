@@ -1,6 +1,7 @@
 mod card;
 mod dto;
 
+use std::collections::BTreeMap;
 use rand::prelude::SliceRandom;
 use rand::Rng;
 
@@ -122,12 +123,38 @@ impl Board {
         };
         for (pile_index, cards) in board_dto.monkey {
             for card_index in 0..cards.len() {
-                board.set_card(true, pile_index, card_index as u8, 0);
+                let card = cards::from_string(&cards[card_index]);
+                board.set_card(true, pile_index, card_index as u8, card);
             }
             board.set_height(true, pile_index, cards.len() as u8);
         }
-
         board
+    }
+
+    pub fn to_dto(&self) -> BoardDto {
+        let mut dto = BoardDto{monkey: BTreeMap::new(), wolf: BTreeMap::new()};
+
+        for pile_index in 0usize..11 {
+            if self.monkey_heights[pile_index] > 0 {
+                let mut card_strings = Vec::new();
+                for card_index in 0..self.monkey_heights[pile_index] {
+                    let card = self.get_card(true, pile_index as u8, card_index);
+                    card_strings.push(cards::to_string(card));
+                }
+                dto.monkey.insert(pile_index as u8, card_strings);
+            }
+
+            if self.wolf_heights[pile_index] > 0 {
+                let mut card_strings = Vec::new();
+                for card_index in 0..self.wolf_heights[pile_index] {
+                    let card = self.get_card(false, pile_index as u8, card_index);
+                    card_strings.push(cards::to_string(card));
+                }
+                dto.wolf.insert(pile_index as u8, card_strings);
+            }
+        }
+
+        dto
     }
 
     pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {

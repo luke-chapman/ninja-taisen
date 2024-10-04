@@ -55,7 +55,7 @@ pub mod cards {
     pub const CHECK_CATEGORY: u8 = 0b0_0_11_0000;
     pub const CHECK_STRENGTH: u8 = 0b0_0_00_1111;
 
-    pub fn from_string(card_string: String) -> u8 {
+    pub fn from_string(card_string: &String) -> u8 {
         if card_string.len() != 3 {
             panic!(format!("Invalid card_string {}, expected it to be length 3", card_string));
         }
