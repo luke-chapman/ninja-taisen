@@ -61,11 +61,12 @@ pub mod cards {
         }
 
         let mut card = BIT_NON_NULL;
-        match card_string[0] {
-            "M" => {
+        let card_chars = card_string.chars();
+        match card_chars[0] {
+            'M' => {
                 card |= BIT_TEAM_MONKEY;
             },
-            "W" => {
+            'W' => {
                 card |= BIT_TEAM_WOLF;
             }
             _ => {
@@ -73,17 +74,17 @@ pub mod cards {
             }
         }
 
-        match card_string[1] {
-            "R" => {
+        match card_chars[1] {
+            'R' => {
                 card |= BITS_CATEGORY_ROCK;
             }
-            "P" => {
+            'P' => {
                 card |= BITS_CATEGORY_PAPER;
             }
-            "S" => {
+            'S' => {
                 card |= BITS_CATEGORY_SCISSORS;
             }
-            "J" => {
+            'J' => {
                 card |= BITS_CATEGORY_JOKER;
             }
             _ => {
@@ -91,21 +92,24 @@ pub mod cards {
             }
         }
 
-        match card_string[2] {
-            "1" => {
+        match card_chars[2] {
+            '0' => {
+                card |= BITS_STRENGTH_0;
+            }
+            '1' => {
                 card |= BITS_STRENGTH_1;
             }
-            "2" => {
+            '2' => {
                 card |= BITS_STRENGTH_2;
             }
-            "3" => {
+            '3' => {
                 card |= BITS_STRENGTH_3;
             }
-            "4" => {
+            '4' => {
                 card |= BITS_STRENGTH_4;
             }
             _ => {
-                panic!(format!("Invalid card string {}, expected index 2 to be 0, 1, 2 or 3", card_string))
+                panic!(format!("Invalid card string {}, expected index 2 to be in [0,1,2,3,4]", card_string))
             }
         }
 
@@ -113,7 +117,60 @@ pub mod cards {
     }
 
     pub fn to_string(card_u8: u8) -> String {
+        let mut components: Vec<char> = Vec::new();
 
+        match card_u8 & CHECK_TEAM {
+            BIT_TEAM_MONKEY => {
+                components.push('M');
+            }
+            BIT_TEAM_WOLF => {
+                components.push('W');
+            }
+            _ => {
+                panic!(format!("Unexpected card {}, cannot determine team", card_u8));
+            }
+        }
+
+        match card_u8 & CHECK_CATEGORY {
+            BITS_CATEGORY_ROCK => {
+                components.push('R');
+            }
+            BITS_CATEGORY_PAPER => {
+                components.push('P');
+            }
+            BITS_CATEGORY_SCISSORS => {
+                components.push('S');
+            }
+            BITS_CATEGORY_JOKER => {
+                components.push('J');
+            }
+            _ => {
+                panic!(format!("Unexpected card {}, cannot determine category", card_u8));
+            }
+        }
+
+        match card_u8 & CHECK_STRENGTH {
+            BITS_STRENGTH_0 => {
+                components.push('0');
+            }
+            BITS_STRENGTH_1 => {
+                components.push('1');
+            }
+            BITS_STRENGTH_2 => {
+                components.push('2');
+            }
+            BITS_STRENGTH_3 => {
+                components.push('3');
+            }
+            BITS_STRENGTH_4 => {
+                components.push('4');
+            }
+            _ => {
+                panic!(format!("Unexpected card {}, cannot determine strength", card_u8))
+            }
+        }
+
+        String::from_iter(components)
     }
 }
 
