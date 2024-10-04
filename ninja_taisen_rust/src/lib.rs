@@ -1,5 +1,6 @@
 mod board;
 
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
 use chrono::Utc;
@@ -102,13 +103,19 @@ pub fn execute_move(request: ExecuteRequest) -> ExecuteResponse {
         else if request.team == "wolf" { false }
         else { panic!("Unexpected team {}", request.team) };
 
+    let mut dice_lookup = HashMap::new();
+    dice_lookup.insert(String::from("rock"), request.dice.rock);
+    dice_lookup.insert(String::from("paper"), request.dice.paper);
+    dice_lookup.insert(String::from("scissors"), request.dice.scissors);
+
     let mut board = Board::from_dto(&request.board);
     for a_move in request.moves {
         let card = board::cards::from_string(&a_move.card);
+        let dice_roll = dice_lookup.get(&a_move.dice_category);
         let card_location = board.locate_card(is_monkey, card);
         board.move_card_and_resolve_battles(
             is_monkey,
-            0,
+            *dice_roll.unwrap(),
             card_location.pile_index,
             card_location.card_index
         );
