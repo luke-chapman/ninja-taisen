@@ -152,21 +152,65 @@ pub fn battle_winner(card_a: u8, card_b: u8) -> BattleResult {
         }
     }
     else if card_a_category != card_b_category {
-        // rock-paper-scissors battle. Shift bits to the right, then we have rock=0, paper=1, scissors=2
-        let category_difference = ((card_a_category >> 4) as i8) - ((card_b_category >> 4) as i8);
-        let card_a_wins = (category_difference % 3) == 1;
-        if card_a_wins {
-            return BattleResult {
-                winner: card_a,
-                card_a_residual: card_a,
-                card_b_residual: cards::NULL
+        match card_a_category {
+            cards::BITS_CATEGORY_ROCK => {
+                match card_b_category {
+                    cards::BITS_CATEGORY_PAPER => {
+                        return BattleResult {
+                            winner: card_b,
+                            card_a_residual: cards::NULL,
+                            card_b_residual: card_b
+                        }
+                    }
+                    cards::BITS_CATEGORY_SCISSORS => {
+                        return BattleResult {
+                            winner: card_a,
+                            card_a_residual: card_a,
+                            card_b_residual: cards::NULL
+                        }
+                    }
+                    _ => panic!("Unexpected category")
+                }
             }
-        } else {
-            return BattleResult {
-                winner: card_b,
-                card_a_residual: cards::NULL,
-                card_b_residual: card_b
+            cards::BITS_CATEGORY_PAPER => {
+                match card_b_category {
+                    cards::BITS_CATEGORY_SCISSORS => {
+                        return BattleResult {
+                            winner: card_b,
+                            card_a_residual: cards::NULL,
+                            card_b_residual: card_b
+                        }
+                    }
+                    cards::BITS_CATEGORY_ROCK => {
+                        return BattleResult {
+                            winner: card_a,
+                            card_a_residual: card_a,
+                            card_b_residual: cards::NULL
+                        }
+                    }
+                    _ => panic!("Unexpected category")
+                }
             }
+            cards::BITS_CATEGORY_SCISSORS => {
+                match card_b_category {
+                    cards::BITS_CATEGORY_ROCK => {
+                        return BattleResult {
+                            winner: card_b,
+                            card_a_residual: cards::NULL,
+                            card_b_residual: card_b
+                        }
+                    }
+                    cards::BITS_CATEGORY_PAPER => {
+                        return BattleResult {
+                            winner: card_a,
+                            card_a_residual: card_a,
+                            card_b_residual: cards::NULL
+                        }
+                    }
+                    _ => panic!("Unexpected category")
+                }
+            }
+            _ => panic!("Unexpected category")
         }
     }
     else {
