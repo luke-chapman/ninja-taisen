@@ -128,6 +128,14 @@ impl Board {
             }
             board.set_height(true, pile_index, cards.len() as u8);
         }
+        ;
+        for (pile_index, cards) in board_dto.wolf {
+            for card_index in 0..cards.len() {
+                let card = cards::from_string(&cards[card_index]);
+                board.set_card(false, pile_index, card_index as u8, card);
+            }
+            board.set_height(false, pile_index, cards.len() as u8);
+        }
         board
     }
 
