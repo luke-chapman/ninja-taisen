@@ -54,6 +54,67 @@ pub mod cards {
     pub const CHECK_TEAM: u8 = 0b0_1_00_0000;
     pub const CHECK_CATEGORY: u8 = 0b0_0_11_0000;
     pub const CHECK_STRENGTH: u8 = 0b0_0_00_1111;
+
+    pub fn from_string(card_string: String) -> u8 {
+        if card_string.len() != 3 {
+            panic!(format!("Invalid card_string {}, expected it to be length 3", card_string));
+        }
+
+        let mut card = BIT_NON_NULL;
+        match card_string[0] {
+            "M" => {
+                card |= BIT_TEAM_MONKEY;
+            },
+            "W" => {
+                card |= BIT_TEAM_WOLF;
+            }
+            _ => {
+                panic!(format!("Invalid card_string {}, expected index 0 to be M or W", card_string));
+            }
+        }
+
+        match card_string[1] {
+            "R" => {
+                card |= BITS_CATEGORY_ROCK;
+            }
+            "P" => {
+                card |= BITS_CATEGORY_PAPER;
+            }
+            "S" => {
+                card |= BITS_CATEGORY_SCISSORS;
+            }
+            "J" => {
+                card |= BITS_CATEGORY_JOKER;
+            }
+            _ => {
+                panic!(format!("Invalid card string {}, expected index 1 to be R, P S or J", card_string))
+            }
+        }
+
+        match card_string[2] {
+            "1" => {
+                card |= BITS_STRENGTH_1;
+            }
+            "2" => {
+                card |= BITS_STRENGTH_2;
+            }
+            "3" => {
+                card |= BITS_STRENGTH_3;
+            }
+            "4" => {
+                card |= BITS_STRENGTH_4;
+            }
+            _ => {
+                panic!(format!("Invalid card string {}, expected index 2 to be 0, 1, 2 or 3", card_string))
+            }
+        }
+
+        card
+    }
+
+    pub fn to_string(card_u8: u8) -> String {
+
+    }
 }
 
 pub struct BattleResult {

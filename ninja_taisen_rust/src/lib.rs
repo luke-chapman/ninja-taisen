@@ -1,6 +1,5 @@
 mod board;
 
-use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::Write;
 use chrono::Utc;
@@ -8,7 +7,7 @@ use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use std::path::Path;
 use serde::Serialize;
-use crate::board::{roll_dice_three_times, Board};
+use crate::board::{roll_dice_three_times, Board, ExecuteRequest, ExecuteResponse};
 
 pub struct InstructionDto {
     pub id: u64,
@@ -97,38 +96,8 @@ pub fn simulate(
     results
 }
 
-#[derive(Serialize)]
-pub struct BoardDto {
-    monkey: BTreeMap<u8, Vec<String>>,
-    wolf: BTreeMap<u8, Vec<String>>
-}
-
-#[derive(Serialize)]
-pub struct DiceRollDto {
-    rock: i8,
-    paper: i8,
-    scissors: i8
-}
-
-#[derive(Serialize)]
-pub struct MoveDto {
-    dice_category: String,
-    card: String
-}
-
-#[derive(Serialize)]
-pub struct ExecuteRequest {
-    board: BoardDto,
-    dice: DiceRollDto,
-    team: String,
-    moves: Vec<MoveDto>
-}
-
-#[derive(Serialize)]
-pub struct ExecuteResponse {
-
-}
-
 pub fn execute_move(request: ExecuteRequest) -> ExecuteResponse {
 
+
+    return ExecuteResponse::new();
 }

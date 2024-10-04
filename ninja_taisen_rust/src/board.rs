@@ -1,13 +1,16 @@
 mod card;
+mod dto;
 
 use rand::prelude::SliceRandom;
 use rand::Rng;
 
-use crate::board::card::cards;
+pub use crate::board::card::cards;
+pub use crate::board::dto::{ExecuteRequest, ExecuteResponse};
+use crate::board::dto::BoardDto;
 
 pub struct Board {
-    monkey_cards: [u8; 110],
-    wolf_cards: [u8; 110],
+    pub monkey_cards: [u8; 110],
+    pub wolf_cards: [u8; 110],
     pub monkey_heights: [u8; 11],
     pub wolf_heights: [u8; 11]
 }
@@ -108,6 +111,23 @@ impl Board {
             wolf_cards: self.wolf_cards.clone(),
             wolf_heights: self.wolf_heights.clone()
         }
+    }
+
+    pub fn from_dto(board_dto: &BoardDto) -> Self {
+        let mut board = Board{
+            monkey_cards: [0; 110],
+            wolf_cards: [0; 110],
+            monkey_heights: [0; 11],
+            wolf_heights: [0; 11]
+        };
+        for (pile_index, cards) in board_dto.monkey {
+            for card_index in 0..cards.len() {
+                board.set_card(true, pile_index, card_index as u8, 0);
+            }
+            board.set_height(true, pile_index, cards.len() as u8);
+        }
+
+        board
     }
 
     pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {
@@ -371,7 +391,7 @@ impl Board {
         }
     }
 
-    fn get_height(&self, is_monkey: bool, pile_index: u8) -> u8 {
+    pub fn get_height(&self, is_monkey: bool, pile_index: u8) -> u8 {
         if is_monkey {
             self.monkey_heights[pile_index as usize]
         }
@@ -380,7 +400,7 @@ impl Board {
         }
     }
 
-    fn set_height(&mut self, is_monkey: bool, pile_index: u8, height: u8) {
+    pub fn set_height(&mut self, is_monkey: bool, pile_index: u8, height: u8) {
         if is_monkey {
             self.monkey_heights[pile_index as usize] = height
         }
@@ -389,7 +409,7 @@ impl Board {
         }
     }
 
-    fn get_card(&self, is_monkey: bool, pile_index: u8, card_index: u8) -> u8 {
+    pub fn get_card(&self, is_monkey: bool, pile_index: u8, card_index: u8) -> u8 {
         let index = pile_index * 10 + card_index;
         if is_monkey {
             self.monkey_cards[index as usize]
@@ -399,7 +419,7 @@ impl Board {
         }
     }
 
-    fn set_card(&mut self, is_monkey: bool, pile_index: u8, card_index: u8, card: u8) {
+    pub fn set_card(&mut self, is_monkey: bool, pile_index: u8, card_index: u8, card: u8) {
         let index = pile_index * 10 + card_index;
         if is_monkey {
             self.monkey_cards[index as usize] = card
