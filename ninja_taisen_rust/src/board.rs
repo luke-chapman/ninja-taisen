@@ -111,15 +111,18 @@ impl Board {
     }
 
     pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {
-        let mut remaining_battles: Vec<u8> = Vec::new();
+        let mut remaining_battles = Vec::new();
         self.move_card(is_monkey, dice_roll, pile_index, card_index, &mut remaining_battles);
 
         loop {
-            let remaining_battle = remaining_battles.pop();
-            if remaining_battle.is_none() {
+            let maybe_next_battle = remaining_battles.last();
+            if maybe_next_battle.is_none() {
                 break;
             }
-            self.resolve_battle(is_monkey, remaining_battle.unwrap(), &mut remaining_battles)
+
+            let next_battle = *maybe_next_battle.unwrap();
+            self.resolve_battle(is_monkey, next_battle, &mut remaining_battles);
+            remaining_battles.retain(|&x| x != next_battle);
         }
 
         // Restore jokers
