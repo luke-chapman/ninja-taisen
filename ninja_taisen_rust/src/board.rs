@@ -435,57 +435,60 @@ mod tests {
     fn test_new_board() {
         for seed in 42..45 {
             let mut rnd = StdRng::seed_from_u64(seed);
-            let board = Board::new(&mut rnd);
+            let original = Board::new(&mut rnd);
+            let cloned = original.clone();
 
-            assert_eq!(board.monkey_heights, [4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0]);
-            assert_eq!(board.wolf_heights, [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
-            assert_eq!(board.monkey_cards[0], cards::MJ4);
-            assert_eq!(board.wolf_cards[100], cards::WJ4);
-            assert_eq!(board.monkey_cards.len(), 110);
-            assert_eq!(board.wolf_cards.len(), 110);
+            for board in [original, cloned] {
+                assert_eq!(board.monkey_heights, [4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0]);
+                assert_eq!(board.wolf_heights, [0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
+                assert_eq!(board.monkey_cards[0], cards::MJ4);
+                assert_eq!(board.wolf_cards[100], cards::WJ4);
+                assert_eq!(board.monkey_cards.len(), 110);
+                assert_eq!(board.wolf_cards.len(), 110);
 
-            {
-                let monkey_indices: [usize; 10] = [0, 1, 2, 3, 10, 11, 12, 20, 21, 30];
-                let monkey_cards = [
-                    cards::MJ4,
-                    cards::MR1, cards::MR2, cards::MR3,
-                    cards::MP1, cards::MP2, cards::MP3,
-                    cards::MS1, cards::MS2, cards::MS3
-                ];
-                let mut seen_monkey_cards = HashSet::new();
-                for i in 0..board.monkey_cards.len() {
-                    let card = board.monkey_cards[i];
-                    if monkey_indices.contains(&i) {
-                        assert_ne!(cards::NULL, card);
-                        assert!(monkey_cards.contains(&card));
-                        assert!(!seen_monkey_cards.contains(&card));
-                        seen_monkey_cards.insert(card);
-                    }
-                    else {
-                        assert_eq!(cards::NULL, board.monkey_cards[i]);
+                {
+                    let monkey_indices: [usize; 10] = [0, 1, 2, 3, 10, 11, 12, 20, 21, 30];
+                    let monkey_cards = [
+                        cards::MJ4,
+                        cards::MR1, cards::MR2, cards::MR3,
+                        cards::MP1, cards::MP2, cards::MP3,
+                        cards::MS1, cards::MS2, cards::MS3
+                    ];
+                    let mut seen_monkey_cards = HashSet::new();
+                    for i in 0..board.monkey_cards.len() {
+                        let card = board.monkey_cards[i];
+                        if monkey_indices.contains(&i) {
+                            assert_ne!(cards::NULL, card);
+                            assert!(monkey_cards.contains(&card));
+                            assert!(!seen_monkey_cards.contains(&card));
+                            seen_monkey_cards.insert(card);
+                        }
+                        else {
+                            assert_eq!(cards::NULL, board.monkey_cards[i]);
+                        }
                     }
                 }
-            }
 
-            {
-                let wolf_indices: [usize; 10] = [100, 101, 102, 103, 90, 91, 92, 80, 81, 70];
-                let wolf_cards = [
-                    cards::WJ4,
-                    cards::WR1, cards::WR2, cards::WR3,
-                    cards::WP1, cards::WP2, cards::WP3,
-                    cards::WS1, cards::WS2, cards::WS3
-                ];
-                let mut seen_wolf_cards = HashSet::new();
-                for i in 0..board.wolf_cards.len() {
-                    let card = board.wolf_cards[i];
-                    if wolf_indices.contains(&i) {
-                        assert_ne!(cards::NULL, card);
-                        assert!(wolf_cards.contains(&card));
-                        assert!(!seen_wolf_cards.contains(&card));
-                        seen_wolf_cards.insert(card);
-                    }
-                    else {
-                        assert_eq!(cards::NULL, board.wolf_cards[i]);
+                {
+                    let wolf_indices: [usize; 10] = [100, 101, 102, 103, 90, 91, 92, 80, 81, 70];
+                    let wolf_cards = [
+                        cards::WJ4,
+                        cards::WR1, cards::WR2, cards::WR3,
+                        cards::WP1, cards::WP2, cards::WP3,
+                        cards::WS1, cards::WS2, cards::WS3
+                    ];
+                    let mut seen_wolf_cards = HashSet::new();
+                    for i in 0..board.wolf_cards.len() {
+                        let card = board.wolf_cards[i];
+                        if wolf_indices.contains(&i) {
+                            assert_ne!(cards::NULL, card);
+                            assert!(wolf_cards.contains(&card));
+                            assert!(!seen_wolf_cards.contains(&card));
+                            seen_wolf_cards.insert(card);
+                        }
+                        else {
+                            assert_eq!(cards::NULL, board.wolf_cards[i]);
+                        }
                     }
                 }
             }
