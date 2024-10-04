@@ -287,25 +287,9 @@ impl Board {
     }
 
     fn new_pile_index(is_monkey: bool, dice_roll: i8, pile_index: u8) -> u8 {
-        let unsnapped_index: Option<u8>;
-        if is_monkey {
-            if dice_roll >= 0 {
-                unsnapped_index = Some(pile_index + (dice_roll as u8));
-            }
-            else {
-                unsnapped_index = Some(pile_index - ((-dice_roll) as u8));
-            }
-        }
-        else {
-            if dice_roll >= 0 {
-                unsnapped_index = Some(pile_index - (dice_roll as u8));
-            }
-            else {
-                unsnapped_index = Some(pile_index + (-dice_roll as u8));
-            }
-        }
-
-        std::cmp::min(10, std::cmp::max(0, unsnapped_index.unwrap()))
+        let pile_index_i8 = pile_index as i8;
+        let unsnapped_index = if is_monkey { pile_index_i8 + dice_roll } else { pile_index_i8 - dice_roll };
+        std::cmp::min(10, std::cmp::max(0, unsnapped_index)) as u8
     }
 
     fn resolve_battle(&mut self, is_monkey: bool, battle_index: u8, remaining_battles: &mut Vec<u8>) {
