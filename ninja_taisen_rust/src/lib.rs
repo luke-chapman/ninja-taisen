@@ -132,7 +132,7 @@ mod tests {
     use std::path::Path;
     use tempfile::tempdir;
     use crate::{execute_move, simulate, ExecuteRequest, InstructionDto};
-    use crate::board::{BoardDto, ChooseRequest, ChooseResponse};
+    use crate::board::*;
 
     #[test]
     fn test_simulate_one() {

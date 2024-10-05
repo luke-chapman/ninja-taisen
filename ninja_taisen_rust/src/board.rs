@@ -6,7 +6,7 @@ use rand::prelude::SliceRandom;
 use rand::Rng;
 
 pub use crate::board::card::*;
-pub use crate::board::dto::{ExecuteRequest, ExecuteResponse, BoardDto};
+pub use crate::board::dto::*;
 
 pub struct Board {
     pub monkey_cards: [u8; 110],
