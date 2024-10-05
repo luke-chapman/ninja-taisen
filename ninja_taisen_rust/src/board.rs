@@ -121,7 +121,7 @@ impl Board {
             monkey_heights: [0; 11],
             wolf_heights: [0; 11]
         };
-        for (pile_index, cards) in board_dto.monkey {
+        for (&pile_index, cards) in board_dto.monkey.iter() {
             for card_index in 0..cards.len() {
                 let card = cards::from_string(&cards[card_index]);
                 board.set_card(true, pile_index, card_index as u8, card);
@@ -129,7 +129,7 @@ impl Board {
             board.set_height(true, pile_index, cards.len() as u8);
         }
         ;
-        for (pile_index, cards) in board_dto.wolf {
+        for (&pile_index, cards) in board_dto.wolf.iter() {
             for card_index in 0..cards.len() {
                 let card = cards::from_string(&cards[card_index]);
                 board.set_card(false, pile_index, card_index as u8, card);
@@ -466,7 +466,7 @@ impl Board {
 
     pub fn locate_card(&self, is_monkey: bool, card: u8) -> CardLocation {
         for pile_index in 0u8..11 {
-            for card_index in self.get_height(is_monkey, pile_index) {
+            for card_index in 0..self.get_height(is_monkey, pile_index) {
                 if self.get_card(is_monkey, pile_index, card_index) == card {
                     return CardLocation{pile_index, card_index}
                 }

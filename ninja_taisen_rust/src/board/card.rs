@@ -57,11 +57,11 @@ pub mod cards {
 
     pub fn from_string(card_string: &String) -> u8 {
         if card_string.len() != 3 {
-            panic!(format!("Invalid card_string {}, expected it to be length 3", card_string));
+            panic!("{}", format!("Invalid card_string {}, expected it to be length 3", card_string));
         }
 
         let mut card = BIT_NON_NULL;
-        let card_chars = card_string.chars();
+        let card_chars = Vec::from_iter(card_string.chars());
         match card_chars[0] {
             'M' => {
                 card |= BIT_TEAM_MONKEY;
@@ -70,7 +70,7 @@ pub mod cards {
                 card |= BIT_TEAM_WOLF;
             }
             _ => {
-                panic!(format!("Invalid card_string {}, expected index 0 to be M or W", card_string));
+                panic!("{}", format!("Invalid card_string {}, expected index 0 to be M or W", card_string));
             }
         }
 
@@ -88,7 +88,7 @@ pub mod cards {
                 card |= BITS_CATEGORY_JOKER;
             }
             _ => {
-                panic!(format!("Invalid card string {}, expected index 1 to be R, P S or J", card_string))
+                panic!("{}", format!("Invalid card string {}, expected index 1 to be R, P S or J", card_string))
             }
         }
 
@@ -109,7 +109,7 @@ pub mod cards {
                 card |= BITS_STRENGTH_4;
             }
             _ => {
-                panic!(format!("Invalid card string {}, expected index 2 to be in [0,1,2,3,4]", card_string))
+                panic!("{}", format!("Invalid card string {}, expected index 2 to be in [0,1,2,3,4]", card_string))
             }
         }
 
@@ -127,7 +127,7 @@ pub mod cards {
                 components.push('W');
             }
             _ => {
-                panic!(format!("Unexpected card {}, cannot determine team", card_u8));
+                panic!("{}", format!("Unexpected card {}, cannot determine team", card_u8));
             }
         }
 
@@ -145,7 +145,7 @@ pub mod cards {
                 components.push('J');
             }
             _ => {
-                panic!(format!("Unexpected card {}, cannot determine category", card_u8));
+                panic!("{}", format!("Unexpected card {}, cannot determine category", card_u8));
             }
         }
 
@@ -166,7 +166,7 @@ pub mod cards {
                 components.push('4');
             }
             _ => {
-                panic!(format!("Unexpected card {}, cannot determine strength", card_u8))
+                panic!("{}", format!("Unexpected card {}, cannot determine strength", card_u8))
             }
         }
 
