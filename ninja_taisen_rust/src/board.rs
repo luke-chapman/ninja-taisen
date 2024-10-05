@@ -160,12 +160,12 @@ impl Board {
         self.move_card(is_monkey, dice_roll, pile_index, card_index, &mut remaining_battles);
 
         loop {
-            let maybe_next_battle = remaining_battles.last();
-            if maybe_next_battle.is_none() {
+            let optional_next_battle = remaining_battles.last();
+            if optional_next_battle.is_none() {
                 break;
             }
 
-            let next_battle = *maybe_next_battle.unwrap();
+            let next_battle = *optional_next_battle.unwrap();
             self.resolve_battle(is_monkey, next_battle, &mut remaining_battles);
             remaining_battles.retain(|&x| x != next_battle);
         }
@@ -352,7 +352,7 @@ impl Board {
             let monkey_card = self.get_card(true, battle_index, monkey_card_index);
             let wolf_card = self.get_card(false, battle_index, wolf_card_index);
 
-            let battle_result = card::battle_winner(monkey_card, wolf_card);
+            let battle_result = battle_winner(monkey_card, wolf_card);
             self.set_card(true, battle_index, monkey_card_index, battle_result.card_a_residual);
             self.set_card(false, battle_index, wolf_card_index, battle_result.card_b_residual);
 
