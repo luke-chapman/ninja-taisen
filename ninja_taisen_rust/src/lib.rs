@@ -9,6 +9,7 @@ use rand::rngs::StdRng;
 use std::path::Path;
 use serde::Serialize;
 pub use crate::board::{roll_dice_three_times, Board, ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse, BoardDto};
+use crate::board::cards::{BIT_TEAM_MONKEY, BIT_TEAM_WOLF, CHECK_TEAM};
 
 pub struct InstructionDto {
     pub id: u64,
@@ -41,11 +42,12 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut rand::rngs::StdRng) -> R
 
     while turn_count < 100 {
         let victorious_team = board.victorious_team();
-        if victorious_team != 0 {
-            if victorious_team == 0b1_0_00_0000 {
+        if victorious_team != board::cards::NULL {
+            if (victorious_team & CHECK_TEAM) == BIT_TEAM_MONKEY {
                 winner = Some(String::from("monkey"));
             }
             else {
+                assert_eq!(victorious_team & CHECK_TEAM, BIT_TEAM_WOLF);
                 winner = Some(String::from("wolf"))
             }
             break;
@@ -53,14 +55,14 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut rand::rngs::StdRng) -> R
 
         let dice_rolls = roll_dice_three_times(rng);
         let permitted_moves = board.gather_all_moves(is_monkey, &dice_rolls);
-        if permitted_moves.is_empty() {
-            continue
-        }
 
-        let move_index = rng.gen_range(0..permitted_moves.len());
-        board = permitted_moves[move_index].board.clone();
-        is_monkey = !is_monkey;
         turn_count += 1;
+        is_monkey = !is_monkey;
+
+        if !permitted_moves.is_empty() {
+            let move_index = rng.gen_range(0..permitted_moves.len());
+            board = permitted_moves[move_index].board.clone();
+        }
     }
 
     ResultDto {

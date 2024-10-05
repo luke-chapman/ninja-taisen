@@ -28,7 +28,7 @@ fn test_simulate_one() {
 fn test_simulate_many() {
     let temp_dir = tempdir().expect("Failed to create temp dir");
     let mut instructions = Vec::new();
-    for i in 0..10 {
+    for i in 0..100 {
         instructions.push(InstructionDto{
             id: i,
             seed: i,

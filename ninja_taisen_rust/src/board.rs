@@ -213,7 +213,7 @@ impl Board {
         }
 
         let monkey_alive = self.monkey_heights.iter().any(|&x| x > 0);
-        let wolf_alive = self.monkey_heights.iter().any(|&x| x > 0);
+        let wolf_alive = self.wolf_heights.iter().any(|&x| x > 0);
 
         if monkey_alive {
             if wolf_alive {
