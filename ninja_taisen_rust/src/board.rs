@@ -1,20 +1,24 @@
 mod card;
+mod dto;
 
+use std::collections::BTreeMap;
 use rand::prelude::SliceRandom;
 use rand::Rng;
 
-use crate::board::card::cards;
+pub use crate::board::card::*;
+pub use crate::board::dto::*;
 
+#[derive(Clone, Debug, PartialEq)]
 pub struct Board {
-    monkey_cards: [u8; 110],
-    wolf_cards: [u8; 110],
+    pub monkey_cards: [u8; 110],
+    pub wolf_cards: [u8; 110],
     pub monkey_heights: [u8; 11],
     pub wolf_heights: [u8; 11]
 }
 
 pub struct CardLocation {
-    pile_index: u8,
-    card_index: u8
+    pub pile_index: u8,
+    pub card_index: u8
 }
 
 pub struct DiceRoll {
@@ -38,13 +42,13 @@ pub fn roll_dice_three_times(rng: &mut rand::rngs::StdRng) -> [DiceRoll; 3] {
 
 #[derive(Clone)]
 pub struct Move {
-    dice_category: u8,
-    dice_roll: i8,
-    card: u8
+    pub dice_category: u8,
+    pub dice_roll: i8,
+    pub card: u8
 }
 
 pub struct CompletedMoves {
-    moves: Vec<Move>,
+    pub moves: Vec<Move>,
     pub board: Board
 }
 
@@ -101,13 +105,54 @@ impl Board {
         }
     }
 
-    pub fn clone(&self) -> Self {
-        Self {
-            monkey_cards: self.monkey_cards.clone(),
-            monkey_heights: self.monkey_heights.clone(),
-            wolf_cards: self.wolf_cards.clone(),
-            wolf_heights: self.wolf_heights.clone()
+    pub fn from_dto(board_dto: &BoardDto) -> Self {
+        let mut board = Board{
+            monkey_cards: [0; 110],
+            wolf_cards: [0; 110],
+            monkey_heights: [0; 11],
+            wolf_heights: [0; 11]
+        };
+        for (&pile_index, cards) in board_dto.monkey.iter() {
+            for card_index in 0..cards.len() {
+                let card = cards::from_string(&cards[card_index]);
+                board.set_card(true, pile_index, card_index as u8, card);
+            }
+            board.set_height(true, pile_index, cards.len() as u8);
         }
+        for (&pile_index, cards) in board_dto.wolf.iter() {
+            for card_index in 0..cards.len() {
+                let card = cards::from_string(&cards[card_index]);
+                board.set_card(false, pile_index, card_index as u8, card);
+            }
+            board.set_height(false, pile_index, cards.len() as u8);
+        }
+        board
+    }
+
+    pub fn to_dto(&self) -> BoardDto {
+        let mut dto = BoardDto{monkey: BTreeMap::new(), wolf: BTreeMap::new()};
+
+        for pile_index in 0usize..11 {
+            if self.monkey_heights[pile_index] > 0 {
+                let mut card_strings = Vec::new();
+                for card_index in 0..self.monkey_heights[pile_index] {
+                    let card = self.get_card(true, pile_index as u8, card_index);
+                    card_strings.push(cards::to_string(card));
+                }
+                dto.monkey.insert(pile_index as u8, card_strings);
+            }
+
+            if self.wolf_heights[pile_index] > 0 {
+                let mut card_strings = Vec::new();
+                for card_index in 0..self.wolf_heights[pile_index] {
+                    let card = self.get_card(false, pile_index as u8, card_index);
+                    card_strings.push(cards::to_string(card));
+                }
+                dto.wolf.insert(pile_index as u8, card_strings);
+            }
+        }
+
+        dto
     }
 
     pub fn move_card_and_resolve_battles(&mut self, is_monkey: bool, dice_roll: i8, pile_index: u8, card_index: u8) {
@@ -115,12 +160,12 @@ impl Board {
         self.move_card(is_monkey, dice_roll, pile_index, card_index, &mut remaining_battles);
 
         loop {
-            let maybe_next_battle = remaining_battles.last();
-            if maybe_next_battle.is_none() {
+            let optional_next_battle = remaining_battles.last();
+            if optional_next_battle.is_none() {
                 break;
             }
 
-            let next_battle = *maybe_next_battle.unwrap();
+            let next_battle = *optional_next_battle.unwrap();
             self.resolve_battle(is_monkey, next_battle, &mut remaining_battles);
             remaining_battles.retain(|&x| x != next_battle);
         }
@@ -159,7 +204,7 @@ impl Board {
         }
 
         let monkey_alive = self.monkey_heights.iter().any(|&x| x > 0);
-        let wolf_alive = self.monkey_heights.iter().any(|&x| x > 0);
+        let wolf_alive = self.wolf_heights.iter().any(|&x| x > 0);
 
         if monkey_alive {
             if wolf_alive {
@@ -230,7 +275,7 @@ impl Board {
         dice_category: u8,
         dice_roll: i8
     ) -> Vec<CompletedMoves> {
-        let mut options = Vec::new();
+        let mut end_states = Vec::new();
 
         for initial_state in initial_states {
             if initial_state.board.victorious_team() != cards::NULL {
@@ -253,12 +298,12 @@ impl Board {
                 let mut moves = initial_state.moves.clone();
                 moves.push(Move{dice_category, dice_roll, card });
 
-                let new_state = CompletedMoves { moves, board };
-                options.push(new_state);
+                let end_state = CompletedMoves { moves, board };
+                end_states.push(end_state);
             }
         }
 
-        options
+        end_states
     }
 
     fn moveable_card_indices(&self, is_monkey: bool, category: u8, used_joker: bool) -> Vec<CardLocation> {
@@ -270,11 +315,11 @@ impl Board {
             let pile_height = heights[pile_index] as i8;
             let accessible_start = std::cmp::max(0, pile_height - 3);
 
-            for card_index_i32 in accessible_start..pile_height {
-                let card_index = card_index_i32 as usize;
+            for card_index_i8 in accessible_start..pile_height {
+                let card_index = card_index_i8 as usize;
                 let card = cards[pile_index * 10 + card_index];
                 let card_category = card & cards::CHECK_CATEGORY;
-                if card_category == category || (card_category == cards::BITS_CATEGORY_JOKER && !used_joker) {
+                if card_category == category || ((card_category == cards::BITS_CATEGORY_JOKER) && !used_joker) {
                     card_locations.push(CardLocation{
                         pile_index: pile_index as u8,
                         card_index: card_index as u8
@@ -307,7 +352,7 @@ impl Board {
             let monkey_card = self.get_card(true, battle_index, monkey_card_index);
             let wolf_card = self.get_card(false, battle_index, wolf_card_index);
 
-            let battle_result = card::battle_winner(monkey_card, wolf_card);
+            let battle_result = battle_winner(monkey_card, wolf_card);
             self.set_card(true, battle_index, monkey_card_index, battle_result.card_a_residual);
             self.set_card(false, battle_index, wolf_card_index, battle_result.card_b_residual);
 
@@ -408,6 +453,18 @@ impl Board {
             self.wolf_cards[index as usize] = card
         }
     }
+
+    pub fn locate_card(&self, is_monkey: bool, card: u8) -> CardLocation {
+        for pile_index in 0u8..11 {
+            for card_index in 0..self.get_height(is_monkey, pile_index) {
+                if self.get_card(is_monkey, pile_index, card_index) == card {
+                    return CardLocation{pile_index, card_index}
+                }
+            }
+        }
+
+        panic!("Failed to find card {}", card);
+    }
 }
 
 #[cfg(test)]
@@ -480,6 +537,19 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn test_dto_round_trip() {
+        let mut rng = StdRng::seed_from_u64(42);
+        let board_a = Board::new(&mut rng);
+        let board_dto_a = board_a.to_dto();
+
+        let board_b = Board::from_dto(&board_dto_a);
+        assert_eq!(board_a, board_b);
+
+        let board_dto_b = board_b.to_dto();
+        assert_eq!(board_dto_a, board_dto_b);
     }
 
     #[test]

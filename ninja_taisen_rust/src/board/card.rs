@@ -54,6 +54,124 @@ pub mod cards {
     pub const CHECK_TEAM: u8 = 0b0_1_00_0000;
     pub const CHECK_CATEGORY: u8 = 0b0_0_11_0000;
     pub const CHECK_STRENGTH: u8 = 0b0_0_00_1111;
+
+    pub fn from_string(card_string: &String) -> u8 {
+        if card_string.len() != 3 {
+            panic!("{}", format!("Invalid card_string {}, expected it to be length 3", card_string));
+        }
+
+        let mut card = BIT_NON_NULL;
+        let card_chars = Vec::from_iter(card_string.chars());
+        match card_chars[0] {
+            'M' => {
+                card |= BIT_TEAM_MONKEY;
+            },
+            'W' => {
+                card |= BIT_TEAM_WOLF;
+            }
+            _ => {
+                panic!("{}", format!("Invalid card_string {}, expected index 0 to be M or W", card_string));
+            }
+        }
+
+        match card_chars[1] {
+            'R' => {
+                card |= BITS_CATEGORY_ROCK;
+            }
+            'P' => {
+                card |= BITS_CATEGORY_PAPER;
+            }
+            'S' => {
+                card |= BITS_CATEGORY_SCISSORS;
+            }
+            'J' => {
+                card |= BITS_CATEGORY_JOKER;
+            }
+            _ => {
+                panic!("{}", format!("Invalid card string {}, expected index 1 to be R, P S or J", card_string))
+            }
+        }
+
+        match card_chars[2] {
+            '0' => {
+                card |= BITS_STRENGTH_0;
+            }
+            '1' => {
+                card |= BITS_STRENGTH_1;
+            }
+            '2' => {
+                card |= BITS_STRENGTH_2;
+            }
+            '3' => {
+                card |= BITS_STRENGTH_3;
+            }
+            '4' => {
+                card |= BITS_STRENGTH_4;
+            }
+            _ => {
+                panic!("{}", format!("Invalid card string {}, expected index 2 to be in [0,1,2,3,4]", card_string))
+            }
+        }
+
+        card
+    }
+
+    pub fn to_string(card_u8: u8) -> String {
+        let mut components: Vec<char> = Vec::new();
+
+        match card_u8 & CHECK_TEAM {
+            BIT_TEAM_MONKEY => {
+                components.push('M');
+            }
+            BIT_TEAM_WOLF => {
+                components.push('W');
+            }
+            _ => {
+                panic!("{}", format!("Unexpected card {}, cannot determine team", card_u8));
+            }
+        }
+
+        match card_u8 & CHECK_CATEGORY {
+            BITS_CATEGORY_ROCK => {
+                components.push('R');
+            }
+            BITS_CATEGORY_PAPER => {
+                components.push('P');
+            }
+            BITS_CATEGORY_SCISSORS => {
+                components.push('S');
+            }
+            BITS_CATEGORY_JOKER => {
+                components.push('J');
+            }
+            _ => {
+                panic!("{}", format!("Unexpected card {}, cannot determine category", card_u8));
+            }
+        }
+
+        match card_u8 & CHECK_STRENGTH {
+            BITS_STRENGTH_0 => {
+                components.push('0');
+            }
+            BITS_STRENGTH_1 => {
+                components.push('1');
+            }
+            BITS_STRENGTH_2 => {
+                components.push('2');
+            }
+            BITS_STRENGTH_3 => {
+                components.push('3');
+            }
+            BITS_STRENGTH_4 => {
+                components.push('4');
+            }
+            _ => {
+                panic!("{}", format!("Unexpected card {}, cannot determine strength", card_u8))
+            }
+        }
+
+        String::from_iter(components)
+    }
 }
 
 pub struct BattleResult {
