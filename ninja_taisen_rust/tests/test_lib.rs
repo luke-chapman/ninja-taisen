@@ -42,7 +42,7 @@ fn test_simulate_many() {
 }
 
 #[test]
-fn test_execute_move() {
+fn test_execute_move_agrees_with_python() {
     let this_file = Path::new(file!()).canonicalize().unwrap();
     let json_root = this_file
         .parent().unwrap()
