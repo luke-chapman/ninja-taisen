@@ -275,7 +275,7 @@ impl Board {
         dice_category: u8,
         dice_roll: i8
     ) -> Vec<CompletedMoves> {
-        let mut options = Vec::new();
+        let mut end_states = Vec::new();
 
         for initial_state in initial_states {
             if initial_state.board.victorious_team() != cards::NULL {
@@ -298,12 +298,12 @@ impl Board {
                 let mut moves = initial_state.moves.clone();
                 moves.push(Move{dice_category, dice_roll, card });
 
-                let new_state = CompletedMoves { moves, board };
-                options.push(new_state);
+                let end_state = CompletedMoves { moves, board };
+                end_states.push(end_state);
             }
         }
 
-        options
+        end_states
     }
 
     fn moveable_card_indices(&self, is_monkey: bool, category: u8, used_joker: bool) -> Vec<CardLocation> {
@@ -315,11 +315,11 @@ impl Board {
             let pile_height = heights[pile_index] as i8;
             let accessible_start = std::cmp::max(0, pile_height - 3);
 
-            for card_index_i32 in accessible_start..pile_height {
-                let card_index = card_index_i32 as usize;
+            for card_index_i8 in accessible_start..pile_height {
+                let card_index = card_index_i8 as usize;
                 let card = cards[pile_index * 10 + card_index];
                 let card_category = card & cards::CHECK_CATEGORY;
-                if card_category == category || (card_category == cards::BITS_CATEGORY_JOKER && !used_joker) {
+                if card_category == category || ((card_category == cards::BITS_CATEGORY_JOKER) && !used_joker) {
                     card_locations.push(CardLocation{
                         pile_index: pile_index as u8,
                         card_index: card_index as u8
