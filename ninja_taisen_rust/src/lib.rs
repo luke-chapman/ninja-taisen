@@ -97,7 +97,7 @@ pub fn simulate(
     results
 }
 
-pub fn execute_move(request: ExecuteRequest) -> ExecuteResponse {
+pub fn execute_move(request: &ExecuteRequest) -> ExecuteResponse {
     let is_monkey =
         if request.team == "monkey" { true }
         else if request.team == "wolf" { false }
@@ -109,7 +109,7 @@ pub fn execute_move(request: ExecuteRequest) -> ExecuteResponse {
     dice_lookup.insert(String::from("scissors"), request.dice.scissors);
 
     let mut board = Board::from_dto(&request.board);
-    for a_move in request.moves {
+    for a_move in &request.moves {
         let card = board::cards::from_string(&a_move.card);
         let dice_roll = dice_lookup.get(&a_move.dice_category);
         let card_location = board.locate_card(is_monkey, card);

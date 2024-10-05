@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use tempfile::tempdir;
-use ninja_taisen_rust::{InstructionDto, simulate, ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse};
+use ninja_taisen_rust::{InstructionDto, simulate, ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse, execute_move};
 
 #[test]
 fn test_simulate_one() {
@@ -47,11 +47,38 @@ fn test_execute_move() {
     let json_dir = this_file
         .parent().unwrap()
         .parent().unwrap()
+        .parent().unwrap()
         .join(Path::new("tests/regression/turn_by_turn/random_vs_random"));
 
-    let request_0_filename = json_dir.join("request_0.json");
     let mut request_0_string = String::new();
-    File::open(&request_0_filename).unwrap().read_to_string(&mut request_0_string).unwrap();
+    File::open(json_dir.join("request_0.json"))
+        .unwrap()
+        .read_to_string(&mut request_0_string)
+        .unwrap();
     let request_0: ChooseRequest = serde_json::from_str(&request_0_string).unwrap();
-    assert_eq!(request_0.dice.scissors, 2);
+
+    let mut response_0_string = String::new();
+    File::open(json_dir.join("response_0.json"))
+        .unwrap()
+        .read_to_string(&mut response_0_string)
+        .unwrap();
+    let response_0: ChooseResponse = serde_json::from_str(&response_0_string).unwrap();
+
+    let execute_request = ExecuteRequest{
+        board: request_0.board,
+        dice: request_0.dice,
+        team: request_0.team,
+        moves: response_0.moves
+    };
+
+    let execute_response = execute_move(&execute_request);
+
+    let mut request_1_string = String::new();
+    File::open(json_dir.join("request_1.json"))
+        .unwrap()
+        .read_to_string(&mut request_1_string)
+        .unwrap();
+    let request_1: ChooseRequest = serde_json::from_str(&request_1_string).unwrap();
+
+    assert_eq!(request_1.board.monkey[&0][0], execute_response.board.monkey[&0][0]);
 }
