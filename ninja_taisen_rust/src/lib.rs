@@ -8,7 +8,7 @@ use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use std::path::Path;
 use serde::Serialize;
-use crate::board::{roll_dice_three_times, Board, ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse, BoardDto};
+use crate::board::{roll_dice_three_times, Board, ExecuteRequest, ExecuteResponse};
 use crate::board::cards::{BIT_TEAM_MONKEY, BIT_TEAM_WOLF, CHECK_TEAM};
 
 pub struct InstructionDto {
@@ -131,7 +131,8 @@ mod tests {
     use std::io::Read;
     use std::path::Path;
     use tempfile::tempdir;
-    use crate::{execute_move, simulate, BoardDto, ChooseRequest, ChooseResponse, ExecuteRequest, InstructionDto};
+    use crate::{execute_move, simulate, ExecuteRequest, InstructionDto};
+    use crate::board::{BoardDto, ChooseRequest, ChooseResponse};
 
     #[test]
     fn test_simulate_one() {
