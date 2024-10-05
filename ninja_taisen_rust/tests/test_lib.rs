@@ -1,8 +1,8 @@
-use std::fs::File;
+use std::fs::{File,read_dir};
 use std::io::Read;
 use std::path::Path;
 use tempfile::tempdir;
-use ninja_taisen_rust::{InstructionDto, simulate, ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse, execute_move};
+use ninja_taisen_rust::{InstructionDto, simulate, BoardDto, ChooseRequest, ChooseResponse, ExecuteRequest, execute_move};
 
 #[test]
 fn test_simulate_one() {
@@ -44,41 +44,81 @@ fn test_simulate_many() {
 #[test]
 fn test_execute_move() {
     let this_file = Path::new(file!()).canonicalize().unwrap();
-    let json_dir = this_file
+    let json_root = this_file
         .parent().unwrap()
         .parent().unwrap()
         .parent().unwrap()
-        .join(Path::new("tests/regression/turn_by_turn/random_vs_random"));
+        .join(Path::new("tests/regression/turn_by_turn"));
 
-    let mut request_0_string = String::new();
-    File::open(json_dir.join("request_0.json"))
-        .unwrap()
-        .read_to_string(&mut request_0_string)
-        .unwrap();
-    let request_0: ChooseRequest = serde_json::from_str(&request_0_string).unwrap();
+    let mut pass_count = 0;
+    let mut fail_count = 0;
 
-    let mut response_0_string = String::new();
-    File::open(json_dir.join("response_0.json"))
+    for json_dir_wrap in read_dir(&json_root).unwrap() {
+        let json_dir = json_dir_wrap.unwrap();
+        if !json_dir.file_type().unwrap().is_dir() {
+            continue
+        }
+
+        for item_wrap in read_dir(&json_dir.path()).unwrap() {
+            let filename = item_wrap.unwrap().file_name();
+            let filename_str = filename.to_str().unwrap();
+            if filename_str.starts_with("request_") && filename_str.ends_with(".json") {
+                let index_str = filename_str.replace("request_", "").replace(".json", "");
+                let index: u8 = index_str.parse().unwrap();
+                let pass = assert_execute_response(&json_dir.path(), index);
+                if pass {
+                    pass_count += 1;
+                } else {
+                    fail_count += 1;
+                }
+            }
+        }
+    }
+
+    assert_eq!(fail_count, 0);
+    assert_ne!(pass_count, 0);
+}
+
+fn assert_execute_response(json_dir: &Path, turn_index: u8) -> bool {
+    let mut request_string = String::new();
+    File::open(json_dir.join(format!("request_{}.json", turn_index)))
         .unwrap()
-        .read_to_string(&mut response_0_string)
+        .read_to_string(&mut request_string)
         .unwrap();
-    let response_0: ChooseResponse = serde_json::from_str(&response_0_string).unwrap();
+    let request: ChooseRequest = serde_json::from_str(&request_string).unwrap();
+
+    let mut response_string = String::new();
+    File::open(json_dir.join(format!("response_{}.json", turn_index)))
+        .unwrap()
+        .read_to_string(&mut response_string)
+        .unwrap();
+    let response: ChooseResponse = serde_json::from_str(&response_string).unwrap();
 
     let execute_request = ExecuteRequest{
-        board: request_0.board,
-        dice: request_0.dice,
-        team: request_0.team,
-        moves: response_0.moves
+        board: request.board,
+        dice: request.dice,
+        team: request.team,
+        moves: response.moves
     };
-
     let execute_response = execute_move(&execute_request);
 
-    let mut request_1_string = String::new();
-    File::open(json_dir.join("request_1.json"))
-        .unwrap()
-        .read_to_string(&mut request_1_string)
-        .unwrap();
-    let request_1: ChooseRequest = serde_json::from_str(&request_1_string).unwrap();
-
-    assert_eq!(request_1.board.monkey[&0][0], execute_response.board.monkey[&0][0]);
+    let next_request_filename = json_dir.join(format!("request_{}.json", turn_index + 1));
+    if next_request_filename.exists() {
+        let mut next_request_string = String::new();
+        File::open(next_request_filename)
+            .unwrap()
+            .read_to_string(&mut next_request_string)
+            .unwrap();
+        let next_request: ChooseRequest = serde_json::from_str(&next_request_string).unwrap();
+        return next_request.board == execute_response.board
+    }
+    else {
+        let mut board_string = String::new();
+        File::open(json_dir.join("final_board.json"))
+            .unwrap()
+            .read_to_string(&mut board_string)
+            .unwrap();
+        let expected_board: BoardDto = serde_json::from_str(&board_string).unwrap();
+        return expected_board == execute_response.board
+    }
 }

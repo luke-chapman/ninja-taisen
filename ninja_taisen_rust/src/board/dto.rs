@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 pub struct BoardDto {
     pub monkey: BTreeMap<u8, Vec<String>>,
     pub wolf: BTreeMap<u8, Vec<String>>

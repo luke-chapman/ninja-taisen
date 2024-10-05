@@ -8,7 +8,7 @@ use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use std::path::Path;
 use serde::Serialize;
-pub use crate::board::{roll_dice_three_times, Board, ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse};
+pub use crate::board::{roll_dice_three_times, Board, ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse, BoardDto};
 
 pub struct InstructionDto {
     pub id: u64,
