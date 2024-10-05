@@ -8,6 +8,7 @@ use rand::Rng;
 pub use crate::board::card::*;
 pub use crate::board::dto::*;
 
+#[derive(Clone, Debug, PartialEq)]
 pub struct Board {
     pub monkey_cards: [u8; 110],
     pub wolf_cards: [u8; 110],
@@ -41,13 +42,13 @@ pub fn roll_dice_three_times(rng: &mut rand::rngs::StdRng) -> [DiceRoll; 3] {
 
 #[derive(Clone)]
 pub struct Move {
-    dice_category: u8,
-    dice_roll: i8,
-    card: u8
+    pub dice_category: u8,
+    pub dice_roll: i8,
+    pub card: u8
 }
 
 pub struct CompletedMoves {
-    moves: Vec<Move>,
+    pub moves: Vec<Move>,
     pub board: Board
 }
 
@@ -104,15 +105,6 @@ impl Board {
         }
     }
 
-    pub fn clone(&self) -> Self {
-        Self {
-            monkey_cards: self.monkey_cards.clone(),
-            monkey_heights: self.monkey_heights.clone(),
-            wolf_cards: self.wolf_cards.clone(),
-            wolf_heights: self.wolf_heights.clone()
-        }
-    }
-
     pub fn from_dto(board_dto: &BoardDto) -> Self {
         let mut board = Board{
             monkey_cards: [0; 110],
@@ -127,7 +119,6 @@ impl Board {
             }
             board.set_height(true, pile_index, cards.len() as u8);
         }
-        ;
         for (&pile_index, cards) in board_dto.wolf.iter() {
             for card_index in 0..cards.len() {
                 let card = cards::from_string(&cards[card_index]);
@@ -546,6 +537,19 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn test_dto_round_trip() {
+        let mut rng = StdRng::seed_from_u64(42);
+        let board_a = Board::new(&mut rng);
+        let board_dto_a = board_a.to_dto();
+
+        let board_b = Board::from_dto(&board_dto_a);
+        assert_eq!(board_a, board_b);
+
+        let board_dto_b = board_b.to_dto();
+        assert_eq!(board_dto_a, board_dto_b);
     }
 
     #[test]

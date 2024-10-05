@@ -33,7 +33,7 @@ pub struct ResultDto {
     pub process_name: String,
 }
 
-fn simulate_one(instruction: &InstructionDto, rng: &mut rand::rngs::StdRng) -> ResultDto {
+fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
     let mut board = Board::new(rng);
     let mut is_monkey = true;
     let mut turn_count: u8 = 0;
@@ -240,7 +240,7 @@ mod tests {
                 .read_to_string(&mut next_request_string)
                 .unwrap();
             let next_request: ChooseRequest = serde_json::from_str(&next_request_string).unwrap();
-            return next_request.board == execute_response.board
+            next_request.board == execute_response.board
         }
         else {
             let mut board_string = String::new();
@@ -249,7 +249,7 @@ mod tests {
                 .read_to_string(&mut board_string)
                 .unwrap();
             let expected_board: BoardDto = serde_json::from_str(&board_string).unwrap();
-            return expected_board == execute_response.board
+            expected_board == execute_response.board
         }
     }
 }
