@@ -1,5 +1,8 @@
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
 use tempfile::tempdir;
-use ninja_taisen_rust::{InstructionDto, simulate};
+use ninja_taisen_rust::{InstructionDto, simulate, ChooseRequest, ChooseResponse, ExecuteRequest, ExecuteResponse};
 
 #[test]
 fn test_simulate_one() {
@@ -36,4 +39,19 @@ fn test_simulate_many() {
 
     let results = simulate(&instructions, temp_dir.path());
     assert_eq!(results.len(), instructions.len());
+}
+
+#[test]
+fn test_execute_move() {
+    let this_file = Path::new(file!()).canonicalize().unwrap();
+    let json_dir = this_file
+        .parent().unwrap()
+        .parent().unwrap()
+        .join(Path::new("tests/regression/turn_by_turn/random_vs_random"));
+
+    let request_0_filename = json_dir.join("request_0.json");
+    let mut request_0_string = String::new();
+    File::open(&request_0_filename).unwrap().read_to_string(&mut request_0_string).unwrap();
+    let request_0: ChooseRequest = serde_json::from_str(&request_0_string).unwrap();
+    assert_eq!(request_0.dice.scissors, 2);
 }
