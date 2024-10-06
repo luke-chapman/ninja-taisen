@@ -1,4 +1,9 @@
 mod board;
+mod dto;
+mod battle;
+mod card;
+mod dice;
+mod move_gatherer;
 
 use std::collections::HashMap;
 use std::fs::File;
@@ -7,31 +12,11 @@ use chrono::Utc;
 use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use std::path::Path;
-use serde::Serialize;
-use crate::board::{roll_dice_three_times, Board, ExecuteRequest, ExecuteResponse};
-use crate::board::cards::{BIT_TEAM_MONKEY, BIT_TEAM_WOLF, CHECK_TEAM};
-
-pub struct InstructionDto {
-    pub id: u64,
-    pub seed: u64,
-    pub monkey_strategy: String,
-    pub wolf_strategy: String,
-}
-
-#[derive(Serialize)]
-pub struct ResultDto {
-    pub id: u64,
-    pub seed: u64,
-    pub monkey_strategy: String,
-    pub wolf_strategy: String,
-    pub winner: String,
-    pub turn_count: u8,
-    pub monkey_cards_left: u8,
-    pub wolf_cards_left: u8,
-    pub start_time: String,
-    pub end_time: String,
-    pub process_name: String,
-}
+use crate::board::*;
+use crate::card::cards;
+use crate::dice::roll_dice_three_times;
+use crate::dto::*;
+use crate::move_gatherer::gather_all_moves;
 
 fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
     let mut board = Board::new(rng);
@@ -42,19 +27,19 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
 
     while turn_count < 100 {
         let victorious_team = board.victorious_team();
-        if victorious_team != board::cards::NULL {
-            if (victorious_team & CHECK_TEAM) == BIT_TEAM_MONKEY {
+        if victorious_team != cards::NULL {
+            if (victorious_team & cards::CHECK_TEAM) == cards::BIT_TEAM_MONKEY {
                 winner = Some(String::from("monkey"));
             }
             else {
-                assert_eq!(victorious_team & CHECK_TEAM, BIT_TEAM_WOLF);
+                assert_eq!(victorious_team & cards::CHECK_TEAM, cards::BIT_TEAM_WOLF);
                 winner = Some(String::from("wolf"))
             }
             break;
         }
 
         let dice_rolls = roll_dice_three_times(rng);
-        let permitted_moves = board.gather_all_moves(is_monkey, &dice_rolls);
+        let permitted_moves = gather_all_moves(&board, is_monkey, &dice_rolls);
 
         turn_count += 1;
         is_monkey = !is_monkey;
@@ -112,7 +97,7 @@ pub fn execute_move(request: &ExecuteRequest) -> ExecuteResponse {
 
     let mut board = Board::from_dto(&request.board);
     for a_move in &request.moves {
-        let card = board::cards::from_string(&a_move.card);
+        let card = card::from_string(&a_move.card);
         let dice_roll = dice_lookup.get(&a_move.dice_category);
         let card_location = board.locate_card(is_monkey, card);
         board.move_card_and_resolve_battles(
@@ -132,7 +117,7 @@ mod tests {
     use std::path::Path;
     use tempfile::tempdir;
     use crate::{execute_move, simulate, ExecuteRequest, InstructionDto};
-    use crate::board::*;
+    use crate::dto::{BoardDto, ChooseRequest, ChooseResponse};
 
     #[test]
     fn test_simulate_one() {

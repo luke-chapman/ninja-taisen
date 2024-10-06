@@ -1,6 +1,28 @@
 use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 
+pub struct InstructionDto {
+    pub id: u64,
+    pub seed: u64,
+    pub monkey_strategy: String,
+    pub wolf_strategy: String,
+}
+
+#[derive(Serialize)]
+pub struct ResultDto {
+    pub id: u64,
+    pub seed: u64,
+    pub monkey_strategy: String,
+    pub wolf_strategy: String,
+    pub winner: String,
+    pub turn_count: u8,
+    pub monkey_cards_left: u8,
+    pub wolf_cards_left: u8,
+    pub start_time: String,
+    pub end_time: String,
+    pub process_name: String,
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct BoardDto {
     pub monkey: BTreeMap<u8, Vec<String>>,
