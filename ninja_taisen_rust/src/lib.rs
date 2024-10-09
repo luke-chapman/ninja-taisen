@@ -9,6 +9,7 @@ mod strategy;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
+use std::ops::Deref;
 use chrono::Utc;
 use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
@@ -20,6 +21,9 @@ use crate::dto::*;
 use crate::move_gatherer::gather_all_moves;
 
 fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
+    let monkey_strategy = strategy::lookup_strategy(&instruction.monkey_strategy);
+    let wolf_strategy = strategy::lookup_strategy(&instruction.wolf_strategy);
+
     let mut board = Board::new(rng);
     let mut is_monkey = true;
     let mut turn_count: u8 = 0;
@@ -42,13 +46,17 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
         let dice_rolls = roll_dice_three_times(rng);
         let permitted_moves = gather_all_moves(&board, is_monkey, &dice_rolls);
 
+        if !permitted_moves.is_empty() {
+            if is_monkey {
+                board = monkey_strategy.choose_move(&permitted_moves, rng).board.clone();
+            }
+            else {
+                board = wolf_strategy.choose_move(&permitted_moves, rng).board.clone();
+            }
+        }
+
         turn_count += 1;
         is_monkey = !is_monkey;
-
-        if !permitted_moves.is_empty() {
-            let move_index = rng.gen_range(0..permitted_moves.len());
-            board = permitted_moves[move_index].board.clone();
-        }
     }
 
     ResultDto {
