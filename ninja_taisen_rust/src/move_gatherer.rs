@@ -4,7 +4,11 @@ use crate::dice::DiceRoll;
 
 pub fn gather_all_moves(board: &Board, is_monkey: bool, dice_rolls: &[DiceRoll; 3]) -> Vec<CompletedMoves> {
     let mut completed_moves = Vec::new();
-    let initial_states = vec![CompletedMoves { moves: Vec::new(), board: board.clone() }];
+    let initial_states = vec![CompletedMoves {
+        moves: Vec::new(),
+        board: board.clone(),
+        is_monkey,
+    }];
 
     for a in 0..dice_rolls.len() {
         let mut new_moves_a = gather_moves_for_dice_roll(
@@ -76,7 +80,7 @@ fn gather_moves_for_dice_roll(
             let mut moves = initial_state.moves.clone();
             moves.push(Move{dice_category, dice_roll, card });
 
-            let end_state = CompletedMoves { moves, board };
+            let end_state = CompletedMoves { moves, board, is_monkey };
             end_states.push(end_state);
         }
     }

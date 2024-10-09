@@ -27,7 +27,8 @@ pub struct Move {
 
 pub struct CompletedMoves {
     pub moves: Vec<Move>,
-    pub board: Board
+    pub board: Board,
+    pub is_monkey: bool
 }
 
 impl CompletedMoves {
