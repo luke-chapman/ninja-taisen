@@ -4,6 +4,7 @@ mod battle;
 mod card;
 mod dice;
 mod move_gatherer;
+mod strategy;
 
 use std::collections::HashMap;
 use std::fs::File;
