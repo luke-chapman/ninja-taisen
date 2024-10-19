@@ -13,10 +13,11 @@ use chrono::Utc;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::{Path, PathBuf};
+use std::time::{SystemTime, UNIX_EPOCH};
 use polars::prelude::*;
 use crate::board::*;
 use crate::card::cards;
-use crate::dice::roll_dice_three_times;
+use crate::dice::{roll_dice_three_times, DiceRoll};
 use crate::dto::*;
 use crate::move_gatherer::gather_all_moves;
 use crate::strategy::Strategy;
@@ -134,6 +135,38 @@ pub fn simulate_many_single_thread(
     full_filename
 }
 
+pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
+    let board = Board::from_dto(&request.board);
+    let is_monkey =
+        if request.team == String::from("monkey") { true }
+        else if request.team == String::from("wolf") { false }
+        else { panic!("Unexpected team {}", request.team) };
+    let dice_roll = [
+        DiceRoll{category: cards::BITS_CATEGORY_ROCK, roll: request.dice.rock},
+        DiceRoll{category: cards::BITS_CATEGORY_PAPER, roll: request.dice.paper},
+        DiceRoll{category: cards::BITS_CATEGORY_SCISSORS, roll: request.dice.scissors},
+    ];
+
+    let all_permitted_moves = gather_all_moves(&board, is_monkey, &dice_roll);
+    if all_permitted_moves.len() == 0 {
+        return ChooseResponse{moves: Vec::new()};
+    }
+    let strategy = Strategy::new(&request.strategy);
+
+    let start = SystemTime::now();
+    let since_epoch = start.duration_since(UNIX_EPOCH).expect("Time went backwards");
+    let seed = since_epoch.as_secs(); // Use seconds as the seed
+    let mut rng = StdRng::seed_from_u64(seed);
+
+    let chosen_move = strategy.choose_move(&all_permitted_moves, &mut rng);
+
+    let mut move_dtos = Vec::new();
+    for a_move in &chosen_move.moves {
+        move_dtos.push(a_move.to_dto())
+    }
+    ChooseResponse{moves: move_dtos}
+}
+
 pub fn execute_move(request: &ExecuteRequest) -> ExecuteResponse {
     let is_monkey =
         if request.team == "monkey" { true }
@@ -162,12 +195,14 @@ pub fn execute_move(request: &ExecuteRequest) -> ExecuteResponse {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashSet;
     use std::fs::{read_dir, File};
     use std::io::Read;
     use std::path::Path;
     use polars::prelude::{ParquetReader, SerReader};
     use tempfile::tempdir;
-    use crate::{execute_move, simulate_many_single_thread, ExecuteRequest, InstructionDto};
+    use crate::{card, choose_move, execute_move, simulate_many_single_thread, ExecuteRequest, InstructionDto};
+    use crate::card::cards;
     use crate::dto::{BoardDto, ChooseRequest, ChooseResponse};
 
     #[test]
@@ -211,9 +246,18 @@ mod tests {
     }
 
     #[test]
+    fn test_choose_move_returns_valid_move() {
+        test_each_request_response(true)
+    }
+
+    #[test]
     fn test_execute_move_agrees_with_python() {
-        let this_file = Path::new(file!()).canonicalize().unwrap();
-        let json_root = this_file
+        test_each_request_response(false)
+    }
+
+    fn test_each_request_response(is_choose: bool) {
+        let json_root = Path::new(file!())
+            .canonicalize().unwrap()
             .parent().unwrap()
             .parent().unwrap()
             .parent().unwrap()
@@ -234,7 +278,14 @@ mod tests {
                 if filename_str.starts_with("request_") && filename_str.ends_with(".json") {
                     let index_str = filename_str.replace("request_", "").replace(".json", "");
                     let index: u8 = index_str.parse().unwrap();
-                    let pass = assert_execute_response(&json_dir.path(), index);
+
+                    let pass =
+                        if is_choose {
+                            assert_choose_response(&json_dir.path(), index)
+                        } else {
+                            assert_execute_response(&json_dir.path(), index)
+                        };
+
                     if pass {
                         pass_count += 1;
                     } else {
@@ -246,6 +297,51 @@ mod tests {
 
         assert_eq!(fail_count, 0);
         assert_ne!(pass_count, 0);
+    }
+
+    fn assert_choose_response(json_dir: &Path, turn_index: u8) -> bool {
+        let mut request_string = String::new();
+        File::open(json_dir.join(format!("request_{}.json", turn_index)))
+            .unwrap()
+            .read_to_string(&mut request_string)
+            .unwrap();
+        let request: ChooseRequest = serde_json::from_str(&request_string).unwrap();
+
+        let response = choose_move(&request);
+
+        let mut result = response.moves.len() <= 3;
+        let mut seen_dice_categories: HashSet<String> = HashSet::new();
+        let mut seen_cards: HashSet<String> = HashSet::new();
+
+        for a_move in &response.moves {
+            let dice_category = &a_move.dice_category;
+            let card = &a_move.card;
+
+            let card_u8 = card::from_string(card);
+            let card_category_u8 = card_u8 & cards::CHECK_CATEGORY;
+            let dice_category_u8 =
+                if dice_category == "rock" { cards::BITS_CATEGORY_ROCK }
+                else if dice_category == "paper" { cards::BITS_CATEGORY_PAPER }
+                else if dice_category == "scissors" { cards::BITS_CATEGORY_SCISSORS }
+                else { panic!("Unexpected dice_category {}", dice_category) };
+            let team_u8 =
+                if request.team == "monkey" { cards::BIT_TEAM_MONKEY }
+                else if request.team == "wolf" { cards::BIT_TEAM_WOLF }
+                else { panic!("Unexpected team {}", request.team) };
+
+            result &= (card_u8 & cards::CHECK_TEAM) == team_u8;
+            if card_category_u8 != cards::BITS_CATEGORY_JOKER {
+                result &= card_category_u8 == dice_category_u8;
+            }
+
+            result &= !seen_dice_categories.contains(dice_category);
+            result &= !seen_cards.contains(card);
+
+            seen_dice_categories.insert(dice_category.clone());
+            seen_cards.insert(card.clone());
+        }
+
+        result
     }
 
     fn assert_execute_response(json_dir: &Path, turn_index: u8) -> bool {

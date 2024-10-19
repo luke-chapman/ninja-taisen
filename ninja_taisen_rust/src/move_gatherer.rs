@@ -78,7 +78,7 @@ fn gather_moves_for_dice_roll(
             );
 
             let mut moves = initial_state.moves.clone();
-            moves.push(Move{dice_category, dice_roll, card });
+            moves.push(Move{ dice_category, card });
 
             let end_state = CompletedMoves { moves, board, is_monkey };
             end_states.push(end_state);

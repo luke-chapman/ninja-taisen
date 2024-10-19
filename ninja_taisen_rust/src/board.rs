@@ -21,8 +21,20 @@ pub struct CardLocation {
 #[derive(Clone)]
 pub struct Move {
     pub dice_category: u8,
-    pub dice_roll: i8,
     pub card: u8
+}
+
+impl Move {
+    pub fn to_dto(&self) -> MoveDto {
+        let category_bit = self.dice_category & cards::CHECK_CATEGORY;
+        let dice_str =
+            if category_bit == cards::BITS_CATEGORY_ROCK { "rock".into() }
+            else if category_bit == cards::BITS_CATEGORY_PAPER { "paper".into() }
+            else if category_bit == cards::BITS_CATEGORY_SCISSORS { "scissors".into() }
+            else { panic!("Unexpected dice_category {}", self.dice_category) };
+
+        MoveDto{dice_category: dice_str, card: card::to_string(self.card)}
+    }
 }
 
 pub struct CompletedMoves {
