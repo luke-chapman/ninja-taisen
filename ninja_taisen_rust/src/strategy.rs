@@ -39,11 +39,11 @@ impl Strategy {
                     continue
                 }
                 if moves.is_monkey {
-                    if (victorious_team & cards::CHECK_CATEGORY) == cards::BIT_TEAM_MONKEY {
+                    if (victorious_team & cards::CHECK_TEAM) == cards::BIT_TEAM_MONKEY {
                         return moves;
                     }
                 } else {
-                    if (victorious_team & cards::CHECK_CATEGORY) == cards::BIT_TEAM_WOLF {
+                    if (victorious_team & cards::CHECK_TEAM) == cards::BIT_TEAM_WOLF {
                         return moves;
                     }
                 }
