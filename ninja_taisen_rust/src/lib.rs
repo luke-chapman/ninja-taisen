@@ -9,11 +9,11 @@ mod metric;
 
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::Write;
 use chrono::Utc;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use polars::prelude::*;
 use crate::board::*;
 use crate::card::cards;
 use crate::dice::roll_dice_three_times;
@@ -75,23 +75,63 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
     }
 }
 
-pub fn simulate(
+pub fn simulate_many_single_thread(
     instructions: &Vec<InstructionDto>,
     results_dir: &Path,
-) -> Vec<ResultDto> {
-    let mut results = Vec::new();
+) -> PathBuf {
+    let mut vec_id = Vec::new();
+    let mut vec_seed = Vec::new();
+    let mut vec_monkey_strategy = Vec::new();
+    let mut vec_wolf_strategy = Vec::new();
+    let mut vec_winner = Vec::new();
+    let mut vec_turn_count = Vec::new();
+    let mut vec_monkey_cards_left = Vec::new();
+    let mut vec_wolf_cards_left = Vec::new();
+    let mut vec_start_time = Vec::new();
+    let mut vec_end_time = Vec::new();
+    let mut vec_process_name = Vec::new();
 
     for instruction in instructions.iter() {
         let mut rng = StdRng::seed_from_u64(instruction.seed);
-        results.push(simulate_one(instruction, &mut rng))
+        let result = simulate_one(instruction, &mut rng);
+
+        vec_id.push(result.id);
+        vec_seed.push(result.seed);
+        vec_monkey_strategy.push(result.monkey_strategy);
+        vec_wolf_strategy.push(result.wolf_strategy);
+        vec_winner.push(result.winner);
+        vec_turn_count.push(result.turn_count);
+        vec_monkey_cards_left.push(result.monkey_cards_left);
+        vec_wolf_cards_left.push(result.wolf_cards_left);
+        vec_start_time.push(result.start_time);
+        vec_end_time.push(result.end_time);
+        vec_process_name.push(result.process_name);
     }
 
-    let json = serde_json::to_string_pretty(&results).unwrap();
-    let filename = results_dir.join("results.json");
-    let mut file = File::create(filename).expect("Unable to create results.json");
-    file.write(json.as_bytes()).expect("Unable to write data");
+    let mut df = DataFrame::new(vec![
+        Series::new("id".into(), &vec_id),
+        Series::new("seed".into(), &vec_seed),
+        Series::new("monkey_strategy".into(), &vec_monkey_strategy),
+        Series::new("wolf_strategy".into(), &vec_wolf_strategy),
+        Series::new("winner".into(), &vec_winner),
+        Series::new("turn_count".into(), &vec_turn_count),
+        Series::new("monkey_cards_left".into(), &vec_monkey_cards_left),
+        Series::new("wolf_cards_left".into(), &vec_wolf_cards_left),
+        Series::new("start_time".into(), &vec_start_time),
+        Series::new("end_time".into(), &vec_end_time),
+        Series::new("process_name".into(), &vec_process_name),
+    ]).unwrap();
 
-    results
+    // Path to write the Parquet file
+    let filename = format!("results_{}-{}.parquet", instructions[0].id, instructions[instructions.len() - 1].id);
+    let full_filename = results_dir.join(filename);
+
+    // Write the DataFrame to a Parquet file
+    let file = File::create(&full_filename).unwrap();
+    ParquetWriter::new(file).finish(&mut df).unwrap();
+
+    println!("Wrote parquet results to {}", full_filename.as_os_str().to_str().unwrap());
+    full_filename
 }
 
 pub fn execute_move(request: &ExecuteRequest) -> ExecuteResponse {
@@ -125,8 +165,9 @@ mod tests {
     use std::fs::{read_dir, File};
     use std::io::Read;
     use std::path::Path;
+    use polars::prelude::{ParquetReader, SerReader};
     use tempfile::tempdir;
-    use crate::{execute_move, simulate, ExecuteRequest, InstructionDto};
+    use crate::{execute_move, simulate_many_single_thread, ExecuteRequest, InstructionDto};
     use crate::dto::{BoardDto, ChooseRequest, ChooseResponse};
 
     #[test]
@@ -140,13 +181,12 @@ mod tests {
                 wolf_strategy: String::from("random")
             }
         ];
-        let results = simulate(&instructions, temp_dir.path());
+        let results_filename = simulate_many_single_thread(&instructions, temp_dir.path());
+        let mut results_file = File::open(&results_filename).unwrap();
+        let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
-        assert_eq!(results.len(), 1);
-        assert_eq!(results[0].id, instructions[0].id);
-        assert_eq!(results[0].seed, instructions[0].seed);
-        assert_eq!(results[0].monkey_strategy, instructions[0].monkey_strategy);
-        assert_eq!(results[0].wolf_strategy, instructions[0].wolf_strategy);
+        assert_eq!(results_df.shape().0, 1);
+        assert_eq!(results_df.shape().1, 11);
     }
 
     #[test]
@@ -162,8 +202,12 @@ mod tests {
             });
         }
 
-        let results = simulate(&instructions, temp_dir.path());
-        assert_eq!(results.len(), instructions.len());
+        let results_filename = simulate_many_single_thread(&instructions, temp_dir.path());
+        let mut results_file = File::open(&results_filename).unwrap();
+        let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
+
+        assert_eq!(results_df.shape().0, instructions.len());
+        assert_eq!(results_df.shape().1, 11);
     }
 
     #[test]
