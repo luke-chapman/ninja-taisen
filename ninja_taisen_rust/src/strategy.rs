@@ -39,11 +39,11 @@ impl Strategy {
                     continue
                 }
                 if moves.is_monkey {
-                    if (victorious_team & cards::CHECK_CATEGORY) == cards::BIT_TEAM_MONKEY {
+                    if (victorious_team & cards::CHECK_TEAM) == cards::BIT_TEAM_MONKEY {
                         return moves;
                     }
                 } else {
-                    if (victorious_team & cards::CHECK_CATEGORY) == cards::BIT_TEAM_WOLF {
+                    if (victorious_team & cards::CHECK_TEAM) == cards::BIT_TEAM_WOLF {
                         return moves;
                     }
                 }
@@ -68,11 +68,11 @@ impl Strategy {
         }
     }
 
-    fn random_move<'a, 'b>(all_permitted_moves: &'a Vec<CompletedMoves>, rng: &'b mut StdRng) -> &'a CompletedMoves {
+    fn random_move<'a>(all_permitted_moves: &'a Vec<CompletedMoves>, rng: &mut StdRng) -> &'a CompletedMoves {
         &all_permitted_moves[rng.gen_range(0..all_permitted_moves.len())]
     }
 
-    fn random_best_metric<'a, 'b, 'c>(all_permitted_moves: &'a Vec<CompletedMoves>, metric: &'b impl Metric, rng: &'c mut StdRng) -> &'a CompletedMoves {
+    fn random_best_metric<'a>(all_permitted_moves: &'a Vec<CompletedMoves>, metric: &impl Metric, rng: &mut StdRng) -> &'a CompletedMoves {
         let mut metric_to_moves: HashMap<OrderedFloat<f32>, Vec<&CompletedMoves>> = HashMap::new();
         for completed_moves in all_permitted_moves {
             let metric_value = OrderedFloat(metric.calculate(completed_moves));
