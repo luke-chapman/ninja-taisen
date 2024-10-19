@@ -111,15 +111,15 @@ pub fn simulate_many_single_thread(
     let mut df = DataFrame::new(vec![
         Series::new("id".into(), &vec_id),
         Series::new("seed".into(), &vec_seed),
-        //Series::new("monkey_strategy".into(), &vec_monkey_strategy),
-        //Series::new("wolf_strategy".into(), &vec_wolf_strategy),
-        //Series::new("winner".into(), &vec_winner),
-        //Series::new("turn_count".into(), &vec_turn_count),
-        //Series::new("monkey_cards_left".into(), &vec_monkey_cards_left),
-        //Series::new("wolf_cards_left".into(), &vec_wolf_cards_left),
-        //Series::new("start_time".into(), &vec_start_time),
-        //Series::new("end_time".into(), &vec_end_time),
-        //Series::new("process_name".into(), &vec_process_name),
+        Series::new("monkey_strategy".into(), &vec_monkey_strategy),
+        Series::new("wolf_strategy".into(), &vec_wolf_strategy),
+        Series::new("winner".into(), &vec_winner),
+        Series::new("turn_count".into(), &vec_turn_count),
+        Series::new("monkey_cards_left".into(), &vec_monkey_cards_left),
+        Series::new("wolf_cards_left".into(), &vec_wolf_cards_left),
+        Series::new("start_time".into(), &vec_start_time),
+        Series::new("end_time".into(), &vec_end_time),
+        Series::new("process_name".into(), &vec_process_name),
     ]).unwrap();
 
     // Path to write the Parquet file
