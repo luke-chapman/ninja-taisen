@@ -5,6 +5,7 @@ mod card;
 mod dice;
 mod move_gatherer;
 mod strategy;
+mod metric;
 
 use std::collections::HashMap;
 use std::fs::File;
@@ -19,10 +20,11 @@ use crate::card::cards;
 use crate::dice::roll_dice_three_times;
 use crate::dto::*;
 use crate::move_gatherer::gather_all_moves;
+use crate::strategy::Strategy;
 
 fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
-    let monkey_strategy = strategy::lookup_strategy(&instruction.monkey_strategy);
-    let wolf_strategy = strategy::lookup_strategy(&instruction.wolf_strategy);
+    let monkey_strategy = Strategy::new(&instruction.monkey_strategy);
+    let wolf_strategy = Strategy::new(&instruction.wolf_strategy);
 
     let mut board = Board::new(rng);
     let mut is_monkey = true;
