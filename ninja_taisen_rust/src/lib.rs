@@ -198,7 +198,7 @@ mod tests {
     use std::collections::HashSet;
     use std::fs::{read_dir, File};
     use std::io::Read;
-    use std::path::{Path, PathBuf};
+    use std::path::Path;
     use polars::prelude::{ParquetReader, SerReader};
     use tempfile::tempdir;
     use crate::{card, choose_move, execute_move, simulate_many_single_thread, ExecuteRequest, InstructionDto};
@@ -337,8 +337,8 @@ mod tests {
             result &= !seen_dice_categories.contains(dice_category);
             result &= !seen_cards.contains(card);
 
-            seen_dice_categories.add(dice_category);
-            seen_cards.add(card);
+            seen_dice_categories.insert(dice_category.clone());
+            seen_cards.insert(card.clone());
         }
 
         result
