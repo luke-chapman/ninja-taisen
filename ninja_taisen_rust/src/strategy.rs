@@ -3,9 +3,9 @@ use rand::prelude::StdRng;
 use rand::Rng;
 use crate::board::CompletedMoves;
 use crate::card::cards;
-use std::str::FromStr;
 use crate::metric::{CountMetric,PositionMetric,StrengthMetric,Metric};
 
+#[derive(PartialEq)]
 enum StrategyName {
     Random,
     RandomSpotWin,
@@ -14,29 +14,20 @@ enum StrategyName {
     MetricStrength,
 }
 
-impl FromStr for StrategyName {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Err> {
-        match s.to_lowercase().as_str() {
-            "random" => Ok(StrategyName::Random),
-            "random_spot_win" => Ok(StrategyName::RandomSpotWin),
-            "metric_count" => Ok(StrategyName::MetricCount),
-            "metric_position" => Ok(StrategyName::MetricPosition),
-            "metric_strength" => Ok(StrategyName::MetricStrength),
-            _ => Err(format!("Unable to parse string {} to enum StrategyName", s)),
-        }
-    }
-}
-
 pub struct Strategy {
     name: StrategyName,
 }
 
 impl Strategy {
-    pub fn new(strategy_name_str: &str) -> Self {
-        let name = StrategyName::from_str(strategy_name_str).unwrap();
-        Strategy{name}
+    pub fn new(strategy_name_str: &String) -> Self {
+        match strategy_name_str.to_lowercase().as_str() {
+            "random" => Strategy{name: StrategyName::Random},
+            "random_spot_win" => Strategy{name: StrategyName::RandomSpotWin},
+            "metric_count" => Strategy{name: StrategyName::MetricCount},
+            "metric_position" => Strategy{name: StrategyName::MetricPosition},
+            "metric_strength" => Strategy{name: StrategyName::MetricStrength},
+            _ => panic!("Could not match strategy_name"),
+        }
     }
 
     pub fn choose_move(&self, all_permitted_moves: &Vec<CompletedMoves>, rng: &mut StdRng) -> &CompletedMoves {
@@ -88,7 +79,7 @@ impl Strategy {
     }
 
     fn random_best_metric(all_permitted_moves: &Vec<CompletedMoves>, metric: &impl Metric, rng: &mut StdRng) -> &CompletedMoves {
-        let mut metric_to_moves = HashMap::new();
+        let mut metric_to_moves: HashMap<f32, Vec<&CompletedMoves>> = HashMap::new();
         for completed_moves in all_permitted_moves {
             let metric = metric.calculate(completed_moves);
             let mut existing_moves = metric_to_moves.get_mut(&metric);

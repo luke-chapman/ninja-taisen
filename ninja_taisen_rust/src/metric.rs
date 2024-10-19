@@ -16,13 +16,13 @@ pub struct CountMetric {
 
 impl Metric for CountMetric {
     fn calculate(&self, completed_moves: &CompletedMoves) -> f32 {
-        let monkey_count = completed_moves.board.monkey_heights.iter().sum();
-        let wolf_count = completed_moves.board.wolf_heights.iter().sum();
+        let monkey_count = completed_moves.board.monkey_heights.iter().sum::<u8>() as f32;
+        let wolf_count = completed_moves.board.wolf_heights.iter().sum::<u8>() as f32;
         if completed_moves.is_monkey {
-            Metric::normalise(monkey_count, wolf_count)
+            Self::normalise(monkey_count, wolf_count)
         }
         else {
-            Metric::normalise(wolf_count, monkey_count)
+            Self::normalise(wolf_count, monkey_count)
         }
     }
 }
@@ -38,7 +38,7 @@ impl StrengthMetric {
             cards::BITS_STRENGTH_2 => { 4.0 }
             cards::BITS_STRENGTH_3 => { 5.0 }
             cards::BITS_STRENGTH_4 => { 9.0 }
-            _ => { panic!("{}" format("Unexpected strength {}", strength)) }
+            _ => { panic!("{}", format!("Unexpected strength {}", strength)) }
         }
     }
 
@@ -58,10 +58,10 @@ impl Metric for StrengthMetric {
         let monkey_metric = StrengthMetric::team_metric(&completed_moves.board.monkey_heights, &completed_moves.board.monkey_cards);
         let wolf_metric = StrengthMetric::team_metric(&completed_moves.board.wolf_heights, &completed_moves.board.wolf_cards);
         if completed_moves.is_monkey {
-            Metric::normalise(monkey_metric, wolf_metric)
+            Self::normalise(monkey_metric, wolf_metric)
         }
         else {
-            Metric::normalise(wolf_metric, monkey_metric)
+            Self::normalise(wolf_metric, monkey_metric)
         }
     }
 }
@@ -90,10 +90,10 @@ impl Metric for PositionMetric {
         let monkey_metric = self.team_metric(&completed_moves.board.monkey_heights, completed_moves.is_monkey);
         let wolf_metric = self.team_metric(&completed_moves.board.wolf_heights, completed_moves.is_monkey);
         if completed_moves.is_monkey {
-            Metric::normalise(monkey_metric, wolf_metric)
+            Self::normalise(monkey_metric, wolf_metric)
         }
         else {
-            Metric::normalise(wolf_metric, monkey_metric)
+            Self::normalise(wolf_metric, monkey_metric)
         }
     }
 }
