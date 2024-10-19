@@ -13,8 +13,7 @@ use chrono::Utc;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::{Path, PathBuf};
-use polars::df;
-use polars::prelude::ParquetWriter;
+use polars::prelude::*;
 use crate::board::*;
 use crate::card::cards;
 use crate::dice::roll_dice_three_times;
@@ -109,19 +108,19 @@ pub fn simulate_many_single_thread(
         vec_process_name.push(result.process_name);
     }
 
-    let mut df = df! [
-        "id" => &vec_id,
-        "seed" => &vec_seed,
-        "monkey_strategy" => &vec_monkey_strategy,
-        "wolf_strategy" => &vec_wolf_strategy,
-        "winner" => &vec_winner,
-        "turn_count" => &vec_turn_count,
-        "monkey_cards_left" => &vec_monkey_cards_left,
-        "wolf_cards_left" => &vec_wolf_cards_left,
-        "start_time" => &vec_start_time,
-        "end_time" => &vec_end_time,
-        "process_name" => &vec_process_name,
-    ].unwrap();
+    let mut df = DataFrame::new(vec![
+        Series::new("id".into(), &vec_id),
+        Series::new("seed".into(), &vec_seed),
+        //Series::new("monkey_strategy".into(), &vec_monkey_strategy),
+        //Series::new("wolf_strategy".into(), &vec_wolf_strategy),
+        //Series::new("winner".into(), &vec_winner),
+        //Series::new("turn_count".into(), &vec_turn_count),
+        //Series::new("monkey_cards_left".into(), &vec_monkey_cards_left),
+        //Series::new("wolf_cards_left".into(), &vec_wolf_cards_left),
+        //Series::new("start_time".into(), &vec_start_time),
+        //Series::new("end_time".into(), &vec_end_time),
+        //Series::new("process_name".into(), &vec_process_name),
+    ]).unwrap();
 
     // Path to write the Parquet file
     let filename = format!("results_{}-{}.parquet", instructions[0].id, instructions[instructions.len() - 1].id);
@@ -166,7 +165,7 @@ mod tests {
     use std::fs::{read_dir, File};
     use std::io::Read;
     use std::path::Path;
-    use polars::prelude::{DataFrame, DataType, ParquetReader, SerReader};
+    use polars::prelude::{ParquetReader, SerReader};
     use tempfile::tempdir;
     use crate::{execute_move, simulate_many_single_thread, ExecuteRequest, InstructionDto};
     use crate::dto::{BoardDto, ChooseRequest, ChooseResponse};
@@ -183,8 +182,8 @@ mod tests {
             }
         ];
         let results_filename = simulate_many_single_thread(&instructions, temp_dir.path());
-        let results_file = File::open(&results_filename).unwrap();
-        let results_df = ParquetReader::new(&results_file).finish().unwrap();
+        let mut results_file = File::open(&results_filename).unwrap();
+        let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
         assert_eq!(results_df.shape().0, 1);
         assert_eq!(results_df.shape().1, 11);
@@ -204,8 +203,8 @@ mod tests {
         }
 
         let results_filename = simulate_many_single_thread(&instructions, temp_dir.path());
-        let results_file = File::open(&results_filename).unwrap();
-        let results_df = ParquetReader::new(&results_file).finish().unwrap();
+        let mut results_file = File::open(&results_filename).unwrap();
+        let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
         assert_eq!(results_df.shape().0, 1);
         assert_eq!(results_df.shape().1, 11);
