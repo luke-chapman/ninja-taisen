@@ -51,12 +51,12 @@ impl CompletedMoves {
 
 impl Board {
     pub fn new(rng: &mut rand::rngs::StdRng) -> Self {
-        let mut monkey = vec![
+        let mut monkey = [
             cards::MR1, cards::MR2, cards::MR3,
             cards::MP1, cards::MP2, cards::MP3,
             cards::MS1, cards::MS2, cards::MS3
         ];
-        let mut wolf = vec![
+        let mut wolf = [
             cards::WR1, cards::WR2, cards::WR3,
             cards::WP1, cards::WP2, cards::WP3,
             cards::WS1, cards::WS2, cards::WS3
