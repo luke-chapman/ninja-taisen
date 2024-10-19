@@ -206,7 +206,7 @@ mod tests {
         let mut results_file = File::open(&results_filename).unwrap();
         let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
-        assert_eq!(results_df.shape().0, 1);
+        assert_eq!(results_df.shape().0, instructions.len());
         assert_eq!(results_df.shape().1, 11);
     }
 
