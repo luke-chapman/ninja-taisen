@@ -30,7 +30,7 @@ impl Strategy {
         }
     }
 
-    pub fn choose_move(&self, all_permitted_moves: &Vec<CompletedMoves>, rng: &mut StdRng) -> &CompletedMoves {
+    pub fn choose_move<'a, 'b>(&self, all_permitted_moves: &'a Vec<CompletedMoves>, rng: &'b mut StdRng) -> &'a CompletedMoves {
         if self.name != StrategyName::Random {
             for moves in all_permitted_moves {
                 let victorious_team = moves.board.victorious_team();
@@ -64,11 +64,10 @@ impl Strategy {
                 let metric = StrengthMetric{};
                 Self::random_best_metric(all_permitted_moves, &metric, rng)
             }
-            _ => panic!("Unexpected strategy name")
         }
     }
 
-    fn random_move(all_permitted_moves: &Vec<CompletedMoves>, rng: &mut StdRng) -> &CompletedMoves {
+    fn random_move<'a, 'b>(all_permitted_moves: &'a Vec<CompletedMoves>, rng: &'b mut StdRng) -> &'a CompletedMoves {
         &all_permitted_moves[rng.gen_range(0..all_permitted_moves.len())]
     }
 
@@ -78,16 +77,16 @@ impl Strategy {
         if other_metric != 0.0 { team_metric / other_metric } else { team_metric }
     }
 
-    fn random_best_metric(all_permitted_moves: &Vec<CompletedMoves>, metric: &impl Metric, rng: &mut StdRng) -> &CompletedMoves {
+    fn random_best_metric<'a, 'b, 'c>(all_permitted_moves: &'a Vec<CompletedMoves>, metric: &'b impl Metric, rng: &'c mut StdRng) -> &'a CompletedMoves {
         let mut metric_to_moves: HashMap<f32, Vec<&CompletedMoves>> = HashMap::new();
         for completed_moves in all_permitted_moves {
-            let metric = metric.calculate(completed_moves);
-            let mut existing_moves = metric_to_moves.get_mut(&metric);
+            let metric_value = metric.calculate(completed_moves);
+            let mut existing_moves = metric_to_moves.get_mut(&metric_value);
             if existing_moves.is_some() {
                 existing_moves.unwrap().push(completed_moves);
             }
             else {
-                metric_to_moves.insert(metric, vec![completed_moves]);
+                metric_to_moves.insert(metric_value, vec![completed_moves]);
             }
         }
 
