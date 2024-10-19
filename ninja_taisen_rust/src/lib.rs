@@ -16,7 +16,7 @@ use std::path::{Path, PathBuf};
 use polars::prelude::*;
 use crate::board::*;
 use crate::card::cards;
-use crate::dice::roll_dice_three_times;
+use crate::dice::{roll_dice_three_times, DiceRoll};
 use crate::dto::*;
 use crate::move_gatherer::gather_all_moves;
 use crate::strategy::Strategy;
@@ -132,6 +132,33 @@ pub fn simulate_many_single_thread(
 
     println!("Wrote parquet results to {}", full_filename.as_os_str().to_str().unwrap());
     full_filename
+}
+
+pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
+    let board = Board::from_dto(&request.board);
+    let is_monkey =
+        if request.team == String::from("monkey") { true }
+        else if request.team == String::from("wolf") { false }
+        else { panic!("Unexpected team {}", request.team) };
+    let dice_roll = [
+        DiceRoll{category: cards::BITS_CATEGORY_ROCK, roll: request.dice.rock},
+        DiceRoll{category: cards::BITS_CATEGORY_PAPER, roll: request.dice.paper},
+        DiceRoll{category: cards::BITS_CATEGORY_SCISSORS, roll: request.dice.scissors},
+    ];
+
+    let all_permitted_moves = gather_all_moves(&board, is_monkey, &dice_roll);
+    if all_permitted_moves.len() == 0 {
+        return ChooseResponse{moves: Vec::new()};
+    }
+    let strategy = Strategy::new(&request.strategy);
+    let mut rng = StdRng::seed_from_u64(0);
+    let chosen_move = strategy.choose_move(&all_permitted_moves, &mut rng);
+
+    let mut move_dtos = Vec::new();
+    for a_move in chosen_move.moves {
+        move_dtos.push(a_move.to_dto())
+    }
+    ChooseResponse{moves: move_dtos}
 }
 
 pub fn execute_move(request: &ExecuteRequest) -> ExecuteResponse {
