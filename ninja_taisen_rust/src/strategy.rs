@@ -20,14 +20,14 @@ pub struct Strategy {
 }
 
 impl Strategy {
-    pub fn new(strategy_name_str: &String) -> Self {
-        match strategy_name_str.to_lowercase().as_str() {
-            "random" => Strategy{name: StrategyName::Random},
-            "random_spot_win" => Strategy{name: StrategyName::RandomSpotWin},
-            "metric_count" => Strategy{name: StrategyName::MetricCount},
-            "metric_position" => Strategy{name: StrategyName::MetricPosition},
-            "metric_strength" => Strategy{name: StrategyName::MetricStrength},
-            _ => panic!("Could not match strategy_name"),
+    pub fn new(strategy_name: &String) -> Self {
+        match strategy_name.as_str() {
+            "random" => { Strategy{name: StrategyName::Random} },
+            "random_spot_win" => { Strategy{name: StrategyName::RandomSpotWin} },
+            "metric_count" => { Strategy{name: StrategyName::MetricCount} },
+            "metric_position" => { Strategy{name: StrategyName::MetricPosition} },
+            "metric_strength" => { Strategy{name: StrategyName::MetricStrength} },
+            _ => panic!("{}", format!("Could not match strategy_name '{}'", strategy_name)),
         }
     }
 

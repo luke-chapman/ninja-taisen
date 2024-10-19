@@ -137,7 +137,7 @@ mod tests {
                 id: 0,
                 seed: 0,
                 monkey_strategy: String::from("metric_strength"),
-                wolf_strategy: String::from("wolf_strength")
+                wolf_strategy: String::from("random")
             }
         ];
         let results = simulate(&instructions, temp_dir.path());
@@ -157,8 +157,8 @@ mod tests {
             instructions.push(InstructionDto{
                 id: i,
                 seed: i,
-                monkey_strategy: String::from("metric_strength"),
-                wolf_strategy: String::from("wolf_strength")
+                monkey_strategy: String::from("random_spot_win"),
+                wolf_strategy: String::from("metric_count")
             });
         }
 
