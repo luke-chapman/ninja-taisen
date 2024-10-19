@@ -31,7 +31,7 @@ impl Strategy {
         }
     }
 
-    pub fn choose_move<'a, 'b>(&self, all_permitted_moves: &'a Vec<CompletedMoves>, rng: &'b mut StdRng) -> &'a CompletedMoves {
+    pub fn choose_move<'a>(&self, all_permitted_moves: &'a Vec<CompletedMoves>, rng: &mut StdRng) -> &'a CompletedMoves {
         if self.name != StrategyName::Random {
             for moves in all_permitted_moves {
                 let victorious_team = moves.board.victorious_team();
@@ -68,7 +68,7 @@ impl Strategy {
         }
     }
 
-    fn random_move<'a>(all_permitted_moves: &'a Vec<CompletedMoves>, rng: &mut StdRng) -> &'a CompletedMoves {
+    fn random_move<'a>(all_permitted_moves: &'a [CompletedMoves], rng: &mut StdRng) -> &'a CompletedMoves {
         &all_permitted_moves[rng.gen_range(0..all_permitted_moves.len())]
     }
 
@@ -89,6 +89,6 @@ impl Strategy {
             .iter()
             .max_by_key(|&t| t.0)
             .unwrap().1;
-        &moves_with_max_metric[rng.gen_range(0..moves_with_max_metric.len())]
+        moves_with_max_metric[rng.gen_range(0..moves_with_max_metric.len())]
     }
 }
