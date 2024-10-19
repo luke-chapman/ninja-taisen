@@ -148,7 +148,7 @@ pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
     ];
 
     let all_permitted_moves = gather_all_moves(&board, is_monkey, &dice_roll);
-    if all_permitted_moves.len() == 0 {
+    if all_permitted_moves.is_empty() {
         return ChooseResponse{moves: Vec::new()};
     }
     let strategy = Strategy::new(&request.strategy);
