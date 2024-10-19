@@ -4,6 +4,7 @@ use rand::Rng;
 use crate::board::CompletedMoves;
 use crate::card::cards;
 use crate::metric::{CountMetric,PositionMetric,StrengthMetric,Metric};
+use ordered_float::OrderedFloat;
 
 #[derive(PartialEq)]
 enum StrategyName {
@@ -71,17 +72,11 @@ impl Strategy {
         &all_permitted_moves[rng.gen_range(0..all_permitted_moves.len())]
     }
 
-    fn normalise_metric(team_metric: f32, other_metric: f32) -> f32 {
-        assert!(team_metric >= 0.0);
-        assert!(other_metric >= 0.0);
-        if other_metric != 0.0 { team_metric / other_metric } else { team_metric }
-    }
-
     fn random_best_metric<'a, 'b, 'c>(all_permitted_moves: &'a Vec<CompletedMoves>, metric: &'b impl Metric, rng: &'c mut StdRng) -> &'a CompletedMoves {
-        let mut metric_to_moves: HashMap<f32, Vec<&CompletedMoves>> = HashMap::new();
+        let mut metric_to_moves: HashMap<OrderedFloat<f32>, Vec<&CompletedMoves>> = HashMap::new();
         for completed_moves in all_permitted_moves {
-            let metric_value = metric.calculate(completed_moves);
-            let mut existing_moves = metric_to_moves.get_mut(&metric_value);
+            let metric_value = OrderedFloat(metric.calculate(completed_moves));
+            let existing_moves = metric_to_moves.get_mut(&metric_value);
             if existing_moves.is_some() {
                 existing_moves.unwrap().push(completed_moves);
             }
