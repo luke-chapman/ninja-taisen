@@ -244,6 +244,11 @@ mod tests {
     }
 
     #[test]
+    fn test_choose_move_returns_valid_move() {
+        todo!("Need to write test 2024-10-19")
+    }
+
+    #[test]
     fn test_execute_move_agrees_with_python() {
         let this_file = Path::new(file!()).canonicalize().unwrap();
         let json_root = this_file
