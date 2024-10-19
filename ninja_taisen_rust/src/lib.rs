@@ -13,6 +13,7 @@ use chrono::Utc;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::{Path, PathBuf};
+use std::time::{SystemTime, UNIX_EPOCH};
 use polars::prelude::*;
 use crate::board::*;
 use crate::card::cards;
@@ -151,7 +152,12 @@ pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
         return ChooseResponse{moves: Vec::new()};
     }
     let strategy = Strategy::new(&request.strategy);
-    let mut rng = StdRng::seed_from_u64(0);
+
+    let start = SystemTime::now();
+    let since_epoch = start.duration_since(UNIX_EPOCH).expect("Time went backwards");
+    let seed = since_epoch.as_secs(); // Use seconds as the seed
+    let mut rng = StdRng::seed_from_u64(seed);
+
     let chosen_move = strategy.choose_move(&all_permitted_moves, &mut rng);
 
     let mut move_dtos = Vec::new();
