@@ -155,7 +155,7 @@ pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
     let chosen_move = strategy.choose_move(&all_permitted_moves, &mut rng);
 
     let mut move_dtos = Vec::new();
-    for a_move in chosen_move.moves {
+    for a_move in &chosen_move.moves {
         move_dtos.push(a_move.to_dto())
     }
     ChooseResponse{moves: move_dtos}

@@ -21,7 +21,6 @@ pub struct CardLocation {
 #[derive(Clone)]
 pub struct Move {
     pub dice_category: u8,
-    pub dice_roll: i8,
     pub card: u8
 }
 
