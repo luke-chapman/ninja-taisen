@@ -218,7 +218,7 @@ impl Board {
     fn new_pile_index(is_monkey: bool, dice_roll: i8, pile_index: u8) -> u8 {
         let pile_index_i8 = pile_index as i8;
         let unsnapped_index = if is_monkey { pile_index_i8 + dice_roll } else { pile_index_i8 - dice_roll };
-        std::cmp::min(10, std::cmp::max(0, unsnapped_index)) as u8
+        unsnapped_index.clamp(0, 10) as u8
     }
 
     fn resolve_battle(&mut self, is_monkey: bool, battle_index: u8, remaining_battles: &mut Vec<u8>) {

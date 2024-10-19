@@ -77,7 +77,7 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
 }
 
 pub fn simulate_many_single_thread(
-    instructions: &Vec<InstructionDto>,
+    instructions: &[InstructionDto],
     results_dir: &Path,
 ) -> PathBuf {
     let mut vec_id = Vec::new();
@@ -138,8 +138,8 @@ pub fn simulate_many_single_thread(
 pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
     let board = Board::from_dto(&request.board);
     let is_monkey =
-        if request.team == String::from("monkey") { true }
-        else if request.team == String::from("wolf") { false }
+        if request.team == *"monkey" { true }
+        else if request.team == *"wolf" { false }
         else { panic!("Unexpected team {}", request.team) };
     let dice_roll = [
         DiceRoll{category: cards::BITS_CATEGORY_ROCK, roll: request.dice.rock},
