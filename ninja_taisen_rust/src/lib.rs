@@ -14,8 +14,8 @@ use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
-use polars::export::rayon::ThreadPoolBuilder;
 use polars::prelude::*;
+use threadpool::ThreadPool;
 use crate::board::*;
 use crate::card::cards;
 use crate::dice::{roll_dice_three_times, DiceRoll};
@@ -80,8 +80,8 @@ fn simulate_one(instruction: &InstructionDto) -> ResultDto {
 
 pub fn simulate_many_single_thread(
     instructions: &[InstructionDto],
-    results_dir: &Path,
-) -> PathBuf {
+    results_file: &Path,
+) {
     let mut vec_id = Vec::new();
     let mut vec_seed = Vec::new();
     let mut vec_monkey_strategy = Vec::new();
@@ -124,16 +124,16 @@ pub fn simulate_many_single_thread(
         Series::new("process_name".into(), &vec_process_name),
     ]).unwrap();
 
-    // Path to write the Parquet file
-    let filename = format!("results_{}-{}.parquet", instructions[0].id, instructions[instructions.len() - 1].id);
-    let full_filename = results_dir.join(filename);
-
     // Write the DataFrame to a Parquet file
-    let file = File::create(&full_filename).unwrap();
+    let file = File::create(&results_file).unwrap();
     ParquetWriter::new(file).finish(&mut df).unwrap();
 
-    println!("Wrote parquet results to {}", full_filename.as_os_str().to_str().unwrap());
-    full_filename
+    println!("Wrote parquet results to {}", results_file.as_os_str().to_str().unwrap());
+}
+
+struct ThreadArgs {
+    instructions: Vec<InstructionDto>,
+    results_file: PathBuf,
 }
 
 pub fn simulate_many_multi_thread(
@@ -148,14 +148,47 @@ pub fn simulate_many_multi_thread(
     }
 
     let mut chunks = Vec::new();
+    let mut results_filenames = Vec::new();
     let mut min_index = 0;
     while min_index < instructions.len() {
-        chunks.push(&instructions[min_index..min_index + per_thread]);
+        let mut chunk_instructions = Vec::new();
+        let max_index = std::cmp::min(min_index + per_thread, instructions.len());
+        for i in min_index..max_index {
+            chunk_instructions.push(instructions[i].clone());
+        }
+
+        let filename = format!(
+            "results_{}-{}.parquet",
+            chunk_instructions[0].id,
+            chunk_instructions[chunk_instructions.len() - 1].id,
+        );
+
+        chunks.push(ThreadArgs{
+            instructions: chunk_instructions,
+            results_file: chunk_results_dir.join(&filename),
+        });
+        results_filenames.push(chunk_results_dir.join(&filename));
         min_index += per_thread;
     }
 
-    let builder = ThreadPoolBuilder::new();
-    let pool = builder.num_threads(max_threads).build().unwrap();
+    let pool = ThreadPool::new(max_threads);
+    for thread_args in chunks {
+        pool.execute(move || { simulate_many_single_thread(&thread_args.instructions, &thread_args.results_file); });
+    }
+    pool.join();
+
+    let chunk_lazy_dfs: Vec<_> = results_filenames.iter()
+        .map(|p| LazyFrame::scan_parquet(p, Default::default()).unwrap())
+        .collect();
+    let mut full_df = concat(chunk_lazy_dfs, Default::default())
+        .unwrap()
+        .sort(["id"], Default::default())
+        .collect()
+        .unwrap();
+
+    let results_parquet = results_dir.join("results.parquet");
+    let file = File::create(&results_parquet).unwrap();
+    ParquetWriter::new(file).finish(&mut full_df).unwrap();
 }
 
 pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
@@ -239,7 +272,8 @@ mod tests {
                 wolf_strategy: String::from("random")
             }
         ];
-        let results_filename = simulate_many_single_thread(&instructions, temp_dir.path());
+        let results_filename = temp_dir.path().join("results.parquet");
+        simulate_many_single_thread(&instructions, &results_filename);
         let mut results_file = File::open(&results_filename).unwrap();
         let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
@@ -260,7 +294,8 @@ mod tests {
             });
         }
 
-        let results_filename = simulate_many_single_thread(&instructions, temp_dir.path());
+        let results_filename = temp_dir.path().join("results.parquet");
+        simulate_many_single_thread(&instructions, &results_filename);
         let mut results_file = File::open(&results_filename).unwrap();
         let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
