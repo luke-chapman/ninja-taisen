@@ -139,8 +139,8 @@ pub fn simulate_many_single_thread(
 pub fn simulate_many_multi_thread(
     instructions: &[InstructionDto],
     results_dir: &Path,
-    max_processes: usize,
-    per_process: usize,
+    max_threads: usize,
+    per_thread: usize,
 ) {
     let chunk_results_dir = results_dir.join("chunk_results");
     if !exists(&chunk_results_dir).unwrap() {
@@ -150,11 +150,12 @@ pub fn simulate_many_multi_thread(
     let mut chunks = Vec::new();
     let mut min_index = 0;
     while min_index < instructions.len() {
-        chunks.push(&instructions[min_index..min_index + per_process]);
-        min_index += per_process;
+        chunks.push(&instructions[min_index..min_index + per_thread]);
+        min_index += per_thread;
     }
 
-    let builder = ThreadPoolBuilder{};
+    let builder = ThreadPoolBuilder::new();
+    let pool = builder.num_threads(max_threads).build().unwrap();
 }
 
 pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
