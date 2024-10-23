@@ -8,13 +8,14 @@ mod strategy;
 mod metric;
 
 use std::collections::HashMap;
-use std::fs::File;
+use std::fs::{create_dir_all, exists, File};
 use chrono::Utc;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use polars::prelude::*;
+use threadpool::ThreadPool;
 use crate::board::*;
 use crate::card::cards;
 use crate::dice::{roll_dice_three_times, DiceRoll};
@@ -22,11 +23,12 @@ use crate::dto::*;
 use crate::move_gatherer::gather_all_moves;
 use crate::strategy::Strategy;
 
-fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
+fn simulate_one(instruction: &InstructionDto) -> ResultDto {
+    let mut rng = StdRng::seed_from_u64(instruction.seed);
     let monkey_strategy = Strategy::new(&instruction.monkey_strategy);
     let wolf_strategy = Strategy::new(&instruction.wolf_strategy);
 
-    let mut board = Board::new(rng);
+    let mut board = Board::new(&mut rng);
     let mut is_monkey = true;
     let mut turn_count: u8 = 0;
     let mut winner: Option<String> = None;
@@ -45,15 +47,15 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
             break;
         }
 
-        let dice_rolls = roll_dice_three_times(rng);
+        let dice_rolls = roll_dice_three_times(&mut rng);
         let permitted_moves = gather_all_moves(&board, is_monkey, &dice_rolls);
 
         if !permitted_moves.is_empty() {
             if is_monkey {
-                board = monkey_strategy.choose_move(&permitted_moves, rng).board.clone();
+                board = monkey_strategy.choose_move(&permitted_moves, &mut rng).board.clone();
             }
             else {
-                board = wolf_strategy.choose_move(&permitted_moves, rng).board.clone();
+                board = wolf_strategy.choose_move(&permitted_moves, &mut rng).board.clone();
             }
         }
 
@@ -78,8 +80,8 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
 
 pub fn simulate_many_single_thread(
     instructions: &[InstructionDto],
-    results_dir: &Path,
-) -> PathBuf {
+    results_file: &Path,
+) {
     let mut vec_id = Vec::new();
     let mut vec_seed = Vec::new();
     let mut vec_monkey_strategy = Vec::new();
@@ -93,8 +95,7 @@ pub fn simulate_many_single_thread(
     let mut vec_process_name = Vec::new();
 
     for instruction in instructions.iter() {
-        let mut rng = StdRng::seed_from_u64(instruction.seed);
-        let result = simulate_one(instruction, &mut rng);
+        let result = simulate_one(instruction);
 
         vec_id.push(result.id);
         vec_seed.push(result.seed);
@@ -123,16 +124,71 @@ pub fn simulate_many_single_thread(
         Series::new("process_name".into(), &vec_process_name),
     ]).unwrap();
 
-    // Path to write the Parquet file
-    let filename = format!("results_{}-{}.parquet", instructions[0].id, instructions[instructions.len() - 1].id);
-    let full_filename = results_dir.join(filename);
-
     // Write the DataFrame to a Parquet file
-    let file = File::create(&full_filename).unwrap();
+    let file = File::create(&results_file).unwrap();
     ParquetWriter::new(file).finish(&mut df).unwrap();
 
-    println!("Wrote parquet results to {}", full_filename.as_os_str().to_str().unwrap());
-    full_filename
+    println!("Wrote parquet results to {}", results_file.as_os_str().to_str().unwrap());
+}
+
+struct ThreadArgs {
+    instructions: Vec<InstructionDto>,
+    results_file: PathBuf,
+}
+
+pub fn simulate_many_multi_thread(
+    instructions: &[InstructionDto],
+    results_dir: &Path,
+    max_threads: usize,
+    per_thread: usize,
+) {
+    let chunk_results_dir = results_dir.join("chunk_results");
+    if !exists(&chunk_results_dir).unwrap() {
+        create_dir_all(&chunk_results_dir).unwrap();
+    }
+
+    let mut chunks = Vec::new();
+    let mut results_filenames = Vec::new();
+    let mut min_index = 0;
+    while min_index < instructions.len() {
+        let mut chunk_instructions = Vec::new();
+        let max_index = std::cmp::min(min_index + per_thread, instructions.len());
+        for i in min_index..max_index {
+            chunk_instructions.push(instructions[i].clone());
+        }
+
+        let filename = format!(
+            "results_{}-{}.parquet",
+            chunk_instructions[0].id,
+            chunk_instructions[chunk_instructions.len() - 1].id,
+        );
+
+        chunks.push(ThreadArgs{
+            instructions: chunk_instructions,
+            results_file: chunk_results_dir.join(&filename),
+        });
+        results_filenames.push(chunk_results_dir.join(&filename));
+        min_index += per_thread;
+    }
+
+    let pool = ThreadPool::new(max_threads);
+    for thread_args in chunks {
+        pool.execute(move || { simulate_many_single_thread(&thread_args.instructions, &thread_args.results_file); });
+    }
+    pool.join();
+
+    let chunk_lazy_dfs: Vec<_> = results_filenames.iter()
+        .map(|p| LazyFrame::scan_parquet(p, Default::default()).unwrap())
+        .collect();
+    let mut full_df = concat(chunk_lazy_dfs, Default::default())
+        .unwrap()
+        .sort(["id"], Default::default())
+        .collect()
+        .unwrap();
+
+    let results_parquet = results_dir.join("results.parquet");
+    let file = File::create(&results_parquet).unwrap();
+    ParquetWriter::new(file).finish(&mut full_df).unwrap();
 }
 
 pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
@@ -201,7 +257,7 @@ mod tests {
     use std::path::Path;
     use polars::prelude::{ParquetReader, SerReader};
     use tempfile::tempdir;
-    use crate::{card, choose_move, execute_move, simulate_many_single_thread, ExecuteRequest, InstructionDto};
+    use crate::{card, choose_move, execute_move, simulate_many_multi_thread, simulate_many_single_thread, ExecuteRequest, InstructionDto};
     use crate::card::cards;
     use crate::dto::{BoardDto, ChooseRequest, ChooseResponse};
 
@@ -216,7 +272,8 @@ mod tests {
                 wolf_strategy: String::from("random")
             }
         ];
-        let results_filename = simulate_many_single_thread(&instructions, temp_dir.path());
+        let results_filename = temp_dir.path().join("results.parquet");
+        simulate_many_single_thread(&instructions, &results_filename);
         let mut results_file = File::open(&results_filename).unwrap();
         let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
@@ -225,7 +282,7 @@ mod tests {
     }
 
     #[test]
-    fn test_simulate_many() {
+    fn test_simulate_many_single_thread() {
         let temp_dir = tempdir().expect("Failed to create temp dir");
         let mut instructions = Vec::new();
         for i in 0..100 {
@@ -237,7 +294,31 @@ mod tests {
             });
         }
 
-        let results_filename = simulate_many_single_thread(&instructions, temp_dir.path());
+        let results_filename = temp_dir.path().join("results.parquet");
+        simulate_many_single_thread(&instructions, &results_filename);
+        let mut results_file = File::open(&results_filename).unwrap();
+        let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
+
+        assert_eq!(results_df.shape().0, instructions.len());
+        assert_eq!(results_df.shape().1, 11);
+    }
+
+    #[test]
+    fn test_simulate_many_multi_thread() {
+        let temp_dir = tempdir().expect("Failed to create temp dir");
+        let mut instructions = Vec::new();
+        for i in 0..100 {
+            instructions.push(InstructionDto{
+                id: i,
+                seed: i,
+                monkey_strategy: String::from("random_spot_win"),
+                wolf_strategy: String::from("metric_count")
+            });
+        }
+
+        simulate_many_multi_thread(&instructions, &temp_dir.path(), 3, 12);
+
+        let results_filename = temp_dir.path().join("results.parquet");
         let mut results_file = File::open(&results_filename).unwrap();
         let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
