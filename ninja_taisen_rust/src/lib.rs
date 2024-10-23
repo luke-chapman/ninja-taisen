@@ -257,7 +257,7 @@ mod tests {
     use std::path::Path;
     use polars::prelude::{ParquetReader, SerReader};
     use tempfile::tempdir;
-    use crate::{card, choose_move, execute_move, simulate_many_single_thread, ExecuteRequest, InstructionDto};
+    use crate::{card, choose_move, execute_move, simulate_many_multi_thread, simulate_many_single_thread, ExecuteRequest, InstructionDto};
     use crate::card::cards;
     use crate::dto::{BoardDto, ChooseRequest, ChooseResponse};
 
@@ -282,7 +282,7 @@ mod tests {
     }
 
     #[test]
-    fn test_simulate_many() {
+    fn test_simulate_many_single_thread() {
         let temp_dir = tempdir().expect("Failed to create temp dir");
         let mut instructions = Vec::new();
         for i in 0..100 {
@@ -296,6 +296,29 @@ mod tests {
 
         let results_filename = temp_dir.path().join("results.parquet");
         simulate_many_single_thread(&instructions, &results_filename);
+        let mut results_file = File::open(&results_filename).unwrap();
+        let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
+
+        assert_eq!(results_df.shape().0, instructions.len());
+        assert_eq!(results_df.shape().1, 11);
+    }
+
+    #[test]
+    fn test_simulate_many_multi_thread() {
+        let temp_dir = tempdir().expect("Failed to create temp dir");
+        let mut instructions = Vec::new();
+        for i in 0..100 {
+            instructions.push(InstructionDto{
+                id: i,
+                seed: i,
+                monkey_strategy: String::from("random_spot_win"),
+                wolf_strategy: String::from("metric_count")
+            });
+        }
+
+        simulate_many_multi_thread(&instructions, &temp_dir.path(), 3, 12);
+
+        let results_filename = temp_dir.path().join("results.parquet");
         let mut results_file = File::open(&results_filename).unwrap();
         let results_df = ParquetReader::new(&mut results_file).finish().unwrap();
 
