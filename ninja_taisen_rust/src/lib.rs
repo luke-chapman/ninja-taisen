@@ -22,11 +22,12 @@ use crate::dto::*;
 use crate::move_gatherer::gather_all_moves;
 use crate::strategy::Strategy;
 
-fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
+fn simulate_one(instruction: &InstructionDto) -> ResultDto {
+    let mut rng = StdRng::seed_from_u64(instruction.seed);
     let monkey_strategy = Strategy::new(&instruction.monkey_strategy);
     let wolf_strategy = Strategy::new(&instruction.wolf_strategy);
 
-    let mut board = Board::new(rng);
+    let mut board = Board::new(&mut rng);
     let mut is_monkey = true;
     let mut turn_count: u8 = 0;
     let mut winner: Option<String> = None;
@@ -45,15 +46,15 @@ fn simulate_one(instruction: &InstructionDto, rng: &mut StdRng) -> ResultDto {
             break;
         }
 
-        let dice_rolls = roll_dice_three_times(rng);
+        let dice_rolls = roll_dice_three_times(&mut rng);
         let permitted_moves = gather_all_moves(&board, is_monkey, &dice_rolls);
 
         if !permitted_moves.is_empty() {
             if is_monkey {
-                board = monkey_strategy.choose_move(&permitted_moves, rng).board.clone();
+                board = monkey_strategy.choose_move(&permitted_moves, &mut rng).board.clone();
             }
             else {
-                board = wolf_strategy.choose_move(&permitted_moves, rng).board.clone();
+                board = wolf_strategy.choose_move(&permitted_moves, &mut rng).board.clone();
             }
         }
 
@@ -93,8 +94,7 @@ pub fn simulate_many_single_thread(
     let mut vec_process_name = Vec::new();
 
     for instruction in instructions.iter() {
-        let mut rng = StdRng::seed_from_u64(instruction.seed);
-        let result = simulate_one(instruction, &mut rng);
+        let result = simulate_one(instruction);
 
         vec_id.push(result.id);
         vec_seed.push(result.seed);
