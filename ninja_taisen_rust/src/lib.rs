@@ -8,12 +8,13 @@ mod strategy;
 mod metric;
 
 use std::collections::HashMap;
-use std::fs::File;
+use std::fs::{create_dir_all, exists, File};
 use chrono::Utc;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
+use polars::export::rayon::ThreadPoolBuilder;
 use polars::prelude::*;
 use crate::board::*;
 use crate::card::cards;
@@ -133,6 +134,27 @@ pub fn simulate_many_single_thread(
 
     println!("Wrote parquet results to {}", full_filename.as_os_str().to_str().unwrap());
     full_filename
+}
+
+pub fn simulate_many_multi_thread(
+    instructions: &[InstructionDto],
+    results_dir: &Path,
+    max_processes: usize,
+    per_process: usize,
+) {
+    let chunk_results_dir = results_dir.join("chunk_results");
+    if !exists(&chunk_results_dir).unwrap() {
+        create_dir_all(&chunk_results_dir).unwrap();
+    }
+
+    let mut chunks = Vec::new();
+    let mut min_index = 0;
+    while min_index < instructions.len() {
+        chunks.push(&instructions[min_index..min_index + per_process]);
+        min_index += per_process;
+    }
+
+    let builder = ThreadPoolBuilder{};
 }
 
 pub fn choose_move(request: &ChooseRequest) -> ChooseResponse {
