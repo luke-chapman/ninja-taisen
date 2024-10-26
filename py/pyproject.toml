@@ -19,31 +19,22 @@ dependencies = [
   "pydantic>=2.8.2",
 ]
 
-[tool.hatch.build.targets.sdist]
-source = "py"
-
-[tool.hatch.build.targets.wheel]
-source = "py"
-
-[tool.hatch.metadata.hook]
-root = "py"
-
 [project.urls]
 Documentation = "https://github.com/luke-chapman/ninja-taisen#readme"
 Issues = "https://github.com/luke-chapman/ninja-taisen/issues"
-Source = "https://github.com/luke-chapman/ninja-taisen"
+Source = "https://github.com/luke-chapman/ninja-taisen/py"
 
 [tool.hatch.version]
 path = "src/ninja_taisen/__about__.py"
 
 [tool.hatch.envs.default.scripts]
 lint = [
-  "ruff check src tests ../analysis",
-  "mypy src tests ../analysis --install-types --non-interactive"
+  "ruff check src tests",
+  "mypy src tests --install-types --non-interactive"
 ]
 format = [
-  "black src tests ../analysis",
-  "ruff check src tests ../analysis --fix --unsafe-fixes"
+  "black src tests",
+  "ruff check src tests --fix --unsafe-fixes"
 ]
 test = "pytest {args: tests}"
 regen = "pytest tests/regression --regen"
