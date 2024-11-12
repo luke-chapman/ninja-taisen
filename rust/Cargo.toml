@@ -22,4 +22,4 @@ threadpool = ">=1.8.1"
 
 [dependencies.pyo3]
 version = ">=0.21.1"
-features = ["abi3-py312"]
+features = ["abi3-py312", "extension-module"]
