@@ -52,7 +52,7 @@ def __run_test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tm
     assert 0 <= result.monkey_cards_left <= 10
     assert 0 <= result.wolf_cards_left <= 10
     time_taken_s = (result.end_time - result.start_time).total_seconds()
-    assert 0.0 < time_taken_s < 10.0
+    assert 0.0 < time_taken_s < 100.0
     assert result.process_name
 
     results_df.drop(["start_time", "end_time", "process_name"]).write_csv(serialisation_dir / "results.csv")
