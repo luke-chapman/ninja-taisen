@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct InstructionDto {
     pub id: u64,
     pub seed: u64,
