@@ -5,6 +5,7 @@ from pathlib import Path
 from pstats import SortKey
 
 import polars as pl
+from ninja_taisen_rust import simulate_instructions_from_csv_file
 
 from ninja_taisen.algos.card_mover import CardMover
 from ninja_taisen.algos.game_runner import simulate_many_multi_process
@@ -22,7 +23,6 @@ from ninja_taisen.objects.safe_random import SafeRandom
 from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Board, Card, Category
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 from ninja_taisen.utils.logging_setup import setup_logging
-from ninja_taisen_rust import simulate_instructions_from_csv_file
 
 log = getLogger(__name__)
 
