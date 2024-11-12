@@ -3,7 +3,7 @@ from cProfile import Profile
 from logging import getLogger
 from pathlib import Path
 from pstats import SortKey
-
+import polars as pl
 from ninja_taisen.algos.card_mover import CardMover
 from ninja_taisen.algos.game_runner import simulate_many_multi_process
 from ninja_taisen.algos.move_gatherer import gather_all_permitted_moves
@@ -21,6 +21,8 @@ from ninja_taisen.objects.types import CATEGORY_BY_DTO, TEAM_BY_DTO, Board, Card
 from ninja_taisen.strategy.strategy_lookup import lookup_strategy
 from ninja_taisen.utils.logging_setup import setup_logging
 
+from ninja_taisen_rust import simulate_instructions_from_csv_file
+
 log = getLogger(__name__)
 
 
@@ -34,6 +36,7 @@ def simulate(
     log_file: Path | None = None,
     profile: bool = False,
     serialisation_dir: Path | None = None,
+    rust: bool = False,
 ) -> None:
     setup_logging(verbosity, log_file)
 
@@ -48,6 +51,15 @@ def simulate(
         log.info(f"User provided max_processes={max_processes}; found cpu_count={cpu_count}")
         max_processes = max(cpu_count + max_processes, 1)
         log.info(f"Will use max_processes={max_processes}")
+
+    if rust:
+        log.info(f"Specified rust=True, here we go...")
+        instructions_filename = results_dir / "instructions.csv"
+        pl.DataFrame(data=instructions, orient="row").write_csv(instructions_filename)
+        log.info(f"Wrote instructions to {instructions_filename}")
+        simulate_instructions_from_csv_file(str(instructions_filename), max_processes, per_process)
+        log.info(f"Completed rust simulation - results in {results_dir}")
+        return
 
     if profile:
         with Profile() as profiler:
