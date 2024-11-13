@@ -7,17 +7,19 @@ mod move_gatherer;
 mod strategy;
 mod metric;
 
-use pyo3::prelude::*;
 use csv::ReaderBuilder;
 use std::collections::HashMap;
 use std::fs::{create_dir_all, exists, File};
+use std::thread;
 use chrono::Utc;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use polars::prelude::*;
+use pyo3::prelude::*;
 use threadpool::ThreadPool;
+
 use crate::board::*;
 use crate::card::cards;
 use crate::dice::{roll_dice_three_times, DiceRoll};
@@ -76,7 +78,7 @@ fn simulate_one(instruction: &InstructionDto) -> ResultDto {
         wolf_cards_left: board.wolf_heights.iter().sum(),
         start_time: start_time.to_rfc3339(),
         end_time: Utc::now().to_rfc3339(),
-        process_name: String::from("main_process"),
+        process_name: thread::current().name().unwrap_or("Unnamed thread").to_string(),
     }
 }
 
@@ -371,7 +373,7 @@ mod tests {
             .canonicalize().unwrap()
             .parent().unwrap()
             .parent().unwrap()
-            .join(Path::new("tests/regression/turn_by_turn"));
+            .join(Path::new("py/tests/regression/turn_by_turn"));
 
         let mut pass_count = 0;
         let mut fail_count = 0;

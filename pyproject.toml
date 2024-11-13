@@ -24,6 +24,9 @@ Documentation = "https://github.com/luke-chapman/ninja-taisen#readme"
 Issues = "https://github.com/luke-chapman/ninja-taisen/issues"
 Source = "https://github.com/luke-chapman/ninja-taisen"
 
+[tool.maturin]
+python-source = "py"
+
 [tool.ruff]
 lint.select = [
   # pycodestyle
