@@ -10,6 +10,12 @@ from typing import Any
 import matplotlib.pyplot as plt
 import polars as pl
 
+# TODO 2024-11-13 - work out why the import of ninja_taisen fails. Maturin docs are confusing!
+try:
+    import ninja_taisen
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.dtos import Strategy
 from ninja_taisen.objects.constants import DEFAULT_LOGGING
@@ -131,6 +137,18 @@ def run_analysis(strategies: list[str], results_parquet: Path) -> None:
 
         df = pl.DataFrame(data=data)
         write_png_csv(strategy=strategy_a, df=df, run_dir=results_parquet.parent)
+
+    df_comparison = (
+        pl.scan_parquet(results_parquet)
+        .group_by("monkey_strategy", "wolf_strategy", maintain_order=True)
+        .agg([
+            pl.col("turn_count").mean().alias("avg_turn_count"),
+            pl.col("monkey_cards_left").mean().alias("avg_monkey_cards_left"),
+            pl.col("wolf_cards_left").mean().alias("avg_wolf_cards_left"),
+        ])
+        .collect()
+    )
+    df_comparison.write_csv(results_parquet.parent / "comparison.csv")
 
     log.info("All post analysis complete")
 
