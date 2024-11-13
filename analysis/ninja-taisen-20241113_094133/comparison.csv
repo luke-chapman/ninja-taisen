@@ -1,0 +1,17 @@
+monkey_strategy,wolf_strategy,avg_turn_count,avg_monkey_cards_left,avg_wolf_cards_left
+random,random,14.95,2.967,3.033
+random,random_spot_win,12.956,3.692,3.87
+random,metric_count,10.881,1.905,5.714
+random,metric_strength,10.526,1.879,5.885
+random_spot_win,random,12.837,4.016,3.894
+random_spot_win,random_spot_win,11.669,4.341,4.518
+random_spot_win,metric_count,10.512,2.237,5.871
+random_spot_win,metric_strength,10.526,2.086,5.873
+metric_count,random,10.35,5.912,2.212
+metric_count,random_spot_win,10.351,5.873,2.263
+metric_count,metric_count,11.355,3.2,3.172
+metric_count,metric_strength,11.334,2.916,3.38
+metric_strength,random,10.259,6.064,2.201
+metric_strength,random_spot_win,10.113,6.074,2.322
+metric_strength,metric_count,11.477,3.204,3.059
+metric_strength,metric_strength,11.521,2.986,3.071
