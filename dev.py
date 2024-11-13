@@ -13,13 +13,13 @@ def run_subprocess(command: list[str]) -> None:
 
 
 def lint(args: list[str]) -> None:
-    run_subprocess(["ruff", "check", "ninja_taisen", "tests", "analysis"] + args)
-    run_subprocess(["mypy", "ninja_taisen", "tests", "analysis", "--install-types", "--non-interactive"] + args)
+    run_subprocess(["ruff", "check", "ninja_taisen", "typing", "tests", "analysis"] + args)
+    run_subprocess(["mypy", "ninja_taisen", "typing", "tests", "analysis", "--install-types", "--non-interactive"] + args)
 
 
 def format(args: list[str]) -> None:
-    run_subprocess(["black", "ninja_taisen", "tests", "analysis"] + args)
-    run_subprocess(["ruff", "check", "ninja_taisen", "tests", "analysis", "--fix", "--unsafe-fixes"] + args)
+    run_subprocess(["black", "ninja_taisen", "typing", "tests", "analysis"] + args)
+    run_subprocess(["ruff", "check", "ninja_taisen", "typing", "tests", "analysis", "--fix", "--unsafe-fixes"] + args)
 
 
 def test(args: list[str]) -> None:
