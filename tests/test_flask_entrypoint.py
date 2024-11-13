@@ -76,7 +76,7 @@ def test_execute(tmp_path: Path) -> None:
 
 def __submit_request(url: str, json: dict[str, Any], tmp_path: Path) -> requests.Response:
     process: subprocess.Popen[bytes] | None = None
-    flask_entrypoint = Path(__file__).resolve().parent.parent / "src" / "ninja_taisen" / "flask_entrypoint.py"
+    flask_entrypoint = Path(__file__).resolve().parent.parent / "ninja_taisen" / "flask_entrypoint.py"
     assert flask_entrypoint.is_file()
 
     try:
