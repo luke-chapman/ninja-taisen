@@ -1,9 +1,6 @@
 [build-system]
-requires = ["hatchling", "maturin>=1.0,<2.0"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.hooks]
-pre = ["maturin develop"]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
 
 [project]
 name = "ninja-taisen"
@@ -26,41 +23,6 @@ dependencies = [
 Documentation = "https://github.com/luke-chapman/ninja-taisen#readme"
 Issues = "https://github.com/luke-chapman/ninja-taisen/issues"
 Source = "https://github.com/luke-chapman/ninja-taisen"
-
-[tool.hatch.version]
-path = "src/ninja_taisen/__about__.py"
-
-[tool.hatch.envs.default.scripts]
-lint = [
-  "ruff check src tests analysis",
-  "mypy src tests analysis --install-types --non-interactive"
-]
-format = [
-  "black src tests analysis",
-  "ruff check src tests analysis --fix --unsafe-fixes"
-]
-test = "pytest {args: tests}"
-regen = "pytest tests/regression --regen"
-check = [
-  "hatch run format",
-  "hatch run lint",
-  "hatch run test",
-]
-yeehaw = [
-  "hatch run check",
-  "git add .",
-  "git commit -m {args}",
-  "git push -u",
-]
-
-[tool.hatch.envs.default]
-dependencies = [
-  "black>=24.8.0",
-  "mypy>=1.0.0",
-  "pytest>=8.3.2",
-  "requests>=2.32.3",
-  "ruff>=0.5.6",
-]
 
 [tool.ruff]
 lint.select = [
