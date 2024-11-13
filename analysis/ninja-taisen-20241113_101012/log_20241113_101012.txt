@@ -1,0 +1,15 @@
+2024-11-13 10:10:12 - INFO - batch_simulate - Command line
+C:\Users\lrrch\AppData\Local\Programs\Python\Python312\python.exe .\batch_simulate.py --strategies random random_spot_win metric_count metric_strength --multiplier 1000 --per-process 500 --rust
+2024-11-13 10:10:12 - INFO - batch_simulate - Using run_dir=C:\Users\lrrch\repos\ninja-taisen\analysis\ninja-taisen-20241113_101012
+2024-11-13 10:10:12 - INFO - api - User provided max_processes=-1; found cpu_count=8
+2024-11-13 10:10:12 - INFO - api - Will use max_processes=7
+2024-11-13 10:10:12 - INFO - api - Specified rust=True, here we go...
+2024-11-13 10:10:12 - INFO - api - Wrote instructions to C:\Users\lrrch\repos\ninja-taisen\analysis\ninja-taisen-20241113_101012\instructions.csv
+2024-11-13 10:10:15 - INFO - api - Completed rust simulation - results in C:\Users\lrrch\repos\ninja-taisen\analysis\ninja-taisen-20241113_101012
+2024-11-13 10:10:15 - INFO - batch_simulate - Simulation took 2.99 seconds
+2024-11-13 10:10:15 - INFO - batch_simulate - Beginning analysis...
+2024-11-13 10:10:15 - INFO - batch_simulate - Wrote csv and png for random
+2024-11-13 10:10:15 - INFO - batch_simulate - Wrote csv and png for random_spot_win
+2024-11-13 10:10:15 - INFO - batch_simulate - Wrote csv and png for metric_count
+2024-11-13 10:10:15 - INFO - batch_simulate - Wrote csv and png for metric_strength
+2024-11-13 10:10:15 - INFO - batch_simulate - All post analysis complete
