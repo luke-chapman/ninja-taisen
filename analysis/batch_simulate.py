@@ -12,7 +12,7 @@ import polars as pl
 
 # TODO 2024-11-13 - work out why the import of ninja_taisen fails. Maturin docs are confusing!
 try:
-    import ninja_taisen
+    import ninja_taisen  # noqa
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
