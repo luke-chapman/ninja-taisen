@@ -141,11 +141,13 @@ def run_analysis(strategies: list[str], results_parquet: Path) -> None:
     df_comparison = (
         pl.scan_parquet(results_parquet)
         .group_by("monkey_strategy", "wolf_strategy", maintain_order=True)
-        .agg([
-            pl.col("turn_count").mean().alias("avg_turn_count"),
-            pl.col("monkey_cards_left").mean().alias("avg_monkey_cards_left"),
-            pl.col("wolf_cards_left").mean().alias("avg_wolf_cards_left"),
-        ])
+        .agg(
+            [
+                pl.col("turn_count").mean().alias("avg_turn_count"),
+                pl.col("monkey_cards_left").mean().alias("avg_monkey_cards_left"),
+                pl.col("wolf_cards_left").mean().alias("avg_wolf_cards_left"),
+            ]
+        )
         .collect()
     )
     df_comparison.write_csv(results_parquet.parent / "comparison.csv")

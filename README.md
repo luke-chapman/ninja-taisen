@@ -5,13 +5,7 @@ This repo contains back-end code related to the 2-player board game [Ninja Taise
 - to allow humans to play against this strategy
 - to have some fun along the way and learn new skills
 
-## Showcasing a strategy
-
-You can ask the code to:
-- `choose` a move, using the `choose_move` method in `api.py`
-- `execute` a move, using the `execute_move` method in `api.py`
-
-These methods are packaged up behind a json api using [flask](https://flask.palletsprojects.com). This json api allows the front end (coming soon!) to communicate with the back end without either needing to know any fine details of how the other operates.
+This project was initially written in Python, then re-written in Rust with a Python API - this has proven to make it several hundred times faster!
 
 ## Developing a strategy
 
@@ -21,7 +15,7 @@ This is an open-ended question. As of September 2024, the approach has been:
 - Iterate and repeat based on the results
 
 When developing a strategy you are consuming the code in `ninja-taisen` as a Python library. To this end the library code is structured as a Python pacakge:
-- Methods & classes intended for public usage are in either [api.py](https://github.com/luke-chapman/ninja-taisen/blob/master/src/ninja_taisen/api.py) or [dtos.py](https://github.com/luke-chapman/ninja-taisen/blob/master/src/ninja_taisen/dtos.py)
+- Methods & classes intended for public usage are in either [api.py](https://github.com/luke-chapman/ninja-taisen/blob/master/ninja_taisen/api.py) or [dtos.py](https://github.com/luke-chapman/ninja-taisen/blob/master/ninja_taisen/dtos.py)
 - There are tests, including regression tests. These have been invaluable in developing a reliable game simulator 
 - The code is linted with `ruff` and `mypy`, including checking for type annotations
 
@@ -36,11 +30,19 @@ As of September 2024 the "metric_strength" strategy beats the "random" strategy 
 If you're happy to develop the library broadly in the style described above, please do get involved / get in touch. I've raised [issues](https://github.com/luke-chapman/ninja-taisen/issues) for my current ideas here - consider them a [starter for ten](https://en.wiktionary.org/wiki/starter_for_ten).
 
 ## Local environment setup
-First clone this repo:
+You'll need both a Python and Rust development environment work on this project. Getting this working is non-trivial and there are different ways to go about it - my approach is detailed below.
+
+### Pre-requisites
+Clone this repo: 
 ```
 git clone https://github.com/luke-chapman/ninja-taisen
 ```
-Next, install Python 3.12 or newer on your machine. I recommend the [official, canonical versions](https://www.python.org/downloads/). 
+
+Install Python 3.12 or newer on your machine (NB I'm sticking to 3.12, as matplotlib crashes on 3.13 for me). I recommend the [official, canonical versions](https://www.python.org/downloads/). 
+
+Install Rust on your machine. I did this by installing [RustRover](https://www.jetbrains.com/rust/) on my machine. I'd really recommend this IDE and it's free for non-commercial use.
+
+### Building the package
 
 Now we need to make a Python [virtual environment](https://docs.python.org/3/library/venv.html) with some additional packages on top of the core installation. Open a terminal, `cd` to your location of choice, then run:
 ```
@@ -55,11 +57,49 @@ deactivate                                        # Useful command to deactivate
 ```
 Now we're ready to install extra packages into our environment. `cd` to the folder containing this Readme file, and run
 ```
+pip install -r dev_requirements.txt
 pip install -e .
 ```
+The second of these commands is expected to take several minutes, as it compiles the Rust code into a binary before packaging it into the Python wheel.
+
 Your local environment is now ready with ninja-taisen and all of its dependencies.
 
-## Querying the json endpoint
+### Python development
+The Python code is structured as a Python library, using `maturin` to do a magic which links Rust and Python together.
+
+As far as the Python code goes:
+- `ninja_taisen` has source code
+- `tests` has the tests
+- `typing` provides type hints for the methods exposed from Rust
+
+I'm using `ruff`, `mypy` and `black` for linting and `pytest` for testing. A few settings are encoded in the `pyproject.toml` file.
+
+I use the `dev.py` script to launch useful linting operations, e.g.
+```
+python dev.py lint
+python dev.py test
+```
+You can also commit to a branch using
+```
+python dev.py yeehaw "Commit message"
+```
+This will format, lint & test the code before committing to git if all is well.
+
+### Rust development
+For pure Rust development, we can use `cargo`:
+```
+cargo build    # Compile the code (in debug)
+cargo test     # Compile the code & run unit tests
+```
+
+## Showcasing a strategy
+
+You can ask the code to:
+- `choose` a move, using the `choose_move` method in `api.py`
+- `execute` a move, using the `execute_move` method in `api.py`
+
+These methods are packaged up behind a json api using [flask](https://flask.palletsprojects.com). This json api allows the front end (coming soon!) to communicate with the back end without either needing to know any fine details of how the other operates.
+
 ### Launch server
 You can launch the Python server like this:
 ```
@@ -97,20 +137,3 @@ curl -X POST http://127.0.0.1:5000/execute -H "Content-Type: application/json" -
 
 {"board":{"monkey":{"0":["MJ4","MR3","MP2","MS1"],"1":["MP3"],"2":["MS3"],"3":["MS2","MR1","MR2"],"6":["MP1"]},"wolf":{"7":["WP3"],"8":["WS1","WR2"],"9":["WP1","WS2","WR3"],"10":["WJ4","WR1","WP2","WS3"]}}}
 ```
-
-## Development work
-This project uses `hatch` to structure the project. Hatch invokes `ruff`, `mypy` and `black` for linting and `pytest` for testing.
-
-Linting and tests should pass before hitting master. There are some useful commands in the pyproject.toml file for aid with this:
-
-```
-hatch run format
-hatch run lint
-hatch run test
-```
-
-You can also commit to a branch using
-```
-hatch run yeehaw -- "Commit message"
-```
-This will format, lint & test the code before committing to git if all is well.
