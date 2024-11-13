@@ -371,7 +371,6 @@ mod tests {
             .canonicalize().unwrap()
             .parent().unwrap()
             .parent().unwrap()
-            .parent().unwrap()
             .join(Path::new("tests/regression/turn_by_turn"));
 
         let mut pass_count = 0;
