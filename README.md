@@ -65,7 +65,7 @@ The second of these commands is expected to take several minutes, as it compiles
 Your local environment is now ready with ninja-taisen and all of its dependencies.
 
 ### Python development
-The Python code is structured as a Python library, using `maturin` to do a magic which links Rust and Python together.
+The Python code is structured as a Python library, using `maturin` to do a magic which links Rust and Python together via the magic `maturin develop` command. 
 
 As far as the Python code goes:
 - `ninja_taisen` has source code

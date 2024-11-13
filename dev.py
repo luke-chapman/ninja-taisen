@@ -23,6 +23,8 @@ def format(args: list[str]) -> None:
 
 
 def test(args: list[str]) -> None:
+    run_subprocess(["cargo", "test"] + args)
+    run_subprocess(["maturin", "develop"] + args)
     run_subprocess(["pytest", "tests"] + args)
 
 
