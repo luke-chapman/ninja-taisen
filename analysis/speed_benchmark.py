@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 from collections import defaultdict
+from math import ceil
 from pathlib import Path
 from typing import Any
 
@@ -77,9 +78,9 @@ def choose_chunk_sizes(overall_run_dir: Path) -> tuple[int, int]:
     python_s_per_run = python_dry_run_time / (16 * multiplier)
     rust_s_per_run = rust_dry_run_time / (16 * multiplier)
 
-    python_chunk_size = int(1 / python_s_per_run)
-    rust_chunk_size = int(1 / rust_s_per_run)
-    print("Choosing chunk sizes to aim for about 1s per chunk")
+    python_chunk_size = int(10 / python_s_per_run)
+    rust_chunk_size = int(10 / rust_s_per_run)
+    print("Choosing chunk sizes to aim for about 10s per chunk")
     print(f"Python: {python_chunk_size}, Rust: {rust_chunk_size}")
     return python_chunk_size, rust_chunk_size
 
@@ -96,7 +97,7 @@ def run() -> None:
     python_chunk_size, rust_chunk_size = choose_chunk_sizes(overall_run_dir)
     run_python, run_rust = True, True
 
-    simulation_counts = [400, 1008, 2000, 4000, 10000, 20000, 40000, 100000, 200000, 400000, 1000000]
+    simulation_counts = [400, 1008, 2000, 4000, 10000, 20000, 40000, 100000, 200000, 400000, 1000000, 2000000, 4000000]
 
     results: dict[str, list[Any]] = defaultdict(list)
 
@@ -126,7 +127,7 @@ def run() -> None:
             rust_s = launch_benchmark_process(
                 multiplier=multiplier,
                 parallelism=logical_cpus - 1,
-                chunk_size=rust_chunk_size,
+                chunk_size=min(rust_chunk_size, ceil(multiplier * 16 / (logical_cpus - 1))),
                 rust=True,
                 overall_run_dir=overall_run_dir,
             )
