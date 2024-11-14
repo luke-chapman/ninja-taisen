@@ -7,7 +7,7 @@ def timestamp() -> str:
 
 
 def choose_run_directory() -> Path:
-    return Path.cwd() / f"ninja-taisen-{timestamp()}"
+    return Path.home() / ".ninja-taisen" / f"ninja-taisen-{timestamp()}"
 
 
 def setup_run_directory() -> Path:
