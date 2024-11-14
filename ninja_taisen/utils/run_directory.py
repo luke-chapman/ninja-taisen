@@ -12,5 +12,5 @@ def choose_run_directory() -> Path:
 
 def setup_run_directory() -> Path:
     results_dir = choose_run_directory()
-    results_dir.mkdir()
+    results_dir.mkdir(parents=True, exist_ok=True)
     return results_dir

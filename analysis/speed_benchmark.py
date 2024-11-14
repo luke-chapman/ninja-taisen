@@ -10,15 +10,14 @@ from typing import Any
 import polars as pl
 import psutil
 
-from ninja_taisen.dtos import Strategy
-from ninja_taisen.utils.run_directory import setup_run_directory
-
 # TODO 2024-11-13 - work out why the import of ninja_taisen fails. Maturin docs are confusing!
 try:
     import ninja_taisen  # noqa
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from ninja_taisen.dtos import Strategy
+from ninja_taisen.utils.run_directory import setup_run_directory
 
 STRATEGIES = [Strategy.random, Strategy.random_spot_win, Strategy.metric_count, Strategy.metric_strength]
 COMMAND_PREFIX = [
@@ -37,7 +36,7 @@ def launch_benchmark_process(
 ) -> float:
     name = "rust" if rust else "python"
     run_dir = overall_run_dir / f"dry_run_{name}_{16 * multiplier}"
-    run_dir.mkdir()
+    run_dir.mkdir(parents=True)
     command = COMMAND_PREFIX + [
         "--run-dir",
         str(run_dir),
@@ -118,7 +117,7 @@ def run() -> None:
                 overall_run_dir=overall_run_dir,
             )
             results["python_s"].append(round(python_s, 3))
-            if python_s > 100.0:
+            if python_s > 10.0:
                 run_python = False
         else:
             results["python_s"].append(None)
@@ -132,7 +131,7 @@ def run() -> None:
                 overall_run_dir=overall_run_dir,
             )
             results["rust_s"].append(round(rust_s, 3))
-            if rust_s > 100.0:
+            if rust_s > 10.0:
                 run_rust = False
         else:
             results["rust_s"].append(None)
