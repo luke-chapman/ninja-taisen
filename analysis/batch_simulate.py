@@ -36,8 +36,6 @@ def run_simulation(
     log_file: Path,
     rust: bool,
 ) -> None:
-    start = perf_counter()
-
     instructions: list[InstructionDto] = []
     index = 0
     for monkey_strategy in strategies:
@@ -51,6 +49,7 @@ def run_simulation(
                 instructions.append(instruction)
                 index += 1
 
+    start = perf_counter()
     simulate(
         instructions=instructions,
         results_dir=run_dir,
@@ -60,9 +59,11 @@ def run_simulation(
         log_file=log_file,
         rust=rust,
     )
-
     stop = perf_counter()
-    log.info(f"Simulation took {stop - start:.2f} seconds")
+    time_taken = stop - start
+    log.info(f"Simulation took {time_taken:.2f} seconds")
+    time_taken_txt = run_dir / "time_taken.txt"
+    time_taken_txt.write_text(str(time_taken))
 
 
 def write_png_csv(strategy: str, df: pl.DataFrame, run_dir: Path) -> None:
