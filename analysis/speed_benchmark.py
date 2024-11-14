@@ -26,7 +26,8 @@ COMMAND_PREFIX = [
     str(Path(__file__).resolve().parent / "batch_simulate.py"),
     "--strategies",
 ] + STRATEGIES
-MAX_TIME_S = 600.0
+MAX_TIME_S = 400.0
+
 
 def launch_benchmark_process(
     multiplier: int,
@@ -97,7 +98,23 @@ def run() -> None:
     python_chunk_size, rust_chunk_size = choose_chunk_sizes(overall_run_dir)
     run_python, run_rust = True, True
 
-    simulation_counts = [400, 1008, 2000, 4000, 10000, 20000, 40000, 100000, 200000, 400000, 1000000, 2000000, 4000000]
+    simulation_counts = [
+        112,
+        208,
+        400,
+        1008,
+        2000,
+        4000,
+        10000,
+        20000,
+        40000,
+        100000,
+        200000,
+        400000,
+        1000000,
+        2000000,
+        4000000,
+    ]
 
     results: dict[str, list[Any]] = defaultdict(list)
 
@@ -136,13 +153,6 @@ def run() -> None:
                 run_rust = False
         else:
             results["rust_s"].append(None)
-
-        python_s = results["python_s"][-1]
-        rust_s = results["rust_s"][-1]
-        if python_s and rust_s:
-            results["speed_differential"].append(int(python_s / rust_s))
-        else:
-            results["speed_differential"].append(None)
 
     pl.DataFrame(data=results).write_csv(overall_run_dir / "benchmark_results.csv")
     metadata = {
