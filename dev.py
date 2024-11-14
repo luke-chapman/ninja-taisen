@@ -9,7 +9,10 @@ def run_subprocess(command: list[str]) -> None:
     if result.returncode == 0:
         print(result.stdout.decode("utf-8"))
     else:
-        raise SubprocessError(result.stderr.decode("utf-8"))
+        if result.stderr:
+            raise SubprocessError(result.stderr.decode("utf-8"))
+        else:
+            raise SubprocessError(result.stdout.decode("utf-8"))
 
 
 def lint(args: list[str]) -> None:

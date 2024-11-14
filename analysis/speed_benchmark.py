@@ -1,13 +1,15 @@
 import datetime
 import json
+import os
 import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
+from typing import Any
+
 import polars as pl
 import psutil
-from polars.dependencies import subprocess
-import os
+
 from ninja_taisen.dtos import Strategy
 from ninja_taisen.utils.run_directory import setup_run_directory
 
@@ -19,19 +21,32 @@ except ImportError:
 
 
 STRATEGIES = [Strategy.random, Strategy.random_spot_win, Strategy.metric_count, Strategy.metric_strength]
-COMMAND_PREFIX = [sys.executable, str(Path(__file__).resolve().parent / "batch_simulate.py"), "--strategies"] + STRATEGIES
+COMMAND_PREFIX = [
+    sys.executable,
+    str(Path(__file__).resolve().parent / "batch_simulate.py"),
+    "--strategies",
+] + STRATEGIES
+
 
 def launch_benchmark_process(
-        multiplier: int, parallelism: int, chunk_size: int, rust: bool, overall_run_dir: Path,
+    multiplier: int,
+    parallelism: int,
+    chunk_size: int,
+    rust: bool,
+    overall_run_dir: Path,
 ) -> float:
     name = "rust" if rust else "python"
     run_dir = overall_run_dir / f"dry_run_{name}_{16 * multiplier}"
     run_dir.mkdir()
     command = COMMAND_PREFIX + [
-        "--run-dir", str(run_dir),
-        "--multiplier", str(multiplier),
-        "--max-processes", str(parallelism),
-        "--per-process", str(chunk_size)
+        "--run-dir",
+        str(run_dir),
+        "--multiplier",
+        str(multiplier),
+        "--max-processes",
+        str(parallelism),
+        "--per-process",
+        str(chunk_size),
     ]
     if rust:
         command.append("--rust")
@@ -47,10 +62,18 @@ def launch_benchmark_process(
 def choose_chunk_sizes(overall_run_dir: Path) -> tuple[int, int]:
     multiplier = 10
     python_dry_run_time = launch_benchmark_process(
-        multiplier=multiplier, parallelism=1, chunk_size=multiplier * 16, rust=False, overall_run_dir=overall_run_dir,
+        multiplier=multiplier,
+        parallelism=1,
+        chunk_size=multiplier * 16,
+        rust=False,
+        overall_run_dir=overall_run_dir,
     )
     rust_dry_run_time = launch_benchmark_process(
-        multiplier=multiplier, parallelism=1, chunk_size=multiplier * 16, rust=True, overall_run_dir=overall_run_dir,
+        multiplier=multiplier,
+        parallelism=1,
+        chunk_size=multiplier * 16,
+        rust=True,
+        overall_run_dir=overall_run_dir,
     )
 
     python_s_per_run = python_dry_run_time / (16 * multiplier)
@@ -58,28 +81,25 @@ def choose_chunk_sizes(overall_run_dir: Path) -> tuple[int, int]:
 
     python_chunk_size = int(1 / python_s_per_run) * 10
     rust_chunk_size = int(1 / rust_s_per_run) * 10
-    print(f"Choosing chunk sizes to aim for about 10s per chunk")
+    print("Choosing chunk sizes to aim for about 10s per chunk")
     print(f"Python: {python_chunk_size}, Rust: {rust_chunk_size}")
     return python_chunk_size, rust_chunk_size
 
 
 def run() -> None:
     logical_cpus = psutil.cpu_count(logical=True)
-    total_ram_gb = psutil.virtual_memory().total / (1024 ** 3)
+    assert logical_cpus is not None, "Could not determine logical_cpus"
+
+    total_ram_gb = psutil.virtual_memory().total / (1024**3)
     cpu_freq_ghz = psutil.cpu_freq().max / 1000
 
     overall_run_dir = setup_run_directory()
     python_chunk_size, rust_chunk_size = choose_chunk_sizes(overall_run_dir)
     run_python, run_rust = True, True
 
-    simulation_counts = [
-        2000, 4000,
-        10000, 20000, 40000,
-        100000, 200000, 400000,
-        1000000
-    ]
+    simulation_counts = [2000, 4000, 10000, 20000, 40000, 100000, 200000, 400000, 1000000]
 
-    results = defaultdict(list)
+    results: dict[str, list[Any]] = defaultdict(list)
 
     for simulation_count in simulation_counts:
         if not run_python and not run_rust:
@@ -124,7 +144,7 @@ def run() -> None:
 
     pl.DataFrame(data=results).write_csv(overall_run_dir / "benchmark_results.csv")
     metadata = {
-        "date":  datetime.datetime.today().strftime("%Y-%m-%d"),
+        "date": datetime.datetime.today().strftime("%Y-%m-%d"),
         "user": os.getlogin(),
         "logical_cpus": logical_cpus,
         "total_ram_gb": total_ram_gb,
