@@ -77,8 +77,8 @@ def choose_chunk_sizes(overall_run_dir: Path) -> tuple[int, int]:
     python_s_per_run = python_dry_run_time / (16 * multiplier)
     rust_s_per_run = rust_dry_run_time / (16 * multiplier)
 
-    python_chunk_size = int(1 / python_s_per_run) * 10
-    rust_chunk_size = int(1 / rust_s_per_run) * 10
+    python_chunk_size = int(10 / python_s_per_run)
+    rust_chunk_size = int(10 / rust_s_per_run)
     print("Choosing chunk sizes to aim for about 10s per chunk")
     print(f"Python: {python_chunk_size}, Rust: {rust_chunk_size}")
     return python_chunk_size, rust_chunk_size
@@ -150,6 +150,8 @@ def run() -> None:
         "logical_cpus": logical_cpus,
         "total_ram_gb": round(total_ram_gb, 3),
         "cpu_freq_mhz": cpu_freq_mhz,
+        "python_chunk_size": python_chunk_size,
+        "rust_chunk_size": rust_chunk_size,
     }
     metadata_json = overall_run_dir / "benchmark_metadata.json"
     metadata_json.write_text(json.dumps(metadata, indent=2))
