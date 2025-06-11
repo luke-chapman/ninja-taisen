@@ -40,6 +40,7 @@ def run() -> None:
         "--seed-offset", type=int, default=int(time()), help="Optional seed offset for deterministic results"
     )
     parser.add_argument("--multiplier", default=1, type=int, help="How many times to play the game")
+    parser.add_argument("--no-rust", action="store_true", help="If set, invoke python only implementation")
     parser.add_argument(
         "--run-dir", default=choose_run_directory(), type=Path, help="Directory with results, logs and analysis"
     )
@@ -64,12 +65,13 @@ def run() -> None:
         results_format="csv",
         log_file=log_file,
         max_processes=1,
+        rust=not args.no_rust,
     )
     stop = perf_counter()
     log.info(f"Game simulation took {stop - start:.2f}s")
 
-    results_csv = run_dir / "results.csv"
-    results = pl.read_csv(results_csv, schema_overrides={"start_time": pl.Datetime, "end_time": pl.Datetime})
+    results_parquet = run_dir / "results.parquet"
+    results = pl.read_parquet(results_parquet)
     assert results.shape[0] == args.multiplier
 
     columns = (

@@ -184,7 +184,7 @@ def run() -> None:
     parser.add_argument(
         "--run-dir", default=choose_run_directory(), type=Path, help="Directory with results, logs and analysis"
     )
-    parser.add_argument("--rust", action="store_true", help="If set, invoke rust implementation")
+    parser.add_argument("--no-rust", action="store_true", help="If set, invoke python only implementation")
 
     args = parser.parse_args()
     run_dir = args.run_dir.resolve()
@@ -208,7 +208,7 @@ def run() -> None:
             max_processes=args.max_processes,
             per_process=args.per_process,
             log_file=log_file,
-            rust=args.rust,
+            rust=not args.no_rust,
         )
 
     run_analysis(strategies=args.strategies, results_parquet=results_parquet)
