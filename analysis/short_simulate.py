@@ -70,8 +70,8 @@ def run() -> None:
     stop = perf_counter()
     log.info(f"Game simulation took {stop - start:.2f}s")
 
-    results_csv = run_dir / "results.csv"
-    results = pl.read_csv(results_csv, schema_overrides={"start_time": pl.Datetime, "end_time": pl.Datetime})
+    results_parquet = run_dir / "results.parquet"
+    results = pl.read_parquet(results_parquet)
     assert results.shape[0] == args.multiplier
 
     columns = (
