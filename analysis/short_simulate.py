@@ -7,6 +7,12 @@ from time import perf_counter, time
 
 import polars as pl
 
+# TODO 2024-11-13 - work out why the import of ninja_taisen fails. Maturin docs are confusing!
+try:
+    import ninja_taisen  # noqa
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from ninja_taisen import InstructionDto, simulate
 from ninja_taisen.dtos import Strategy
 from ninja_taisen.objects.constants import DEFAULT_LOGGING
