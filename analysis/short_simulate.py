@@ -27,7 +27,7 @@ def run() -> None:
     parser.add_argument(
         "--monkey",
         choices=list(Strategy),
-        default=Strategy.next_turn_prototype,
+        default=Strategy.metric_strength,
         help="Strategy for the monkey team. Monkey plays first",
     )
     parser.add_argument(
