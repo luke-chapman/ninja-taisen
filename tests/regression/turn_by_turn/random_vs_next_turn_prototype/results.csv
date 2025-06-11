@@ -1,2 +1,0 @@
-id,seed,monkey_strategy,wolf_strategy,winner,turn_count,monkey_cards_left,wolf_cards_left
-0,0,random,next_turn_prototype,wolf,6,4,5

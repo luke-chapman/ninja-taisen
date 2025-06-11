@@ -68,7 +68,6 @@ class Strategy(StrEnum):
     metric_count = "metric_count"
     metric_position = "metric_position"
     metric_strength = "metric_strength"
-    next_turn_prototype = "next_turn_prototype"
 
 
 class ChooseRequest(NinjaTaisenModel):
