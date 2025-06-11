@@ -30,6 +30,7 @@ def test_all_strategies(max_processes: int, results_format: ResultsFormat, regen
         results_format=results_format,
         max_processes=max_processes,
         per_process=5,
+        rust=False,
     )
 
     df_lazy = (

@@ -27,6 +27,7 @@ def __run_test_strategy_combination(monkey_strategy: str, wolf_strategy: str, tm
         results_dir=results_dir,
         results_format="csv",
         serialisation_dir=serialisation_dir,
+        rust=False,
     )
 
     results_df = pl.read_csv(
