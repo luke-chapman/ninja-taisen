@@ -6,7 +6,7 @@ from ninja_taisen.objects.constants import DEFAULT_LOGGING
 
 
 class UTCFormatter(logging.Formatter):
-    converter = time.gmtime
+    converter = time.gmtime  # type: ignore
 
 
 def setup_logging(verbosity: int = DEFAULT_LOGGING, log_file: Path | None = None) -> None:
