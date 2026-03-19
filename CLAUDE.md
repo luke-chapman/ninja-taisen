@@ -43,11 +43,11 @@ Type stubs for the Rust module live in `typing/ninja_taisen_rust/__init__.py`.
 
 ### Python (`ninja_taisen/`)
 
-The Python layer mirrors the Rust game logic and provides the public API, Flask server, and strategy framework.
+The Python layer mirrors the Rust game logic and provides the public API, FastAPI server, and strategy framework.
 
 - **`api.py`** — public entry points: `simulate()`, `choose_move()`, `execute_move()`. Pass `rust=True` to delegate to the Rust backend.
 - **`dtos.py`** — Pydantic models shared by Python and Rust paths (`BoardDto`, `MoveDto`, `ResultDto`, etc.). Uses camelCase JSON serialisation.
-- **`flask_entrypoint.py`** — REST API with `/choose` and `/execute` POST endpoints.
+- **`api_entrypoint.py`** — FastAPI REST API with `/choose` and `/execute` POST endpoints. Run with `uvicorn ninja_taisen.api_entrypoint:app`.
 - **`algos/`** — pure-Python game engine (game_runner, move_gatherer, card_mover, card_battle, board_builder, board_inspector).
 - **`strategy/`** — pluggable strategy implementations behind the `IStrategy` interface.
 - **`objects/types.py`** — core Python types: `Card`, `Board` (defaultdict piles), `Move`, `DiceRoll`, `BattleResult`.
@@ -55,7 +55,7 @@ The Python layer mirrors the Rust game logic and provides the public API, Flask 
 ### Test structure (`tests/`)
 
 - `test_api.py` / `test_api_rust.py` — API-level tests for Python and Rust paths
-- `test_flask_entrypoint.py` — Flask endpoint tests
+- `test_api_entrypoint.py` — FastAPI endpoint tests using `fastapi.testclient.TestClient` (no subprocess needed)
 - `regression/` — JSON fixtures for turn-by-turn move validation and batch simulation results; regenerated with `dev.py regen`
 
 ### Data flow (batch simulation)
