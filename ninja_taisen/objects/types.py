@@ -34,7 +34,7 @@ class Team(IntEnum):
     monkey = 0
     wolf = 1
 
-    def other(self) -> "Team":
+    def other(self) -> Team:
         if self == Team.monkey:
             return Team.wolf
         if self == Team.wolf:
@@ -57,7 +57,7 @@ class Card(NamedTuple):
         return SHORTHAND_BY_TEAM[self.team] + SHORTHAND_BY_CATEGORY[self.category] + str(self.strength)
 
     @classmethod
-    def from_dto(cls, dto: str) -> "Card":
+    def from_dto(cls, dto: str) -> Card:
         assert len(dto) == 3
         return Card(team=TEAM_BY_SHORTHAND[dto[0]], category=CATEGORY_BY_SHORTHAND[dto[1]], strength=int(dto[2]))
 
@@ -73,7 +73,7 @@ class Board(NamedTuple):
     wolf_cards: defaultdict[int, list[Card]]
 
     @classmethod
-    def from_dto(cls, dto: BoardDto) -> "Board":
+    def from_dto(cls, dto: BoardDto) -> Board:
         return Board(
             monkey_cards=defaultdict(
                 list, {i: [Card.from_dto(c) for c in cs] for i, cs in sorted(dto.monkey.items(), key=lambda t: t[0])}
@@ -163,7 +163,7 @@ class BattleStatus(IntEnum):
     draw = 0
     card_b_wins = 1
 
-    def other(self) -> "BattleStatus":
+    def other(self) -> BattleStatus:
         return BattleStatus(-self.value)
 
 
