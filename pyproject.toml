@@ -19,6 +19,16 @@ dependencies = [
   "pydantic>=2.8.2",
 ]
 
+[dependency-groups]
+dev = [
+  "black>=24.8.0",
+  "maturin>=1.0,<2.0",
+  "mypy>=1.0.0",
+  "pytest>=8.3.2",
+  "requests>=2.32.3",
+  "ruff>=0.5.6",
+]
+
 [project.urls]
 Documentation = "https://github.com/luke-chapman/ninja-taisen#readme"
 Issues = "https://github.com/luke-chapman/ninja-taisen/issues"
