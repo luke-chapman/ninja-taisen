@@ -85,3 +85,6 @@ cython_debug/
 
 # Rust
 target
+
+# Claude
+.claude/
