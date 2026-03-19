@@ -1,5 +1,5 @@
 [build-system]
-requires = ["maturin>=1.0,<2.0"]
+requires = ["maturin>=1.12.6,<2.0"]
 build-backend = "maturin"
 
 [project]
@@ -12,21 +12,23 @@ authors = [
   { name = "Luke Chapman", email = "lrrchapman@gmail.com" },
 ]
 dependencies = [
-  "flask>=3.0.3",
-  "matplotlib>=3.9.2",
-  "more-itertools>=10.4",
-  "polars>=1.5.0",
-  "pydantic>=2.8.2",
+  "flask>=3.1.3",
+  "matplotlib>=3.10.8",
+  "more-itertools>=10.8.0",
+  "polars>=1.39.2",
+  "pydantic>=2.12.5",
 ]
 
 [dependency-groups]
 dev = [
-  "black>=24.8.0",
-  "maturin>=1.0,<2.0",
-  "mypy>=1.0.0",
-  "pytest>=8.3.2",
-  "requests>=2.32.3",
-  "ruff>=0.5.6",
+  "black>=26.3.1",
+  "maturin>=1.12.6,<2.0",
+  "mypy>=1.19.1",
+  "pytest>=9.0.2",
+  "requests>=2.32.5",
+  "ruff>=0.15.6",
+  "types-psutil>=7.2.2.20260130",
+  "types-requests>=2.32.4.20260107",
 ]
 
 [project.urls]
