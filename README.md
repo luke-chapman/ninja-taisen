@@ -98,28 +98,25 @@ You can ask the code to:
 - `choose` a move, using the `choose_move` method in `api.py`
 - `execute` a move, using the `execute_move` method in `api.py`
 
-These methods are packaged up behind a json api using [flask](https://flask.palletsprojects.com). This json api allows the front end (coming soon!) to communicate with the back end without either needing to know any fine details of how the other operates.
+These methods are packaged up behind a JSON API using [FastAPI](https://fastapi.tiangolo.com). This JSON API allows the front end (coming soon!) to communicate with the back end without either needing to know any fine details of how the other operates.
 
 ### Launch server
 You can launch the Python server like this:
 ```
-python -m flask --app ./ninja-taisen/src/ninja_taisen/flask_entrypoint.py run
+uvicorn ninja_taisen.api_entrypoint:app
 ```
 You should see output such as:
 ```
-2024-09-13 15:11:59 - INFO - flask_entrypoint - Setting up Flask server 'ninja_taisen.flask_entrypoint'
-2024-09-13 15:11:59 - INFO - flask_entrypoint - Added /choose POST url rule
-2024-09-13 15:11:59 - INFO - flask_entrypoint - Added /execute POST url rule
- * Serving Flask app '.\src\ninja_taisen\flask_entrypoint.py'
- * Debug mode: off
-2024-09-13 15:11:59 - INFO - _internal - WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on http://127.0.0.1:5000
-2024-09-13 15:11:59 - INFO - _internal - Press CTRL+C to quit
+2024-09-13 15:11:59 - INFO - api_entrypoint - Setting up FastAPI server 'ninja_taisen.api_entrypoint'
+INFO:     Started server process [12345]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 There are now two `url`s to query:
 ```
-http://127.0.0.1:5000/choose
-http://127.0.0.1:5000/execute
+http://127.0.0.1:8000/choose
+http://127.0.0.1:8000/execute
 ```
 
 ### Submit a curl command
@@ -127,13 +124,13 @@ The commands below work on Windows using Command Prompt; minor variants should w
 
 #### choose
 ```
-curl -X POST http://127.0.0.1:5000/choose -H "Content-Type: application/json" -d "{\"board\":{\"monkey\":{\"0\":[\"MJ4\",\"MR3\",\"MP2\",\"MS1\"],\"1\":[\"MP3\",\"MS2\",\"MR1\"],\"2\":[\"MS3\",\"MR2\"],\"3\":[\"MP1\"]},\"wolf\":{\"7\":[\"WP3\"],\"8\":[\"WS1\",\"WR2\"],\"9\":[\"WP1\",\"WS2\",\"WR3\"],\"10\":[\"WJ4\",\"WR1\",\"WP2\",\"WS3\"]}},\"dice\":{\"rock\":1,\"paper\":3,\"scissors\":2},\"team\":\"monkey\",\"strategy\":\"random\",\"seed\":42}"
+curl -X POST http://127.0.0.1:8000/choose -H "Content-Type: application/json" -d "{\"board\":{\"monkey\":{\"0\":[\"MJ4\",\"MR3\",\"MP2\",\"MS1\"],\"1\":[\"MP3\",\"MS2\",\"MR1\"],\"2\":[\"MS3\",\"MR2\"],\"3\":[\"MP1\"]},\"wolf\":{\"7\":[\"WP3\"],\"8\":[\"WS1\",\"WR2\"],\"9\":[\"WP1\",\"WS2\",\"WR3\"],\"10\":[\"WJ4\",\"WR1\",\"WP2\",\"WS3\"]}},\"dice\":{\"rock\":1,\"paper\":3,\"scissors\":2},\"team\":\"monkey\",\"strategy\":\"random\",\"seed\":42}"
 
 {"moves":[{"card":"MP1","diceCategory":"paper"},{"card":"MS2","diceCategory":"scissors"},{"card":"MR2","diceCategory":"rock"}]}
 ```
 #### execute
 ```
-curl -X POST http://127.0.0.1:5000/execute -H "Content-Type: application/json" -d "{\"board\":{\"monkey\":{\"0\":[\"MJ4\",\"MR3\",\"MP2\",\"MS1\"],\"1\":[\"MP3\",\"MS2\",\"MR1\"],\"2\":[\"MS3\",\"MR2\"],\"3\":[\"MP1\"]},\"wolf\":{\"7\":[\"WP3\"],\"8\":[\"WS1\",\"WR2\"],\"9\":[\"WP1\",\"WS2\",\"WR3\"],\"10\":[\"WJ4\",\"WR1\",\"WP2\",\"WS3\"]}},\"dice\":{\"rock\":1,\"paper\":3,\"scissors\":2},\"team\":\"monkey\",\"moves\":[{\"diceCategory\":\"paper\",\"card\":\"MP1\"},{\"diceCategory\":\"scissors\",\"card\":\"MS2\"},{\"diceCategory\":\"rock\",\"card\":\"MR2\"}]}"
+curl -X POST http://127.0.0.1:8000/execute -H "Content-Type: application/json" -d "{\"board\":{\"monkey\":{\"0\":[\"MJ4\",\"MR3\",\"MP2\",\"MS1\"],\"1\":[\"MP3\",\"MS2\",\"MR1\"],\"2\":[\"MS3\",\"MR2\"],\"3\":[\"MP1\"]},\"wolf\":{\"7\":[\"WP3\"],\"8\":[\"WS1\",\"WR2\"],\"9\":[\"WP1\",\"WS2\",\"WR3\"],\"10\":[\"WJ4\",\"WR1\",\"WP2\",\"WS3\"]}},\"dice\":{\"rock\":1,\"paper\":3,\"scissors\":2},\"team\":\"monkey\",\"moves\":[{\"diceCategory\":\"paper\",\"card\":\"MP1\"},{\"diceCategory\":\"scissors\",\"card\":\"MS2\"},{\"diceCategory\":\"rock\",\"card\":\"MR2\"}]}"
 
 {"board":{"monkey":{"0":["MJ4","MR3","MP2","MS1"],"1":["MP3"],"2":["MS3"],"3":["MS2","MR1","MR2"],"6":["MP1"]},"wolf":{"7":["WP3"],"8":["WS1","WR2"],"9":["WP1","WS2","WR3"],"10":["WJ4","WR1","WP2","WS3"]}}}
 ```
